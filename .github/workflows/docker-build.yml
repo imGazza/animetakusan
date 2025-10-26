@@ -39,7 +39,8 @@ jobs:
       - name: Build and push multiarch image
         uses: docker/build-push-action@v6
         with:
-          context: ./AnimeTakusan/AnimeTakusan.API
+          context: ./AnimeTakusan
+          file: ./AnimeTakusan/AnimeTakusan.API/Dockerfile
           push: true
           platforms: linux/amd64,linux/arm64,linux/arm/v7
           tags: |
