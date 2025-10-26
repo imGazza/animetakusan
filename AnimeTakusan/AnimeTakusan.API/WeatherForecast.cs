@@ -1,4 +1,4 @@
-namespace AnimeTakusan
+namespace AnimeTakusan.API
 {
     public class WeatherForecast
     {

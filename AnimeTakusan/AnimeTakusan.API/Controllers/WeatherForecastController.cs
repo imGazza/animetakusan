@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace AnimeTakusan.Controllers
+namespace AnimeTakusan.API.Controllers
 {
     [ApiController]
     [Route("[controller]")]
