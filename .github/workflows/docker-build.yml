@@ -53,5 +53,5 @@ jobs:
         run: |          
           curl -s -H "Authorization: Bearer $MY_TOKEN" "$MY_ENDPOINT"
         env:
-          MY_TOKEN: ${{ secrets.MY_TOKEN }}
-          MY_ENDPOINT: ${{ secrets.MY_ENDPOINT }}
+          MY_TOKEN: ${{ secrets.WATCHTOWER_TOKEN }}
+          MY_ENDPOINT: ${{ secrets.UPDATE_CONTAINER_URL }}
