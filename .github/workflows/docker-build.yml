@@ -48,3 +48,10 @@ jobs:
             ghcr.io/${{ steps.repo.outputs.repository }}:${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+      - name: Update image and restart container
+        run: |          
+          curl -s -H "Authorization: Bearer $MY_TOKEN" "$MY_ENDPOINT"
+        env:
+          MY_TOKEN: ${{ secrets.MY_TOKEN }}
+          MY_ENDPOINT: ${{ secrets.MY_ENDPOINT }}
