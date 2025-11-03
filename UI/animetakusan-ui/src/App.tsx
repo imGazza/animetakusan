@@ -18,7 +18,7 @@ function App() {
     setError(null)
     setMessage(null)
     try {
-      const res = await fetch('api.animetakusan.eu/api/Public/message')
+      const res = await fetch('https://api.animetakusan.eu/api/Public/message')
       if (!res.ok) throw new Error(`HTTP ${res.status}`)
       const text = await res.text()
       setMessage(text)
@@ -34,7 +34,7 @@ function App() {
     setWeatherError(null)
     setWeather(null)
     try {
-      const res = await fetch('api.animetakusan.eu/WeatherForecast')
+      const res = await fetch('https://api.animetakusan.eu/WeatherForecast')
       if (!res.ok) throw new Error(`HTTP ${res.status}`)
       const json = await res.json()
       setWeather(JSON.stringify(json, null, 2))
