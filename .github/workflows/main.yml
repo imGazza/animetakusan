@@ -1,0 +1,14 @@
+name: Deploy to Vercel
+
+on:
+  workflow_dispatch:
+
+jobs:
+  trigger-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Vercel Deploy
+        run: |
+          curl -s -X POST ${{ $VERCEL_DEPLOYHOOK_URL }}
+        env:
+            VERCEL_DEPLOYHOOK_URL: ${{ secrets.VERCEL_DEPLOYHOOK_URL }}
