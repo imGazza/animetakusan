@@ -29,5 +29,11 @@ namespace AnimeTakusan.API.Controllers
             })
             .ToArray();
         }
+
+        [HttpGet("custom-message")]
+        public string GetCustomMessage()
+        {
+            return "Deployato con successo";
+        }
     }
 }
