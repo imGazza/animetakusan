@@ -15,6 +15,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # Lowercase repository name for ghcr
+      - name: Set lowercase repository name
+        id: repo
+        run: echo "repository=$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT  
+
       # Set up QEMU to build ARM arch on Github Action
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -34,11 +39,19 @@ jobs:
       - name: Build and push multiarch image
         uses: docker/build-push-action@v6
         with:
-          context: .
+          context: ./AnimeTakusan
+          file: ./AnimeTakusan/AnimeTakusan.API/Dockerfile
           push: true
-          platforms: linux/amd64,linux/arm64,linux/arm/v7
+          platforms: linux/amd64,linux/arm64
           tags: |
-            ghcr.io/${{ github.repository }}:latest
-            ghcr.io/${{ github.repository }}:${{ github.sha }}
+            ghcr.io/${{ steps.repo.outputs.repository }}:latest
+            ghcr.io/${{ steps.repo.outputs.repository }}:${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+      - name: Update image and restart container
+        run: |          
+          curl -s -H "Authorization: Bearer $MY_TOKEN" "$MY_ENDPOINT"
+        env:
+          MY_TOKEN: ${{ secrets.WATCHTOWER_TOKEN }}
+          MY_ENDPOINT: ${{ secrets.UPDATE_CONTAINER_URL }}
