@@ -9,6 +9,6 @@ jobs:
     steps:
       - name: Trigger Vercel Deploy
         run: |
-          curl -s -X POST ${{ $VERCEL_DEPLOYHOOK_URL }}
+          curl -s -X POST "$VERCEL_DEPLOYHOOK_URL"
         env:
             VERCEL_DEPLOYHOOK_URL: ${{ secrets.VERCEL_DEPLOYHOOK_URL }}
