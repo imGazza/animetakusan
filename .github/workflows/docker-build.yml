@@ -1,4 +1,4 @@
-name: Docker Build & Push
+name: Services - Docker build and push
 
 on:
   workflow_dispatch
