@@ -1,16 +1,27 @@
 using AnimeTakusan.API.Extensions;
+using AnimeTakusan.Data.Contexts;
+using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
+    .CreateLogger();
 
+Log.Information("Starting up web app");
+builder.Services.AddSerilog();
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // CORS
 builder.AddCorsPolicies();
+
+builder.Services.AddDbContext<BaseContext>(opt =>
+    opt.UseNpgsql(builder.Configuration.GetConnectionString("PostgresSQL"))
+);
 
 var app = builder.Build();
 
@@ -20,6 +31,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.ApplyDatabaseMigrations();
+
+app.UseSerilogRequestLogging();
 
 app.UseHttpsRedirection();
 

@@ -1,0 +1,35 @@
+services:
+  animetakusanapi:
+    image: animetakusanapi
+    build:
+      context: .
+      dockerfile: AnimeTakusan.API/Dockerfile
+    ports:
+      - 5016:8081      
+    environment:
+      - ASPNETCORE_URLS=http://+:8081
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__PostgresSQL=Host=postgres;Port=5432;Database=animetakusan;Username=at-debug;Password=12345;
+    depends_on:
+      - postgres
+    volumes:
+      - ./logs:/app/logs/anime-takusan
+
+  postgres:
+    image: postgres
+    restart: always
+    shm_size: 128mb
+    environment:
+      POSTGRES_USER: at-debug
+      POSTGRES_PASSWORD: 12345
+      POSTGRES_DB: animetakusan
+    ports:
+      - 5432:5432
+    volumes:
+      - C:\AnimeTakusan\data:/var/lib/postgresql
+
+  adminer:
+    image: adminer
+    restart: always    
+    ports:
+      - 8080:8080
