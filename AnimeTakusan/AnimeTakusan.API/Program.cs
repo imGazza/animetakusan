@@ -1,4 +1,5 @@
 using AnimeTakusan.API.Extensions;
+using AnimeTakusan.API.Serilog;
 using AnimeTakusan.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
@@ -8,9 +9,10 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 Log.Logger = new LoggerConfiguration()
     .ReadFrom.Configuration(builder.Configuration)
+    //.Enrich.With<LocalTimeEnricher>()
     .CreateLogger();
 
-Log.Information("Starting up web app");
+Log.Information("Application starting up...");
 builder.Services.AddSerilog();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

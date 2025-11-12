@@ -10,6 +10,7 @@ services:
       - ASPNETCORE_URLS=http://+:8081
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__PostgresSQL=Host=postgres;Port=5432;Database=animetakusan;Username=at-debug;Password=12345;
+      - TZ=Europe/Rome
     depends_on:
       - postgres
     volumes:
