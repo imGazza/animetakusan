@@ -42,5 +42,16 @@ namespace AnimeTakusan.API.Controllers
             _context.SaveChanges();
             return Ok("Hello from Public API!");
         }
+
+        [HttpGet("users")]
+        public IActionResult GetUsers()
+        {
+            var users = new List<string>();
+            foreach (var user in _context.Users)
+            {
+                users.Add(user.Username);
+            }
+            return Ok(users);
+        }
     }
 }
