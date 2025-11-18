@@ -7,8 +7,8 @@ using AnimeTakusan.Data.Contexts;
 namespace AnimeTakusan.API.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
     [EnableCors("Public")]
+    [Route("api/[controller]")]    
     public class PublicController : ControllerBase
     {
         private readonly BaseContext _context;

@@ -5,9 +5,9 @@ namespace AnimeTakusan.API.Extensions
 {
     public static class ApplicationServicesExtensions
     {
-        public static WebApplicationBuilder AddCorsPolicies(this WebApplicationBuilder Builder)
+        public static WebApplicationBuilder AddCorsPolicies(this WebApplicationBuilder Builder, IConfiguration Configuration)
         {
-            var allowedOrigins = Builder.Configuration.GetSection("AllowedOrigins").Get<string[]>() ?? [];
+            var allowedOrigins = Configuration.GetSection("AllowedOrigins").Get<string[]>() ?? [];
 
             // Allows only from specified domains
             Builder.Services.AddCors(options =>

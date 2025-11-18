@@ -1,5 +1,4 @@
 using AnimeTakusan.API.Extensions;
-using AnimeTakusan.API.Serilog;
 using AnimeTakusan.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
@@ -9,7 +8,6 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 Log.Logger = new LoggerConfiguration()
     .ReadFrom.Configuration(builder.Configuration)
-    //.Enrich.With<LocalTimeEnricher>()
     .CreateLogger();
 
 Log.Information("Application starting up...");
@@ -18,8 +16,14 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Authentication
+builder.Services
+.AddBaseAuthentication()
+.AddGoogleAuthentication(builder.Configuration)
+.AddJwtAuthentication(builder.Configuration);
+
 // CORS
-builder.AddCorsPolicies();
+builder.AddCorsPolicies(builder.Configuration);
 
 builder.Services.AddDbContext<BaseContext>(opt =>
     opt.UseNpgsql(builder.Configuration.GetConnectionString("PostgresSQL"))

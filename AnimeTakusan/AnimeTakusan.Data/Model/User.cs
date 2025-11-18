@@ -1,6 +1,6 @@
 namespace AnimeTakusan.Data.Model;
 
-public class User
+public class User : IEntityGuid
 {
     public Guid Id { get; set; }
     public string Username { get; set; }
