@@ -1,10 +1,16 @@
 using System;
 using System.Runtime.CompilerServices;
+using System.Security.Claims;
 using AnimeTakusan.Data.Contexts;
 
 namespace AnimeTakusan.Core.Authentication;
 
-public class AuthService
+public interface IAuthService
+{
+    void AuthenticateWithGoogle(ClaimsPrincipal claimsPrincipal);
+}
+
+public class AuthService : IAuthService
 {
     private readonly BaseContext _context;
 
@@ -13,8 +19,14 @@ public class AuthService
         _context = context;
     }
 
-    public void SomeAuthMethod()
+    public void AuthenticateWithGoogle(ClaimsPrincipal claimsPrincipal)
     {
-        // Authentication logic goes here
+        // Recupera dati dal ClaimsPrincipal
+
+        // Valida dati
+
+        // Controlla se l'utente esiste già, se no lo crea a DB
+
+        // Genera i tokens
     }
 }

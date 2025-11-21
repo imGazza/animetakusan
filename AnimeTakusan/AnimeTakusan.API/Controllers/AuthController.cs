@@ -1,5 +1,8 @@
+using System.Security.Claims;
+using AnimeTakusan.Core.Authentication;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -12,10 +15,14 @@ namespace AnimeTakusan.API.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IConfiguration _configuration;
+        private readonly ILogger<AuthController> _logger;
+        private readonly IAuthService _authService;
 
-        public AuthController(IConfiguration configuration)
+        public AuthController(IConfiguration configuration, ILogger<AuthController> logger, IAuthService authService)
         {
             _configuration = configuration;
+            _logger = logger;
+            _authService = authService;
         }
 
         [HttpGet("google")]
@@ -44,7 +51,9 @@ namespace AnimeTakusan.API.Controllers
                 return Unauthorized();
             }
 
-            
+            _authService.AuthenticateWithGoogle(authenticateResult.Principal);
+
+            _logger.LogInformation($"User authenticated: {authenticateResult.Principal.FindFirstValue(ClaimTypes.Email)}");
 
             return Redirect(_configuration["Authentication:Google:RedirectUri"]!);
         }

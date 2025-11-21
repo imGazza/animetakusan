@@ -1,5 +1,6 @@
 using System;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace AnimeTakusan.API.Extensions;
@@ -31,8 +32,8 @@ public static class AuthenticationExtensions
 
             options.Scope.Add("profile");
             options.Scope.Add("email");
-
-            options.SaveTokens = true;
+            options.SaveTokens = false;
+            options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
         });
     }
 

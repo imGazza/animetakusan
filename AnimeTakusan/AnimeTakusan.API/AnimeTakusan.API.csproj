@@ -28,6 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AnimeTakusan.Core\AnimeTakusan.Core.csproj" />
     <ProjectReference Include="..\AnimeTakusan.Data\AnimeTakusan.Data.csproj" />
   </ItemGroup>
 
