@@ -1,5 +1,6 @@
 <Solution>
   <Project Path="AnimeTakusan.API/AnimeTakusan.API.csproj" />
-  <Project Path="AnimeTakusan.Core/AnimeTakusan.Core.csproj" />
-  <Project Path="AnimeTakusan.Data/AnimeTakusan.Data.csproj" />
+  <Project Path="AnimeTakusan.Application/AnimeTakusan.Application.csproj" />
+  <Project Path="AnimeTakusan.Domain/AnimeTakusan.Domain.csproj" />
+  <Project Path="AnimeTakusan.Infrastructure/AnimeTakusan.Infrastructure.csproj" />
 </Solution>

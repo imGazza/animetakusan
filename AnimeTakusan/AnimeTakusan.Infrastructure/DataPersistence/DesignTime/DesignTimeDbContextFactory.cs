@@ -1,4 +1,4 @@
-using AnimeTakusan.Data.Contexts;
+using AnimeTakusan.Infrastructure.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;

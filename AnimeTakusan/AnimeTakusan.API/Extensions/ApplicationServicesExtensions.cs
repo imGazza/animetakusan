@@ -1,4 +1,6 @@
-﻿using AnimeTakusan.Data.Contexts;
+﻿using AnimeTakusan.Application.Interfaces;
+using AnimeTakusan.Domain.Interfaces;
+using AnimeTakusan.Infrastructure.Contexts;
 using Microsoft.EntityFrameworkCore;
 
 namespace AnimeTakusan.API.Extensions
@@ -56,6 +58,18 @@ namespace AnimeTakusan.API.Extensions
                 logger.LogError(ex, "Error occurred while migrating the database.");
                 throw;
             }
+        }
+
+        public static WebApplicationBuilder AddServices(this WebApplicationBuilder Builder)
+        {
+            Builder.Services.Scan(scan => scan
+                .FromAssemblyOf<Program>()
+                .FromAssembliesOf(typeof(IBaseService<,>))
+                .AddClasses(classes => classes.AssignableTo<IInjectable>())
+                .AsImplementedInterfaces()
+                .WithScopedLifetime());
+
+            return Builder;
         } 
     }
 }

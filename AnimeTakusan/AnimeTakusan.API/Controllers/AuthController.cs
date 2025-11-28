@@ -1,10 +1,8 @@
 using System.Security.Claims;
-using AnimeTakusan.Core.Authentication;
+using AnimeTakusan.Application.Interfaces;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Google;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AnimeTakusan.API.Controllers
@@ -24,6 +22,12 @@ namespace AnimeTakusan.API.Controllers
             _logger = logger;
             _authService = authService;
         }
+
+        // [HttpGet("token")]
+        // public IActionResult Token()
+        // {
+            
+        // }
 
         [HttpGet("google")]
         public IActionResult Google()

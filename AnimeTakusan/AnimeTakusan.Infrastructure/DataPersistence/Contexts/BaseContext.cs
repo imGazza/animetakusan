@@ -1,7 +1,7 @@
-using AnimeTakusan.Data.Model;
+using AnimeTakusan.Domain.Entitities;
 using Microsoft.EntityFrameworkCore;
 
-namespace AnimeTakusan.Data.Contexts;
+namespace AnimeTakusan.Infrastructure.Contexts;
 
 public class BaseContext : DbContext
 {

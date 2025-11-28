@@ -1,11 +1,13 @@
-using AnimeTakusan.Data.Contexts;
-using AnimeTakusan.Data.Model;
+using AnimeTakusan.Application.Interfaces;
+using AnimeTakusan.Domain.Entities.Common;
+using AnimeTakusan.Domain.Interfaces;
+using AnimeTakusan.Infrastructure.Contexts;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
 
-namespace AnimeTakusan.Core.Common;
+namespace AnimeTakusan.Infrastructure.DataPersistence;
 
-public class BaseService<TEntity, TDto> : IBaseService<TEntity, TDto> where TEntity : class, IEntity
+public class BaseService<TEntity, TDto> : IBaseService<TEntity, TDto> where TEntity : Entity<int>, IInjectable
 {
     private readonly BaseContext _context;
     private readonly DbSet<TEntity> _dbSet;

@@ -1,6 +1,4 @@
-using System;
-
-namespace AnimeTakusan.Core.Common;
+namespace AnimeTakusan.Domain.Interfaces;
 
 public interface IBaseService<TEntity, TDto>
 {

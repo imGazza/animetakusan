@@ -1,5 +1,9 @@
 using AnimeTakusan.API.Extensions;
-using AnimeTakusan.Data.Contexts;
+using AnimeTakusan.Application.Interfaces;
+using AnimeTakusan.Application.Services;
+using AnimeTakusan.Core.Authentication;
+using AnimeTakusan.Infrastructure.Authentication;
+using AnimeTakusan.Infrastructure.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
@@ -16,6 +20,11 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Services
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IJwtHandler, JwtHandler>();
+builder.AddServices();
+
 // Authentication
 builder.Services
 .AddBaseAuthentication()
@@ -28,6 +37,8 @@ builder.AddCorsPolicies(builder.Configuration);
 builder.Services.AddDbContext<BaseContext>(opt =>
     opt.UseNpgsql(builder.Configuration.GetConnectionString("PostgresSQL"))
 );
+
+builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
 
