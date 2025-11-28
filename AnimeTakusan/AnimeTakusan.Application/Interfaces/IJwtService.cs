@@ -4,7 +4,9 @@ namespace AnimeTakusan.Application.Interfaces;
 
 public interface IJwtHandler
 {
-    string GenerateAccessToken(User user);
+    string GetRefreshToken();
+    string GenerateAuthenticatedAccessToken(string refreshToken);
+    string GenerateGuestAccessToken();
     string GenerateRefreshToken();
     void WriteRefreshTokenCookie(string token);
 }

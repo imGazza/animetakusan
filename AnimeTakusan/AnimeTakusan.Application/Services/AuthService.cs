@@ -16,14 +16,23 @@ public class AuthService : IAuthService, IInjectable
         _jwtHandler = jwtHandler    ;
     }
 
-    public string GenerateAccessToken()
-    {
-        throw new NotImplementedException();
-        // Check se utente ha il refresh token
+    // TODO: Return a more complex object with some user info
+    public string Token()
+    {        
+        string refreshToken = _jwtHandler.GetRefreshToken();
+        string accessToken;
+        // TODO: Validate refresh token against database
 
-        // Se no, generate token con solo claims pubblici
+        if(!string.IsNullOrEmpty(refreshToken))
+        {
+            accessToken = _jwtHandler.GenerateAuthenticatedAccessToken(refreshToken);
+        }
+        else
+        {
+            accessToken = _jwtHandler.GenerateGuestAccessToken();
+        }
 
-        // Se si, generate token con ruoli utente
+        return accessToken;
     }
 
     public void AuthenticateWithGoogle(ClaimsPrincipal claimsPrincipal)

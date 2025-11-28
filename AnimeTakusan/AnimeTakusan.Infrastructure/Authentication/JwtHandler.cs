@@ -21,36 +21,69 @@ public class JwtHandler : IJwtHandler
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public string GenerateAccessToken(User user)
-    {   
-        var jwtKey = _configuration["Jwt:Key"];
-        if(jwtKey == null)
-        {
-            throw new ArgumentNullException("JWT Key is not configured.");
-        }
+    public string GetRefreshToken()
+    {
+        return _httpContextAccessor.HttpContext.Request.Cookies["APISID"];
+    }
+
+    public string GenerateGuestAccessToken()
+    {
+        (string jwtKey, string jwtIssuer, string jwtAudience) = ValidateJwtConfig();
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
-            var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+        var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-            var claims = new List<Claim>
-            {
-                new(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-                new(JwtRegisteredClaimNames.Email, user.Email),
-                new(JwtRegisteredClaimNames.Name, $"{user.FirstName} {user.LastName}"),
-                new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            };
+        var claims = new List<Claim>
+        {
+            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+        };
 
-            // Add roles handling
+        var token = new JwtSecurityToken(
+            issuer: jwtIssuer,
+            audience: jwtAudience,
+            claims: claims,
+            expires: DateTime.Now.AddMinutes(15),
+            signingCredentials: credentials
+        );
 
-            var token = new JwtSecurityToken(
-                issuer: _configuration["Jwt:Issuer"],
-                audience: _configuration["Jwt:Audience"],
-                claims: claims,
-                expires: DateTime.Now.AddMinutes(15),
-                signingCredentials: credentials
-            );
+        return new JwtSecurityTokenHandler().WriteToken(token);
+    }
 
-            return new JwtSecurityTokenHandler().WriteToken(token);
+    public string GenerateAuthenticatedAccessToken(string refreshToken)
+    {
+        // TODO: Get user by refresh token from database
+        // User Placeholder
+        var user = new User()
+        {
+            Id = Guid.NewGuid(),
+            Email = "aaa@it.it",
+            FirstName = "Test"
+        };
+
+        (string jwtKey, string jwtIssuer, string jwtAudience) = ValidateJwtConfig();
+
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
+        var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+        var claims = new List<Claim>
+        {
+            new(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
+            new(JwtRegisteredClaimNames.Email, user.Email),
+            new(JwtRegisteredClaimNames.Name, $"{user.FirstName} {user.LastName}"),
+            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+        };
+
+        // Add roles handling
+
+        var token = new JwtSecurityToken(
+            issuer: jwtIssuer,
+            audience: jwtAudience,
+            claims: claims,
+            expires: DateTime.Now.AddMinutes(15),
+            signingCredentials: credentials
+        );
+
+        return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
     public string GenerateRefreshToken()
@@ -74,5 +107,23 @@ public class JwtHandler : IJwtHandler
                 Secure = true,
                 SameSite = SameSiteMode.Strict
             });
+    }
+
+    private (string jwtKey, string jwtIssuer, string jwtAudience) ValidateJwtConfig()
+    {
+        if (_configuration["Jwt:Key"] == null)
+        {
+            throw new ArgumentNullException("JWT Key is not configured.");
+        }
+        if (_configuration["Jwt:Issuer"] == null)
+        {
+            throw new ArgumentNullException("JWT Issuer is not configured.");
+        }
+        if (_configuration["Jwt:Audience"] == null)
+        {
+            throw new ArgumentNullException("JWT Audience is not configured.");
+        }
+
+        return (_configuration["Jwt:Key"]!, _configuration["Jwt:Issuer"]!, _configuration["Jwt:Audience"]!);
     }
 }

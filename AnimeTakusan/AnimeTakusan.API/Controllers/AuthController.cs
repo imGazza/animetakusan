@@ -23,11 +23,11 @@ namespace AnimeTakusan.API.Controllers
             _authService = authService;
         }
 
-        // [HttpGet("token")]
-        // public IActionResult Token()
-        // {
-            
-        // }
+        [HttpGet("token")]
+        public IActionResult Token()
+        {
+            return Ok(_authService.Token());
+        }
 
         [HttpGet("google")]
         public IActionResult Google()
