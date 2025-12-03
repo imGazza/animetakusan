@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using AnimeTakusan.Application.DTOs.Authentication.Requests;
 using AnimeTakusan.Application.Interfaces;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Google;
@@ -29,6 +30,18 @@ namespace AnimeTakusan.API.Controllers
             return Ok(_authService.Token());
         }
 
+        [HttpGet("sign-up")]
+        public IActionResult SignUp(RegisterRequest registerRequest)
+        {
+            if (_configuration["Authentication:Logged:RedirectUri"] == null)
+            {
+                return BadRequest("Redirect URI is missing.");
+            }
+
+            _authService.SignUp(registerRequest);
+            return Redirect(_configuration["Authentication:Logged:RedirectUri"]!);
+        }
+
         [HttpGet("google")]
         public IActionResult Google()
         {
@@ -43,9 +56,9 @@ namespace AnimeTakusan.API.Controllers
         [HttpGet("google-callback")]
         public async Task<IActionResult> GoogleCallback()
         {
-            if (_configuration["Authentication:Google:RedirectUri"] == null)
+            if (_configuration["Authentication:Logged:RedirectUri"] == null)
             {
-                return BadRequest("Google Redirect URI is missing.");
+                return BadRequest("Redirect URI is missing.");
             }
 
             var authenticateResult = await HttpContext.AuthenticateAsync(GoogleDefaults.AuthenticationScheme);
@@ -59,7 +72,7 @@ namespace AnimeTakusan.API.Controllers
 
             _logger.LogInformation($"User authenticated: {authenticateResult.Principal.FindFirstValue(ClaimTypes.Email)}");
 
-            return Redirect(_configuration["Authentication:Google:RedirectUri"]!);
+            return Redirect(_configuration["Authentication:Logged:RedirectUri"]!);
         }
     }
 }

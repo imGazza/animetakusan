@@ -49,7 +49,7 @@ public class JwtHandler : IJwtHandler
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
-    public string GenerateAuthenticatedAccessToken(string refreshToken)
+    public string GenerateUserAccessToken(string refreshToken)
     {
         // TODO: Get user by refresh token from database
         // User Placeholder
@@ -79,7 +79,7 @@ public class JwtHandler : IJwtHandler
             issuer: jwtIssuer,
             audience: jwtAudience,
             claims: claims,
-            expires: DateTime.Now.AddMinutes(15),
+            expires: DateTime.UtcNow.AddMinutes(15),
             signingCredentials: credentials
         );
 
@@ -96,7 +96,7 @@ public class JwtHandler : IJwtHandler
 
     public void WriteRefreshTokenCookie(string token)
     {
-        var expiration = DateTime.Now.AddDays(7);
+        var expiration = DateTime.UtcNow.AddDays(7);
         _httpContextAccessor.HttpContext.Response.Cookies.Append(
             "APISID",
             token, new CookieOptions

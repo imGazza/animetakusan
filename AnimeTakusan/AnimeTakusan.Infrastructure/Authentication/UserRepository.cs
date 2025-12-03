@@ -1,6 +1,7 @@
 using AnimeTakusan.Application.Interfaces;
 using AnimeTakusan.Domain.Entitities;
 using AnimeTakusan.Infrastructure.Contexts;
+using Microsoft.EntityFrameworkCore;
 
 namespace AnimeTakusan.Infrastructure.Authentication;
 
@@ -13,14 +14,9 @@ public class UserRepository : IUserRepository
         _context = context;
     }
 
-    public User? GetUserByEmail(string email)
+    public async Task<User?> GetUserByRefreshToken(string refreshToken)
     {
-        return _context.Users.SingleOrDefault(u => u.Email == email);
-    }
-
-    public void CreateUser(User user)
-    {
-        _context.Users.Add(user);
-        _context.SaveChanges();
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.RefreshToken == refreshToken);
+        return user;
     }
 }

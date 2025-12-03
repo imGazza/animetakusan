@@ -1,12 +1,31 @@
-using System;
+using AnimeTakusan.Domain.Entitities;
+using AnimeTakusan.Infrastructure.Contexts;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 
 namespace AnimeTakusan.API.Extensions;
 
 public static class AuthenticationExtensions
 {
+    public static IServiceCollection AddIdentity(this WebApplicationBuilder Builder)
+    {
+        Builder.Services.AddIdentity<User, IdentityRole<Guid>>(options =>
+        {
+            options.User.RequireUniqueEmail = true;
+
+            options.Password.RequireDigit = true;
+            options.Password.RequiredLength = 8;
+            options.Password.RequireNonAlphanumeric = false;
+            options.Password.RequireUppercase = true;
+            options.Password.RequireLowercase = true;
+
+        }).AddEntityFrameworkStores<BaseContext>();
+
+        return Builder.Services;
+    }
+
     public static AuthenticationBuilder AddBaseAuthentication(this IServiceCollection Services)
     {
         return Services.AddAuthentication(options =>

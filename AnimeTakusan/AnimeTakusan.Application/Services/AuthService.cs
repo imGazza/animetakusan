@@ -1,67 +1,127 @@
 using System.Security.Claims;
+using System.Threading.Tasks;
+using AnimeTakusan.Application.DTOs.Authentication.Requests;
+using AnimeTakusan.Application.DTOs.Authentication.Responses;
 using AnimeTakusan.Application.Interfaces;
 using AnimeTakusan.Domain.Entitities;
+using AnimeTakusan.Domain.Exceptions;
 using AnimeTakusan.Infrastructure.Exceptions;
+using Mapster;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 
 namespace AnimeTakusan.Application.Services;
 
 public class AuthService : IAuthService, IInjectable
 {
+    private readonly ILogger<AuthService> _logger;
     private readonly IUserRepository _userRepository;
+    private readonly UserManager<User> _userManager;
     private readonly IJwtHandler _jwtHandler;
 
-    public AuthService(IUserRepository userRepository, IJwtHandler jwtHandler)
+    public AuthService(IUserRepository userRepository, IJwtHandler jwtHandler, ILogger<AuthService> logger, UserManager<User> userManager)
     {
+        _logger = logger;
         _userRepository = userRepository;
-        _jwtHandler = jwtHandler    ;
+        _jwtHandler = jwtHandler;
+        _userManager = userManager;
     }
 
-    // TODO: Return a more complex object with some user info
-    public string Token()
-    {        
-        string refreshToken = _jwtHandler.GetRefreshToken();
-        string accessToken;
-        // TODO: Validate refresh token against database
-
-        if(!string.IsNullOrEmpty(refreshToken))
-        {
-            accessToken = _jwtHandler.GenerateAuthenticatedAccessToken(refreshToken);
-        }
-        else
-        {
-            accessToken = _jwtHandler.GenerateGuestAccessToken();
-        }
-
-        return accessToken;
-    }
-
-    public void AuthenticateWithGoogle(ClaimsPrincipal claimsPrincipal)
+    /// <summary>
+    /// Generates a generic guest access token for not signed-up users.
+    /// Generates an authenticated user access token otherwise.
+    /// </summary>
+    /// <returns>The access token and a representation of the user, if any.</returns>
+    public async Task<TokenResponse> Token()
     {
-        ValidateUserData(claimsPrincipal, out string email);
+        var refreshToken = _jwtHandler.GetRefreshToken();
+        
+        if (string.IsNullOrEmpty(refreshToken))
+        {
+            return new TokenResponse { AccessToken = _jwtHandler.GenerateGuestAccessToken() };
+        }
 
-        var user = _userRepository.GetUserByEmail(email);
+        var user = await _userRepository.GetUserByRefreshToken(refreshToken);
+        
+        if (user == null || !hasValidRefreshToken(user))
+        {
+            return new TokenResponse { AccessToken = _jwtHandler.GenerateGuestAccessToken() };
+        }
+
+        var response = new TokenResponse {
+            User = user.Adapt<UserInfo>(), 
+            AccessToken = _jwtHandler.GenerateUserAccessToken(refreshToken) 
+        };
+        _logger.LogInformation($"Generated access token for user {user.Email}.");
+        return response;
+    }
+
+    private bool hasValidRefreshToken(User user)
+    {
+        if(user.RefreshTokenExpiryTime <= DateTime.UtcNow)
+        {
+            _logger.LogError($"Refresh token has expired for user {user.Email}.");
+            //throw new InvalidRefreshTokenException($"Refresh token {refreshToken} has expired.");
+            return false;
+        }
+        return true;
+    }
+
+    public async Task SignUp(RegisterRequest registerRequest)
+    {
+        var user = await _userManager.FindByEmailAsync(registerRequest.Email);
+
+        if(user != null)
+        {
+            throw new UserAlreadySignedUpException(registerRequest.Email);
+        }
+
+        user = new User
+        {
+            UserName = registerRequest.Username,
+            Email = registerRequest.Email,
+            FirstName = registerRequest.FirstName,
+            LastName = registerRequest.LastName,
+            ProfilePicture = registerRequest.ProfilePicture
+        };
+        user.PasswordHash = _userManager.PasswordHasher.HashPassword(user, registerRequest.Password);
+        var result = await _userManager.CreateAsync(user);
+
+        if (!result.Succeeded)
+        {
+            throw new RegistrationFailedException(registerRequest.Email);
+        }
+
+        var refreshToken = _jwtHandler.GenerateRefreshToken();
+        _jwtHandler.WriteRefreshTokenCookie(refreshToken);
+    }
+
+    public async Task AuthenticateWithGoogle(ClaimsPrincipal claimsPrincipal)
+    {
+        ValidateGoogleUserData(claimsPrincipal, out string email);
+
+        var user = await _userManager.FindByEmailAsync(email);
         if(user == null)
         {
             user = new User
             {
                 Id = Guid.NewGuid(),
                 Email = email,
-                Username = email,                
+                Username = email,
                 FirstName = claimsPrincipal.FindFirst(ClaimTypes.GivenName)?.Value ?? string.Empty,
                 LastName = claimsPrincipal.FindFirst(ClaimTypes.Surname)?.Value ?? string.Empty,
                 ProfilePicture = claimsPrincipal.FindFirst("picture")?.Value ?? string.Empty
             };
-            _userRepository.CreateUser(user);
+            await _userManager.CreateAsync(user);
         }
+        
+        await AddGoogleLogin(claimsPrincipal, user);
 
         var refreshToken = _jwtHandler.GenerateRefreshToken();
-        
-        // Handle Add Login when Identity implemented
-
         _jwtHandler.WriteRefreshTokenCookie(refreshToken);
     }
 
-    private void ValidateUserData(ClaimsPrincipal claimsPrincipal, out string email)
+    private void ValidateGoogleUserData(ClaimsPrincipal claimsPrincipal, out string email)
     {
         if(claimsPrincipal == null)
         {
@@ -75,5 +135,20 @@ public class AuthService : IAuthService, IInjectable
         }
 
         email = emailClaim.Value;
+    }
+
+    private async Task AddGoogleLogin(ClaimsPrincipal claimsPrincipal, User user)
+    {
+        var info = new UserLoginInfo("Google",
+            claimsPrincipal.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty,
+            "Google");
+
+        var loginResult = await _userManager.AddLoginAsync(user, info);
+
+        if (!loginResult.Succeeded)
+        {
+            throw new ExternalLoginException("Google", $"Failed to add Google login for user {user.Email}. {string.Join(", ",
+                    loginResult.Errors.Select(x => x.Description))}");
+        }
     }
 }

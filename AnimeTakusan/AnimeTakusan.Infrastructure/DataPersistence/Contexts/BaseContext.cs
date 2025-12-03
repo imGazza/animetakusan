@@ -1,13 +1,15 @@
 using AnimeTakusan.Domain.Entitities;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace AnimeTakusan.Infrastructure.Contexts;
 
-public class BaseContext : DbContext
+public class BaseContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>
 {
     public BaseContext(DbContextOptions<BaseContext> options) : base(options){}
 
-    public DbSet<User> Users { get; set; }
+    public override DbSet<User> Users { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

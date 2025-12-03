@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AnimeTakusan.Infrastructure.DataPersistence;
 
-public class BaseService<TEntity, TDto> : IBaseService<TEntity, TDto> where TEntity : Entity<int>, IInjectable
+public class BaseService<TEntity, TDto> : IBaseService<TEntity, TDto> where TEntity : Entity, IInjectable
 {
     private readonly BaseContext _context;
     private readonly DbSet<TEntity> _dbSet;

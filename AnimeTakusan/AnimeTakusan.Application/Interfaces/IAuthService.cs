@@ -1,9 +1,12 @@
 using System.Security.Claims;
+using AnimeTakusan.Application.DTOs.Authentication.Requests;
+using AnimeTakusan.Application.DTOs.Authentication.Responses;
 
 namespace AnimeTakusan.Application.Interfaces;
 
 public interface IAuthService
 {
-    string Token();
-    void AuthenticateWithGoogle(ClaimsPrincipal claimsPrincipal);
+    Task<TokenResponse> Token();
+    Task SignUp(RegisterRequest registerRequest);
+    Task AuthenticateWithGoogle(ClaimsPrincipal claimsPrincipal);
 }

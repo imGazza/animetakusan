@@ -4,6 +4,5 @@ namespace AnimeTakusan.Application.Interfaces;
 
 public interface IUserRepository
 {
-    User? GetUserByEmail(string email);
-    void CreateUser(User user);
+    Task<User> GetUserByRefreshToken(string refreshToken);
 }

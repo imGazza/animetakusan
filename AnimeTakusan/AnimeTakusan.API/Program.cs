@@ -1,6 +1,5 @@
 using AnimeTakusan.API.Extensions;
 using AnimeTakusan.Application.Interfaces;
-using AnimeTakusan.Application.Services;
 using AnimeTakusan.Core.Authentication;
 using AnimeTakusan.Infrastructure.Authentication;
 using AnimeTakusan.Infrastructure.Contexts;
@@ -26,7 +25,8 @@ builder.Services.AddScoped<IJwtHandler, JwtHandler>();
 builder.AddServices();
 
 // Authentication
-builder.Services
+builder
+.AddIdentity()
 .AddBaseAuthentication()
 .AddGoogleAuthentication(builder.Configuration)
 .AddJwtAuthentication(builder.Configuration);
