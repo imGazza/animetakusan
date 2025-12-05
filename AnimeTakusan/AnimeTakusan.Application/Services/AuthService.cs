@@ -1,5 +1,4 @@
 using System.Security.Claims;
-using System.Threading.Tasks;
 using AnimeTakusan.Application.DTOs.Authentication.Requests;
 using AnimeTakusan.Application.DTOs.Authentication.Responses;
 using AnimeTakusan.Application.Interfaces;
@@ -17,19 +16,26 @@ public class AuthService : IAuthService, IInjectable
     private readonly ILogger<AuthService> _logger;
     private readonly IUserRepository _userRepository;
     private readonly UserManager<User> _userManager;
+    private readonly RoleManager<IdentityRole<Guid>> _roleManager;
     private readonly IJwtHandler _jwtHandler;
 
-    public AuthService(IUserRepository userRepository, IJwtHandler jwtHandler, ILogger<AuthService> logger, UserManager<User> userManager)
+    public AuthService(
+        IUserRepository userRepository, 
+        IJwtHandler jwtHandler, 
+        ILogger<AuthService> logger, 
+        UserManager<User> userManager, 
+        RoleManager<IdentityRole<Guid>> roleManager)
     {
         _logger = logger;
         _userRepository = userRepository;
         _jwtHandler = jwtHandler;
         _userManager = userManager;
+        _roleManager = roleManager;
     }
 
     /// <summary>
     /// Generates a generic guest access token for not signed-up users.
-    /// Generates an authenticated user access token otherwise.
+    /// Generates an authenticated user access token otherwise and create a new refresh token.
     /// </summary>
     /// <returns>The access token and a representation of the user, if any.</returns>
     public async Task<TokenResponse> Token()
@@ -43,20 +49,56 @@ public class AuthService : IAuthService, IInjectable
 
         var user = await _userRepository.GetUserByRefreshToken(refreshToken);
         
-        if (user == null || !hasValidRefreshToken(user))
+        if (user == null || !HasValidRefreshToken(user))
         {
             return new TokenResponse { AccessToken = _jwtHandler.GenerateGuestAccessToken() };
         }
 
+        user.RefreshToken = _jwtHandler.GenerateRefreshToken();
+        user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
+        await _userManager.UpdateAsync(user);
+        _jwtHandler.WriteRefreshTokenCookie(user.RefreshToken);
+
+        var userRoles = await _userManager.GetRolesAsync(user);
+
         var response = new TokenResponse {
-            User = user.Adapt<UserInfo>(), 
-            AccessToken = _jwtHandler.GenerateUserAccessToken(refreshToken) 
+            User = user.Adapt<UserInfo>(),
+            AccessToken = _jwtHandler.GenerateUserAccessToken(refreshToken, user, userRoles)
         };
         _logger.LogInformation($"Generated access token for user {user.Email}.");
         return response;
     }
 
-    private bool hasValidRefreshToken(User user)
+    /// <summary>
+    /// Authenticate a user with the provided credentials.
+    /// </summary>
+    /// <param name="loginRequest">User credentials </param>
+    /// <returns>The access token and a representation of the user.</returns>
+    /// <exception cref="LoginFailedException">Invalid email or password</exception>
+    public async Task<TokenResponse> Login(LoginRequest loginRequest)
+    {
+        var user = await _userManager.FindByEmailAsync(loginRequest.Email);
+        if(user == null || !await _userManager.CheckPasswordAsync(user, loginRequest.Password))
+        {
+            throw new LoginFailedException();
+        }
+        
+        user.RefreshToken = _jwtHandler.GenerateRefreshToken();
+        user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
+        await _userManager.UpdateAsync(user);
+        _jwtHandler.WriteRefreshTokenCookie(user.RefreshToken);
+
+        var userRoles = await _userManager.GetRolesAsync(user);
+
+        var response = new TokenResponse {
+            User = user.Adapt<UserInfo>(),
+            AccessToken = _jwtHandler.GenerateUserAccessToken(user.RefreshToken, user, userRoles)
+        };
+        _logger.LogInformation($"User {user.Email} logged in.");
+        return response;
+    }
+
+    private bool HasValidRefreshToken(User user)
     {
         if(user.RefreshTokenExpiryTime <= DateTime.UtcNow)
         {
@@ -67,6 +109,12 @@ public class AuthService : IAuthService, IInjectable
         return true;
     }
 
+    /// <summary>
+    /// Register a new user to the app with the provided data.
+    /// </summary>
+    /// <param name="registerRequest">The registration request containing user details</param>
+    /// <exception cref="UserAlreadySignedUpException">The user is already signed-up with this email</exception>
+    /// <exception cref="RegistrationFailedException">The registration process failed</exception>
     public async Task SignUp(RegisterRequest registerRequest)
     {
         var user = await _userManager.FindByEmailAsync(registerRequest.Email);
@@ -92,10 +140,13 @@ public class AuthService : IAuthService, IInjectable
             throw new RegistrationFailedException(registerRequest.Email);
         }
 
-        var refreshToken = _jwtHandler.GenerateRefreshToken();
-        _jwtHandler.WriteRefreshTokenCookie(refreshToken);
-    }
+        await AddRoleToUser("User", user);
+    }    
 
+    /// <summary>
+    /// Authenticate or register a user using Google external login.
+    /// </summary>
+    /// <param name="claimsPrincipal">Google claims principal</param>
     public async Task AuthenticateWithGoogle(ClaimsPrincipal claimsPrincipal)
     {
         ValidateGoogleUserData(claimsPrincipal, out string email);
@@ -107,20 +158,22 @@ public class AuthService : IAuthService, IInjectable
             {
                 Id = Guid.NewGuid(),
                 Email = email,
-                Username = email,
+                UserName = email,
                 FirstName = claimsPrincipal.FindFirst(ClaimTypes.GivenName)?.Value ?? string.Empty,
                 LastName = claimsPrincipal.FindFirst(ClaimTypes.Surname)?.Value ?? string.Empty,
                 ProfilePicture = claimsPrincipal.FindFirst("picture")?.Value ?? string.Empty
             };
             await _userManager.CreateAsync(user);
-        }
+
+            await AddRoleToUser("User", user);
+        }        
         
         await AddGoogleLogin(claimsPrincipal, user);
 
         var refreshToken = _jwtHandler.GenerateRefreshToken();
         _jwtHandler.WriteRefreshTokenCookie(refreshToken);
     }
-
+    
     private void ValidateGoogleUserData(ClaimsPrincipal claimsPrincipal, out string email)
     {
         if(claimsPrincipal == null)
@@ -151,4 +204,23 @@ public class AuthService : IAuthService, IInjectable
                     loginResult.Errors.Select(x => x.Description))}");
         }
     }
+
+    private async Task AddRoleToUser(string role, User user)
+    {
+        if (!await _roleManager.RoleExistsAsync(role))
+        {
+            var roleResult = await _roleManager.CreateAsync(new IdentityRole<Guid>(role));
+            if (!roleResult.Succeeded)
+            {
+                throw new RoleCreationException(role);
+            }
+        }
+
+        var addRoleResult = await _userManager.AddToRoleAsync(user, role);
+        if (!addRoleResult.Succeeded)
+        {
+            throw new RoleAssignmentException(role, user.Email);
+        }
+    }
+
 }

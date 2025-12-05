@@ -1,11 +1,9 @@
-using AnimeTakusan.Domain.Entities.Common;
 using Microsoft.AspNetCore.Identity;
 
 namespace AnimeTakusan.Domain.Entitities;
 
 public class User : IdentityUser<Guid>
 {
-    public string Username { get; set; }
     public string FirstName { get; set; }
     public string LastName { get; set; }
     public string ProfilePicture { get; set; }

@@ -36,30 +36,22 @@ public class JwtHandler : IJwtHandler
         var claims = new List<Claim>
         {
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            new Claim(ClaimTypes.Role, "Guest")
         };
 
         var token = new JwtSecurityToken(
             issuer: jwtIssuer,
             audience: jwtAudience,
             claims: claims,
-            expires: DateTime.Now.AddMinutes(15),
+            expires: DateTime.UtcNow.AddMinutes(15),
             signingCredentials: credentials
         );
 
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
-    public string GenerateUserAccessToken(string refreshToken)
-    {
-        // TODO: Get user by refresh token from database
-        // User Placeholder
-        var user = new User()
-        {
-            Id = Guid.NewGuid(),
-            Email = "aaa@it.it",
-            FirstName = "Test"
-        };
-
+    public string GenerateUserAccessToken(string refreshToken, User user, IList<string> userRoles)
+    {     
         (string jwtKey, string jwtIssuer, string jwtAudience) = ValidateJwtConfig();
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
@@ -73,7 +65,10 @@ public class JwtHandler : IJwtHandler
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
         };
 
-        // Add roles handling
+        foreach (var role in userRoles)
+        {
+            claims.Add(new Claim(ClaimTypes.Role, role));
+        }
 
         var token = new JwtSecurityToken(
             issuer: jwtIssuer,

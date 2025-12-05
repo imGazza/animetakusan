@@ -21,7 +21,9 @@ public static class AuthenticationExtensions
             options.Password.RequireUppercase = true;
             options.Password.RequireLowercase = true;
 
-        }).AddEntityFrameworkStores<BaseContext>();
+        })
+        .AddRoles<IdentityRole<Guid>>()
+        .AddEntityFrameworkStores<BaseContext>();
 
         return Builder.Services;
     }
