@@ -23,15 +23,13 @@ jobs:
 
       # Restore dependencies
       - name: Restore dependencies
-        with: 
-          context: ./AnimeTakusan
-        run: dotnet restore ./AnimeTakusan/AnimeTakusan.sln
+        working-directory: ./AnimeTakusan
+        run: dotnet restore AnimeTakusan.slnx
 
       # Run tests
       - name: Run tests
-        with: 
-          context: ./AnimeTakusan
-        run: dotnet test ./AnimeTakusan/AnimeTakusan.sln --no-restore --verbosity normal
+        working-directory: ./AnimeTakusan
+        run: dotnet test AnimeTakusan.slnx --no-restore --verbosity normal
 
       # Lowercase repository name for ghcr
       - name: Set lowercase repository name
