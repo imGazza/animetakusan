@@ -23,10 +23,14 @@ jobs:
 
       # Restore dependencies
       - name: Restore dependencies
+        with: 
+          context: ./AnimeTakusan
         run: dotnet restore ./AnimeTakusan/AnimeTakusan.sln
 
       # Run tests
       - name: Run tests
+        with: 
+          context: ./AnimeTakusan
         run: dotnet test ./AnimeTakusan/AnimeTakusan.sln --no-restore --verbosity normal
 
       # Lowercase repository name for ghcr
