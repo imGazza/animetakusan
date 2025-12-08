@@ -2,9 +2,8 @@ using System.Security.Claims;
 using AnimeTakusan.Application.DTOs.Authentication.Requests;
 using AnimeTakusan.Application.DTOs.Authentication.Responses;
 using AnimeTakusan.Application.Interfaces;
-using AnimeTakusan.Domain.Entitities;
+using AnimeTakusan.Domain.Entities;
 using AnimeTakusan.Domain.Exceptions;
-using AnimeTakusan.Infrastructure.Exceptions;
 using Mapster;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
@@ -102,8 +101,7 @@ public class AuthService : IAuthService, IInjectable
     {
         if(user.RefreshTokenExpiryTime <= DateTime.UtcNow)
         {
-            _logger.LogError($"Refresh token has expired for user {user.Email}.");
-            //throw new InvalidRefreshTokenException($"Refresh token {refreshToken} has expired.");
+            _logger.LogWarning($"Refresh token has expired for user {user.Email}.");
             return false;
         }
         return true;
@@ -172,6 +170,7 @@ public class AuthService : IAuthService, IInjectable
 
         var refreshToken = _jwtHandler.GenerateRefreshToken();
         _jwtHandler.WriteRefreshTokenCookie(refreshToken);
+        _logger.LogInformation($"User {user.Email} logged in with Google.");
     }
     
     private void ValidateGoogleUserData(ClaimsPrincipal claimsPrincipal, out string email)

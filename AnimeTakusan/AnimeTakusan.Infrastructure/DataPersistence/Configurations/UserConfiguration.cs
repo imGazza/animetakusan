@@ -1,8 +1,8 @@
-using AnimeTakusan.Domain.Entitities;
+using AnimeTakusan.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace AnimeTakusan.Data.Configurations;
+namespace AnimeTakusan.Infrastructure.DataPersistence.Configurations;
 
 public class UserConfiguration : IEntityTypeConfiguration<User>
 {

@@ -3,12 +3,12 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using AnimeTakusan.Application.Interfaces;
-using AnimeTakusan.Domain.Entitities;
+using AnimeTakusan.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
-namespace AnimeTakusan.Core.Authentication;
+namespace AnimeTakusan.Infrastructure.Authentication;
 
 public class JwtHandler : IJwtHandler
 {

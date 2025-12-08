@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 
-namespace AnimeTakusan.Domain.Entitities;
+namespace AnimeTakusan.Domain.Entities;
 
 public class User : IdentityUser<Guid>
 {

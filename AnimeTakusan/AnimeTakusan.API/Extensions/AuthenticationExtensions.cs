@@ -1,4 +1,4 @@
-using AnimeTakusan.Domain.Entitities;
+using AnimeTakusan.Domain.Entities;
 using AnimeTakusan.Infrastructure.Contexts;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;

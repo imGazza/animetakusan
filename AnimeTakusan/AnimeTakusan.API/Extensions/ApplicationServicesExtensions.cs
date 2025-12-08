@@ -1,5 +1,4 @@
 ﻿using AnimeTakusan.Application.Interfaces;
-using AnimeTakusan.Domain.Interfaces;
 using AnimeTakusan.Infrastructure.Contexts;
 using Microsoft.EntityFrameworkCore;
 

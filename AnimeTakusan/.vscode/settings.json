@@ -1,0 +1,8 @@
+﻿{
+    "coverage-gutters.coverageFileNames": [
+        "AnimeTakusan/AnimeTakusan.Tests/coverage/coverage.info",
+        "AnimeTakusan/AnimeTakusan.Tests/TestResults/**/coverage.cobertura.xml"
+    ],
+    "coverage-gutters.showLineCoverage": true,
+    "coverage-gutters.showRulerCoverage": true
+}

@@ -1,4 +1,4 @@
-namespace AnimeTakusan.Infrastructure.Exceptions;
+namespace AnimeTakusan.Domain.Exceptions;
 
 public class ExternalLoginException : Exception
 {

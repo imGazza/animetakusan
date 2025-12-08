@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace AnimeTakusan.Data.Migrations
+namespace AnimeTakusan.Infrastructure.DataPersistence.Migrations
 {
     /// <inheritdoc />
     public partial class User_RemovedOveriddenUsername : Migration

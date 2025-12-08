@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace AnimeTakusan.Data.Migrations
+namespace AnimeTakusan.Infrastructure.DataPersistence.Migrations
 {
     /// <inheritdoc />
     public partial class InitialCreate : Migration

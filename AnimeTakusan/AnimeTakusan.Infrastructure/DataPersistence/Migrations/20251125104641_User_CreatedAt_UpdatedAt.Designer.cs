@@ -9,7 +9,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace AnimeTakusan.Data.Migrations
+namespace AnimeTakusan.Infrastructure.DataPersistence.Migrations
 {
     [DbContext(typeof(BaseContext))]
     [Migration("20251125104641_User_CreatedAt_UpdatedAt")]

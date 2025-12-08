@@ -1,6 +1,5 @@
 using AnimeTakusan.Application.Interfaces;
 using AnimeTakusan.Domain.Entities.Common;
-using AnimeTakusan.Domain.Interfaces;
 using AnimeTakusan.Infrastructure.Contexts;
 using Mapster;
 using Microsoft.EntityFrameworkCore;

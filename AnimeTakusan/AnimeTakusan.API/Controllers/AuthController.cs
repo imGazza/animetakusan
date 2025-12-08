@@ -1,5 +1,3 @@
-using System.Security.Claims;
-using System.Threading.Tasks;
 using AnimeTakusan.Application.DTOs.Authentication.Requests;
 using AnimeTakusan.Application.Interfaces;
 using Microsoft.AspNetCore.Authentication;
@@ -80,8 +78,6 @@ namespace AnimeTakusan.API.Controllers
             }
 
             await _authService.AuthenticateWithGoogle(authenticateResult.Principal);
-
-            _logger.LogInformation($"User authenticated: {authenticateResult.Principal.FindFirstValue(ClaimTypes.Email)}");
 
             return Redirect(_configuration["Authentication:Logged:RedirectUri"]!);
         }

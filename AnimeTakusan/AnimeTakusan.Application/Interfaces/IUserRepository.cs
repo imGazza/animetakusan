@@ -1,4 +1,4 @@
-using AnimeTakusan.Domain.Entitities;
+using AnimeTakusan.Domain.Entities;
 
 namespace AnimeTakusan.Application.Interfaces;
 

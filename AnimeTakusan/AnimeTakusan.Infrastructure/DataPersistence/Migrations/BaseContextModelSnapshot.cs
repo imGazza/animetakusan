@@ -8,7 +8,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace AnimeTakusan.Data.Migrations
+namespace AnimeTakusan.Infrastructure.DataPersistence.Migrations
 {
     [DbContext(typeof(BaseContext))]
     partial class BaseContextModelSnapshot : ModelSnapshot

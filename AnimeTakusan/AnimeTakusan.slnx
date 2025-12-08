@@ -3,4 +3,5 @@
   <Project Path="AnimeTakusan.Application/AnimeTakusan.Application.csproj" />
   <Project Path="AnimeTakusan.Domain/AnimeTakusan.Domain.csproj" />
   <Project Path="AnimeTakusan.Infrastructure/AnimeTakusan.Infrastructure.csproj" />
+  <Project Path="AnimeTakusan.Tests/AnimeTakusan.Tests.csproj" />
 </Solution>

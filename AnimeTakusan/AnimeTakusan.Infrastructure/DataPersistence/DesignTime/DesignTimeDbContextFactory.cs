@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 
-namespace AnimeTakusan.Data.DesignTime;
+namespace AnimeTakusan.Infrastructure.DataPersistence.DesignTime;
 
 public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<BaseContext>
 {

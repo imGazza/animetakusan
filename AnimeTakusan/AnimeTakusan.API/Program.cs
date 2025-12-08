@@ -1,6 +1,6 @@
 using AnimeTakusan.API.Extensions;
+using AnimeTakusan.API.Handlers;
 using AnimeTakusan.Application.Interfaces;
-using AnimeTakusan.Core.Authentication;
 using AnimeTakusan.Infrastructure.Authentication;
 using AnimeTakusan.Infrastructure.Contexts;
 using Microsoft.EntityFrameworkCore;
@@ -31,6 +31,9 @@ builder
 .AddGoogleAuthentication(builder.Configuration)
 .AddJwtAuthentication(builder.Configuration);
 
+// Exception Handling
+builder.Services.AddExceptionHandling();
+
 // CORS
 builder.AddCorsPolicies(builder.Configuration);
 
@@ -58,6 +61,8 @@ app.UseHttpsRedirection();
 app.UseCors("Public");
 app.UseCors("Authenticated");
 
+app.UseExceptionHandler();
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
