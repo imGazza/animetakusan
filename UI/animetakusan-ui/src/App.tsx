@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
-import { LoginPage } from './pages/LoginPage'
-import { AuthCallbackPage } from './pages/AuthCallbackPage'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
+import Login from './pages/auth/Login'
+import Layout from './pages/layout/Layout'
 
 function App() {
   const [currentPath, setCurrentPath] = useState(window.location.pathname)
@@ -73,60 +73,24 @@ function App() {
     setCurrentPath('/login')
   }
 
-  // Route rendering
-  if (currentPath === '/login') {
-    return <LoginPage />
-  }
+  // // Route rendering
+  // if (currentPath === '/login') {
+  //   return <LoginPage />
+  // }
 
-  if (currentPath === '/auth/callback') {
-    return <AuthCallbackPage />
-  }
+  // if (currentPath === '/auth/callback') {
+  //   return <AuthCallbackPage />
+  // }
 
-  // Redirect to login if not authenticated
-  if (!isAuthenticated) {
-    return <LoginPage />
-  }
+  // // Redirect to login if not authenticated
+  // if (!isAuthenticated) {
+  //   return <LoginPage />
+  // }
 
   // Home page (existing content)
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={handleLogout} style={{marginBottom: 12}}>
-          Logout
-        </button>
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <div style={{marginTop:12}}>
-          <button onClick={fetchMessage} disabled={loading}>
-            {loading ? 'Loading...' : 'Load message'}
-          </button>
-          <button onClick={fetchWeather} disabled={weatherLoading} style={{marginLeft:12}}>
-            {weatherLoading ? 'Loading...' : 'Load weather'}
-          </button>
-        </div>
-        <div style={{marginTop:8}}>
-          {error && <div style={{color:'crimson'}}>Error: {error}</div>}
-          {message != null && <pre style={{whiteSpace:'pre-wrap'}}>{message}</pre>}
-          {weatherError && <div style={{color:'crimson'}}>Weather error: {weatherError}</div>}
-          {weather != null && <pre style={{whiteSpace:'pre-wrap'}}>{weather}</pre>}
-        </div>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <Layout />
     </>
   )
 }
