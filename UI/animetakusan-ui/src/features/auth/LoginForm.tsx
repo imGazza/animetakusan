@@ -11,6 +11,8 @@ import { Input } from "@/components/ui/input"
 import * as z from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Controller, useForm } from "react-hook-form"
+import { useContext } from "react"
+import { AuthContext } from "@/providers/auth/AuthContext"
 
 const formSchema = z.object({
   email: z.email(),
@@ -19,6 +21,8 @@ const formSchema = z.object({
 
 export const LoginForm = () => {
 
+  const { login } = useContext(AuthContext);
+ 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -27,9 +31,9 @@ export const LoginForm = () => {
     },
   })
 
-  function onSubmit(data: z.infer<typeof formSchema>) {
-    //Login logic here
-    console.log(data);
+  async function onSubmit(data: z.infer<typeof formSchema>) {
+    console.log("Submitted", data);
+    await login({ email: data.email, password: data.password });
   }
 
   return (

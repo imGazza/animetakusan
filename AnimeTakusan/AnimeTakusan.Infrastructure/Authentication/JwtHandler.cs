@@ -15,6 +15,8 @@ public class JwtHandler : IJwtHandler
     private readonly IConfiguration _configuration;
     private readonly IHttpContextAccessor _httpContextAccessor;
 
+    private const string RefreshTokenCookieId = "APISID";
+
     public JwtHandler(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
     {
         _configuration = configuration;
@@ -93,15 +95,21 @@ public class JwtHandler : IJwtHandler
     {
         var expiration = DateTime.UtcNow.AddDays(7);
         _httpContextAccessor.HttpContext.Response.Cookies.Append(
-            "APISID",
+            RefreshTokenCookieId,
             token, new CookieOptions
             {
                 HttpOnly = true,
                 Expires = expiration,
                 IsEssential = true,
                 Secure = true,
-                SameSite = SameSiteMode.Strict
+                SameSite = Enum.Parse<SameSiteMode>(_configuration["CookiesSettings:SameSite"] ?? "Lax"),
+                Domain = _configuration["CookiesSettings:Domain"]
             });
+    }
+
+    public void DeleteRefreshTokenCookie()
+    {
+        _httpContextAccessor.HttpContext.Response.Cookies.Delete(RefreshTokenCookieId);
     }
 
     private (string jwtKey, string jwtIssuer, string jwtAudience) ValidateJwtConfig()

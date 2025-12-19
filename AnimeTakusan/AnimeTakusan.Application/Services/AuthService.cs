@@ -61,11 +61,29 @@ public class AuthService : IAuthService, IInjectable
         var userRoles = await _userManager.GetRolesAsync(user);
 
         var response = new TokenResponse {
-            User = user.Adapt<UserInfo>(),
             AccessToken = _jwtHandler.GenerateUserAccessToken(refreshToken, user, userRoles)
         };
         _logger.LogInformation($"Generated access token for user {user.Email}.");
         return response;
+    }
+
+    /// <summary>
+    /// Retrieves the user information of the logged user.
+    /// </summary>
+    /// <returns>
+    /// Returns the logged user's information, if any.
+    /// Returns an emty object for guest users.
+    /// </returns>
+    public async Task<UserInfo> GetUserInfo()
+    {
+        var refreshToken = _jwtHandler.GetRefreshToken();
+        if (string.IsNullOrEmpty(refreshToken))
+        {
+            return null;
+        }
+
+        var user = await _userRepository.GetUserByRefreshToken(refreshToken);
+        return user?.Adapt<UserInfo>() ?? new UserInfo {  };
     }
 
     /// <summary>
@@ -74,7 +92,7 @@ public class AuthService : IAuthService, IInjectable
     /// <param name="loginRequest">User credentials </param>
     /// <returns>The access token and a representation of the user.</returns>
     /// <exception cref="LoginFailedException">Invalid email or password</exception>
-    public async Task<TokenResponse> Login(LoginRequest loginRequest)
+    public async Task Login(LoginRequest loginRequest)
     {
         var user = await _userManager.FindByEmailAsync(loginRequest.Email);
         if(user == null || !await _userManager.CheckPasswordAsync(user, loginRequest.Password))
@@ -87,14 +105,7 @@ public class AuthService : IAuthService, IInjectable
         await _userManager.UpdateAsync(user);
         _jwtHandler.WriteRefreshTokenCookie(user.RefreshToken);
 
-        var userRoles = await _userManager.GetRolesAsync(user);
-
-        var response = new TokenResponse {
-            User = user.Adapt<UserInfo>(),
-            AccessToken = _jwtHandler.GenerateUserAccessToken(user.RefreshToken, user, userRoles)
-        };
         _logger.LogInformation($"User {user.Email} logged in.");
-        return response;
     }
 
     private bool HasValidRefreshToken(User user)
@@ -105,6 +116,30 @@ public class AuthService : IAuthService, IInjectable
             return false;
         }
         return true;
+    }
+
+    /// <summary>
+    /// Logout the current user by invalidating the refresh token.
+    /// </summary>
+    public async Task Logout()
+    {
+        var refreshToken = _jwtHandler.GetRefreshToken();
+        if (string.IsNullOrEmpty(refreshToken))
+        {
+            return;
+        }
+
+        var user = await _userRepository.GetUserByRefreshToken(refreshToken);
+        if (user == null)
+        {
+            return;
+        }
+
+        user.RefreshToken = null;
+        user.RefreshTokenExpiryTime = null;
+        await _userManager.UpdateAsync(user);
+        _jwtHandler.DeleteRefreshTokenCookie();
+        _logger.LogInformation($"User {user.Email} logged out.");
     }
 
     /// <summary>
@@ -138,6 +173,7 @@ public class AuthService : IAuthService, IInjectable
             throw new RegistrationFailedException(registerRequest.Email);
         }
 
+        await AddRoleToUser("Guest", user);
         await AddRoleToUser("User", user);
     }    
 

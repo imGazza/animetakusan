@@ -9,4 +9,5 @@ public interface IJwtHandler
     string GenerateGuestAccessToken();
     string GenerateRefreshToken();
     void WriteRefreshTokenCookie(string token);
+    void DeleteRefreshTokenCookie();
 }

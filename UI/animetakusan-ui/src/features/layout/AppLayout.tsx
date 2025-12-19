@@ -1,13 +1,14 @@
+import { Outlet } from "react-router";
 import Login from "../auth/Login";
 
-const Layout = () => {
+const AppLayout = () => {
   return (
     <div>
       <header>
 
       </header>
       <main>
-        <Login />
+        <Outlet />
       </main>
       <footer>
 
@@ -15,4 +16,4 @@ const Layout = () => {
     </div>
   )
 }
-export default Layout;
+export default AppLayout;

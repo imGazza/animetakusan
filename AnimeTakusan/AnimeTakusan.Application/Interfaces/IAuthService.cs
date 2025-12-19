@@ -7,7 +7,9 @@ namespace AnimeTakusan.Application.Interfaces;
 public interface IAuthService
 {
     Task<TokenResponse> Token();
-    Task<TokenResponse> Login(LoginRequest loginRequest);
+    Task<UserInfo> GetUserInfo();
+    Task Login(LoginRequest loginRequest);
+    Task Logout();
     Task SignUp(RegisterRequest registerRequest);
     Task AuthenticateWithGoogle(ClaimsPrincipal claimsPrincipal);
 }

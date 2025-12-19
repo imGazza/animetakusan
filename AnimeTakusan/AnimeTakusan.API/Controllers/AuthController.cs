@@ -14,13 +14,11 @@ namespace AnimeTakusan.API.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        private readonly ILogger<AuthController> _logger;
         private readonly IAuthService _authService;
 
-        public AuthController(IConfiguration configuration, ILogger<AuthController> logger, IAuthService authService)
+        public AuthController(IConfiguration configuration, IAuthService authService)
         {
             _configuration = configuration;
-            _logger = logger;
             _authService = authService;
         }
 
@@ -30,11 +28,23 @@ namespace AnimeTakusan.API.Controllers
             return Ok(await _authService.Token());
         }
 
-        [Authorize(Roles = "Guest")]
+        [Authorize(Roles = "Guest, User")]
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginRequest loginRequest)
         {
-            return Ok(await _authService.Login(loginRequest));
+            await _authService.Login(loginRequest);
+            return Ok();
+        }
+
+        [HttpGet("user")]
+        public async Task<IActionResult> GetUserInfo()
+        {
+            var user = await _authService.GetUserInfo();
+            if (user == null)
+            {
+                return Ok(new {});
+            }
+            return Ok(user);
         }
 
         [Authorize(Roles = "Guest")]
@@ -80,6 +90,14 @@ namespace AnimeTakusan.API.Controllers
             await _authService.AuthenticateWithGoogle(authenticateResult.Principal);
 
             return Redirect(_configuration["Authentication:Logged:RedirectUri"]!);
+        }
+
+        [Authorize(Roles = "User")]
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout()
+        {
+            await _authService.Logout();
+            return Ok();
         }
     }
 }
