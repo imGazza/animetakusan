@@ -15,7 +15,7 @@ public class JwtHandler : IJwtHandler
     private readonly IConfiguration _configuration;
     private readonly IHttpContextAccessor _httpContextAccessor;
 
-    private const string RefreshTokenCookieId = "APISID";
+    private const string RefreshTokenCookieId = "_atsrt";
 
     public JwtHandler(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
     {
@@ -25,10 +25,10 @@ public class JwtHandler : IJwtHandler
 
     public string GetRefreshToken()
     {
-        return _httpContextAccessor.HttpContext.Request.Cookies["APISID"];
+        return _httpContextAccessor.HttpContext.Request.Cookies[RefreshTokenCookieId];
     }
 
-    public string GenerateGuestAccessToken()
+    public (string Token, DateTime ExpiresAt) GenerateGuestAccessToken()
     {
         (string jwtKey, string jwtIssuer, string jwtAudience) = ValidateJwtConfig();
 
@@ -41,18 +41,22 @@ public class JwtHandler : IJwtHandler
             new Claim(ClaimTypes.Role, "Guest")
         };
 
+        var expiresAt = DateTime.UtcNow.AddMinutes(15);
+
         var token = new JwtSecurityToken(
             issuer: jwtIssuer,
             audience: jwtAudience,
             claims: claims,
-            expires: DateTime.UtcNow.AddMinutes(15),
+            expires: expiresAt,
             signingCredentials: credentials
         );
 
-        return new JwtSecurityTokenHandler().WriteToken(token);
+        expiresAt = expiresAt.AddMinutes(-1); // 1 minute before actual expiring for safety
+        var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
+        return (tokenString, expiresAt);
     }
 
-    public string GenerateUserAccessToken(string refreshToken, User user, IList<string> userRoles)
+    public (string Token, DateTime ExpiresAt) GenerateUserAccessToken(string refreshToken, User user, IList<string> userRoles)
     {     
         (string jwtKey, string jwtIssuer, string jwtAudience) = ValidateJwtConfig();
 
@@ -72,15 +76,19 @@ public class JwtHandler : IJwtHandler
             claims.Add(new Claim(ClaimTypes.Role, role));
         }
 
+        var expiresAt = DateTime.UtcNow.AddMinutes(15);
+
         var token = new JwtSecurityToken(
             issuer: jwtIssuer,
             audience: jwtAudience,
             claims: claims,
-            expires: DateTime.UtcNow.AddMinutes(15),
+            expires: expiresAt,
             signingCredentials: credentials
         );
 
-        return new JwtSecurityTokenHandler().WriteToken(token);
+        expiresAt = expiresAt.AddMinutes(-1); // 1 minute before actual expiring for safety
+        var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
+        return (tokenString, expiresAt);
     }
 
     public string GenerateRefreshToken()

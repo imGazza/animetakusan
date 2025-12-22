@@ -70,8 +70,9 @@ public class AuthenticationTests
     {
         // Arrange
         var guestToken = "guest-access-token";
+        var expiresAt = DateTime.UtcNow.AddMinutes(15);
         _mockJwtHandler.Setup(x => x.GetRefreshToken()).Returns(string.Empty);
-        _mockJwtHandler.Setup(x => x.GenerateGuestAccessToken()).Returns(guestToken);
+        _mockJwtHandler.Setup(x => x.GenerateGuestAccessToken()).Returns((guestToken, expiresAt));
 
         // Act
         var result = await _authService.Token();
@@ -79,7 +80,7 @@ public class AuthenticationTests
         // Assert
         result.Should().NotBeNull();
         result.AccessToken.Should().Be(guestToken);
-        result.User.Should().BeNull();
+        result.ExpiresAt.Should().Be(expiresAt);
         _mockJwtHandler.Verify(x => x.GenerateGuestAccessToken(), Times.Once);
     }
 
@@ -88,12 +89,13 @@ public class AuthenticationTests
     {
         // Arrange
         var guestToken = "guest-access-token";
+        var expiresAt = DateTime.UtcNow.AddMinutes(15);
         var invalidRefreshToken = "invalid-token";
         
         _mockJwtHandler.Setup(x => x.GetRefreshToken()).Returns(invalidRefreshToken);
         _mockUserRepository.Setup(x => x.GetUserByRefreshToken(invalidRefreshToken))
             .ReturnsAsync((User)null);
-        _mockJwtHandler.Setup(x => x.GenerateGuestAccessToken()).Returns(guestToken);
+        _mockJwtHandler.Setup(x => x.GenerateGuestAccessToken()).Returns((guestToken, expiresAt));
 
         // Act
         var result = await _authService.Token();
@@ -101,7 +103,7 @@ public class AuthenticationTests
         // Assert
         result.Should().NotBeNull();
         result.AccessToken.Should().Be(guestToken);
-        result.User.Should().BeNull();
+        result.ExpiresAt.Should().Be(expiresAt);
     }
 
     [Fact(DisplayName = "Token should return guest access token when refresh token is expired")]
@@ -109,6 +111,7 @@ public class AuthenticationTests
     {
         // Arrange
         var guestToken = "guest-access-token";
+        var expiresAt = DateTime.UtcNow.AddMinutes(15);
         var expiredRefreshToken = "expired-token";
         var user = _userFaker.Generate();
         user.RefreshToken = expiredRefreshToken;
@@ -117,7 +120,7 @@ public class AuthenticationTests
         _mockJwtHandler.Setup(x => x.GetRefreshToken()).Returns(expiredRefreshToken);
         _mockUserRepository.Setup(x => x.GetUserByRefreshToken(expiredRefreshToken))
             .ReturnsAsync(user);
-        _mockJwtHandler.Setup(x => x.GenerateGuestAccessToken()).Returns(guestToken);
+        _mockJwtHandler.Setup(x => x.GenerateGuestAccessToken()).Returns((guestToken, expiresAt));
 
         // Act
         var result = await _authService.Token();
@@ -125,7 +128,7 @@ public class AuthenticationTests
         // Assert
         result.Should().NotBeNull();
         result.AccessToken.Should().Be(guestToken);
-        result.User.Should().BeNull();
+        result.ExpiresAt.Should().Be(expiresAt);
     }
 
     [Fact(DisplayName = "Token should return user access token when refresh token is valid")]
@@ -135,6 +138,7 @@ public class AuthenticationTests
         var validRefreshToken = "valid-token";
         var newRefreshToken = "new-refresh-token";
         var accessToken = "user-access-token";
+        var expiresAt = DateTime.UtcNow.AddMinutes(15);
         var user = _userFaker.Generate();
         user.RefreshToken = validRefreshToken;
         user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7); // Valid
@@ -145,7 +149,7 @@ public class AuthenticationTests
             .ReturnsAsync(user);
         _mockJwtHandler.Setup(x => x.GenerateRefreshToken()).Returns(newRefreshToken);
         _mockJwtHandler.Setup(x => x.GenerateUserAccessToken(validRefreshToken, user, roles))
-            .Returns(accessToken);
+            .Returns((accessToken, expiresAt));
         _mockUserManager.Setup(x => x.GetRolesAsync(user)).ReturnsAsync(roles);
         _mockUserManager.Setup(x => x.UpdateAsync(user)).ReturnsAsync(IdentityResult.Success);
 
@@ -155,9 +159,7 @@ public class AuthenticationTests
         // Assert
         result.Should().NotBeNull();
         result.AccessToken.Should().Be(accessToken);
-        result.User.Should().NotBeNull();
-        result.User.Email.Should().Be(user.Email);
-        result.User.UserName.Should().Be(user.UserName);
+        result.ExpiresAt.Should().Be(expiresAt);
         _mockJwtHandler.Verify(x => x.WriteRefreshTokenCookie(newRefreshToken), Times.Once);
         _mockUserManager.Verify(x => x.UpdateAsync(It.Is<User>(u => 
             u.RefreshToken == newRefreshToken && 
@@ -203,36 +205,26 @@ public class AuthenticationTests
         await act.Should().ThrowAsync<LoginFailedException>();
     }
 
-    [Fact(DisplayName = "Login should return token response when credentials are valid")]
-    public async Task Login_ValidCredentials_ReturnsTokenResponse()
+    [Fact(DisplayName = "Login should set refresh token when credentials are valid")]
+    public async Task Login_ValidCredentials_SetsRefreshToken()
     {
         // Arrange
         var loginRequest = _loginRequestFaker.Generate();
         var user = _userFaker.Generate();
         user.Email = loginRequest.Email;
         var newRefreshToken = "new-refresh-token";
-        var accessToken = "access-token";
-        var roles = new List<string> { "User" };
         
         _mockUserManager.Setup(x => x.FindByEmailAsync(loginRequest.Email))
             .ReturnsAsync(user);
         _mockUserManager.Setup(x => x.CheckPasswordAsync(user, loginRequest.Password))
             .ReturnsAsync(true);
         _mockJwtHandler.Setup(x => x.GenerateRefreshToken()).Returns(newRefreshToken);
-        _mockJwtHandler.Setup(x => x.GenerateUserAccessToken(newRefreshToken, user, roles))
-            .Returns(accessToken);
-        _mockUserManager.Setup(x => x.GetRolesAsync(user)).ReturnsAsync(roles);
         _mockUserManager.Setup(x => x.UpdateAsync(user)).ReturnsAsync(IdentityResult.Success);
 
         // Act
-        var result = await _authService.Login(loginRequest);
+        await _authService.Login(loginRequest);
 
         // Assert
-        result.Should().NotBeNull();
-        result.AccessToken.Should().Be(accessToken);
-        result.User.Should().NotBeNull();
-        result.User.Email.Should().Be(user.Email);
-        result.User.UserName.Should().Be(user.UserName);
         _mockJwtHandler.Verify(x => x.WriteRefreshTokenCookie(newRefreshToken), Times.Once);
         _mockUserManager.Verify(x => x.UpdateAsync(It.Is<User>(u => 
             u.RefreshToken == newRefreshToken && 

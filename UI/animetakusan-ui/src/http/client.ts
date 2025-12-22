@@ -1,12 +1,13 @@
+import TokenManager from "@/lib/token-manager";
 import axios, { type InternalAxiosRequestConfig } from "axios";
-
-let token: string | null = null;
 
 let isRefreshing = false;
 let failedQueue: Array<{
     resolve: (value?: any) => void;
     reject: (reason?: any) => void;
 }> = [];
+
+let serverError = false;
 
 const processQueue = (error: any, token: string | null = null) => {
     failedQueue.forEach(prom => {
@@ -26,12 +27,13 @@ const refreshToken = async (): Promise<string | null> => {
             `${import.meta.env.VITE_API_BASE_URL}/auth/token`,
             { withCredentials: true }
         );
-        token = response.data.accessToken;
-        return token;
+        TokenManager.setToken(response.data.accessToken, new Date(response.data.expiresAt));
+        return TokenManager.getAccessToken();
     } catch (error) {
-        token = null;
+        TokenManager.clearToken();
         localStorage.setItem('isAuthenticated', 'false');
-        window.location.href = '/login';
+        //window.location.href = '/login';
+        serverError = true;
         throw error;
     }
 };
@@ -46,13 +48,19 @@ const client = axios.create({
 
 client.interceptors.request.use(
     async (config: InternalAxiosRequestConfig) => {
+
+        if (serverError) {
+            throw new Error("Server error detected, aborting requests.");
+            // TODO: Find a better solution
+        }
+
         // Skip token logic for the refresh endpoint itself
         if (config.url?.includes('/auth/token')) {
             return config;
         }
 
-        // If no token exists, get it before making the request
-        if (!token) {
+        // If no token exists or it's expired, get it before making the request
+        if (!TokenManager.getAccessToken() || TokenManager.isTokenExpired()) {
             if (isRefreshing) {
                 // Wait for ongoing refresh
                 await new Promise((resolve, reject) => {
@@ -63,7 +71,7 @@ client.interceptors.request.use(
                 isRefreshing = true;
                 try {
                     await refreshToken();
-                    processQueue(null, token);
+                    processQueue(null, TokenManager.getAccessToken());
                 } catch (error) {
                     processQueue(error, null);
                     throw error;
@@ -73,8 +81,8 @@ client.interceptors.request.use(
             }
         }
 
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
+        if (TokenManager.getAccessToken()) {
+            config.headers.Authorization = `Bearer ${TokenManager.getAccessToken()}`;
         }
 
         return config;
@@ -87,7 +95,9 @@ client.interceptors.response.use(
     async (error) => {
         const originalRequest = error.config;
         
-        // Check for Unauthorized error
+        // Check for Unauthorized error 
+        // Should never enter here because token refresh is handled in request interceptor
+        // Kept for safety as a retry mechanism
         if (error.response?.status === 401 && !originalRequest._retry) {
             if (isRefreshing) {
                 return new Promise((resolve, reject) => {
@@ -105,9 +115,9 @@ client.interceptors.response.use(
 
             try {
                 await refreshToken();
-                processQueue(null, token);   
+                processQueue(null, TokenManager.getAccessToken());   
                 
-                originalRequest.headers.Authorization = `Bearer ${token}`;
+                originalRequest.headers.Authorization = `Bearer ${TokenManager.getAccessToken()}`;
                 return client(originalRequest);
             } 
             catch (refreshError) {

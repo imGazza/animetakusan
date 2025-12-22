@@ -8,11 +8,9 @@ import { useNavigate } from "react-router";
 const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const navigate = useNavigate();
-
-  // Aggiungi expire time al backend sul token
-  // Sistema e testa login google
+  
+  // Aggiungi session isAuthenticated su login google
   // Crea componente Sign Up
-  // Controlla backend perchè non funziona add login
 
   // User info query
   const { data: userInfo, error, refetch: refetchUser } = useQuery({
@@ -51,9 +49,8 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   });
 
-  const login = async (loginRequest: LoginRequest) => {
-    console.log("Log func");
-    await loginMutation.mutateAsync(loginRequest);
+  const login = (loginRequest: LoginRequest) => {
+    loginMutation.mutate(loginRequest);
   };
 
   const logout = () => {

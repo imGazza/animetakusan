@@ -4,12 +4,15 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace AnimeTakusan.API.Controllers
 {    
     [ApiController]
     [EnableCors("Public")]
+    [EnableRateLimiting("auth")]
     [Route("api/[controller]")]
     public class AuthController : ControllerBase
     {
@@ -22,20 +25,14 @@ namespace AnimeTakusan.API.Controllers
             _authService = authService;
         }
 
+        [EnableRateLimiting("token")]
         [HttpGet("token")]
         public async Task<IActionResult> Token()
         {
             return Ok(await _authService.Token());
         }
 
-        [Authorize(Roles = "Guest, User")]
-        [HttpPost("login")]
-        public async Task<IActionResult> Login(LoginRequest loginRequest)
-        {
-            await _authService.Login(loginRequest);
-            return Ok();
-        }
-
+        [EnableRateLimiting("token")]
         [HttpGet("user")]
         public async Task<IActionResult> GetUserInfo()
         {
@@ -46,6 +43,14 @@ namespace AnimeTakusan.API.Controllers
             }
             return Ok(user);
         }
+
+        [Authorize(Roles = "Guest, User")]
+        [HttpPost("login")]
+        public async Task<IActionResult> Login(LoginRequest loginRequest)
+        {
+            await _authService.Login(loginRequest);
+            return Ok();
+        }        
 
         [Authorize(Roles = "Guest")]
         [HttpPost("sign-up")]
@@ -59,8 +64,7 @@ namespace AnimeTakusan.API.Controllers
             await _authService.SignUp(registerRequest);
             return Ok();
         }
-
-        [Authorize(Roles = "Guest")]
+        
         [HttpGet("google")]
         public IActionResult Google()
         {
@@ -88,6 +92,9 @@ namespace AnimeTakusan.API.Controllers
             }
 
             await _authService.AuthenticateWithGoogle(authenticateResult.Principal);
+
+            // Clean up the temporary Identity.External cookie
+            await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
 
             return Redirect(_configuration["Authentication:Logged:RedirectUri"]!);
         }

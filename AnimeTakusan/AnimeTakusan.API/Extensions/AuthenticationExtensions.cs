@@ -46,7 +46,7 @@ public static class AuthenticationExtensions
             "Authentication:Google:ClientSecret"
         ]);
 
-        return AuthBuilder.AddCookie().AddGoogle(options =>
+        return AuthBuilder.AddGoogle(options =>
         {
             options.ClientId = Configuration["Authentication:Google:ClientId"]!;
             options.ClientSecret = Configuration["Authentication:Google:ClientSecret"]!;
@@ -54,7 +54,7 @@ public static class AuthenticationExtensions
             options.Scope.Add("profile");
             options.Scope.Add("email");
             options.SaveTokens = false;
-            options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            options.SignInScheme = IdentityConstants.ExternalScheme;
         });
     }
 

@@ -8,4 +8,5 @@ export const authApis = {
     userInfo: () => httpClient.get<User>('/auth/user'),
     login: (loginRequest: LoginRequest) => httpClient.post<TokenResponse>('/auth/login', loginRequest),
     logout: () => httpClient.post('/auth/logout'),
+    googleLogin: () => httpClient.get<TokenResponse>('/auth/google'),
 }

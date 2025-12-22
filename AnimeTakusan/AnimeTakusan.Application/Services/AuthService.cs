@@ -43,14 +43,16 @@ public class AuthService : IAuthService, IInjectable
         
         if (string.IsNullOrEmpty(refreshToken))
         {
-            return new TokenResponse { AccessToken = _jwtHandler.GenerateGuestAccessToken() };
+            var (guestToken, guestExpiresAt) = _jwtHandler.GenerateGuestAccessToken();
+            return new TokenResponse { AccessToken = guestToken, ExpiresAt = guestExpiresAt };
         }
 
         var user = await _userRepository.GetUserByRefreshToken(refreshToken);
         
         if (user == null || !HasValidRefreshToken(user))
         {
-            return new TokenResponse { AccessToken = _jwtHandler.GenerateGuestAccessToken() };
+            var (guestToken, guestExpiresAt) = _jwtHandler.GenerateGuestAccessToken();
+            return new TokenResponse { AccessToken = guestToken, ExpiresAt = guestExpiresAt };
         }
 
         user.RefreshToken = _jwtHandler.GenerateRefreshToken();
@@ -60,8 +62,10 @@ public class AuthService : IAuthService, IInjectable
 
         var userRoles = await _userManager.GetRolesAsync(user);
 
+        var (accessToken, expiresAt) = _jwtHandler.GenerateUserAccessToken(refreshToken, user, userRoles);
         var response = new TokenResponse {
-            AccessToken = _jwtHandler.GenerateUserAccessToken(refreshToken, user, userRoles)
+            AccessToken = accessToken,
+            ExpiresAt = expiresAt
         };
         _logger.LogInformation($"Generated access token for user {user.Email}.");
         return response;
@@ -195,17 +199,20 @@ public class AuthService : IAuthService, IInjectable
                 UserName = email,
                 FirstName = claimsPrincipal.FindFirst(ClaimTypes.GivenName)?.Value ?? string.Empty,
                 LastName = claimsPrincipal.FindFirst(ClaimTypes.Surname)?.Value ?? string.Empty,
-                ProfilePicture = claimsPrincipal.FindFirst("picture")?.Value ?? string.Empty
+                ProfilePicture = claimsPrincipal.FindFirst("picture")?.Value ?? string.Empty,
             };
             await _userManager.CreateAsync(user);
 
             await AddRoleToUser("User", user);
-        }        
+        }
         
         await AddGoogleLogin(claimsPrincipal, user);
 
         var refreshToken = _jwtHandler.GenerateRefreshToken();
         _jwtHandler.WriteRefreshTokenCookie(refreshToken);
+        user.RefreshToken = _jwtHandler.GenerateRefreshToken();
+        user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
+        await _userManager.UpdateAsync(user);
         _logger.LogInformation($"User {user.Email} logged in with Google.");
     }
     
@@ -227,6 +234,13 @@ public class AuthService : IAuthService, IInjectable
 
     private async Task AddGoogleLogin(ClaimsPrincipal claimsPrincipal, User user)
     {
+        // Add login only if not already added
+        var userGoogleLogin = await _userManager.GetLoginsAsync(user);
+        if(userGoogleLogin.SingleOrDefault(x => x.LoginProvider == "Google") != null)
+        {
+            return;
+        }
+
         var info = new UserLoginInfo("Google",
             claimsPrincipal.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty,
             "Google");
