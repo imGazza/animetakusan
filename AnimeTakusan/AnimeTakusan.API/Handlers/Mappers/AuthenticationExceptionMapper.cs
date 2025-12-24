@@ -24,7 +24,7 @@ public class AuthenticationExceptionMapper : IExceptionMapper
             ExternalLoginException 
                 or LoginFailedException => new ExceptionDetails
             {
-                StatusCode = System.Net.HttpStatusCode.Unauthorized,
+                StatusCode = System.Net.HttpStatusCode.BadRequest,
                 Message = exception.Message
             },
             RegistrationFailedException 

@@ -1,61 +1,44 @@
 import type { LoginRequest } from "@/models/auth/LoginRequest";
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { AuthContext } from "./AuthContext";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { authApis } from "@/http/api/auth";
+import { useLoginMutation, useLoginProviderMutation, useLogoutMutation, useSignupMutation, useUserQuery } from "./queries";
+import type { RegisterRequest } from "@/models/auth/RegisterRequest";
 import { useNavigate } from "react-router";
 
 const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+  
+  // Customizza toast con il font giusto (https://sonner.emilkowal.ski/styling)
+  // Customizza il componente dei tab con il round basso
+  // Change the accent color to match the orange of the logo
+  // Aggiungi validazione dati Signup sul backend, restituisci errori parlanti in caso di validazione fallita
 
   const navigate = useNavigate();
-  
-  // Aggiungi session isAuthenticated su login google
-  // Crea componente Sign Up
 
-  // User info query
-  const { data: userInfo, error, refetch: refetchUser } = useQuery({
-    queryKey: ['user'],
-    queryFn: authApis.userInfo,
-    staleTime: Infinity,
-    retry: 2,
-  });
+  const { data: userInfo, error, refetch: refetchUser } = useUserQuery();
+  const loginMutation = useLoginMutation(refetchUser, navigate);
+  const logoutMutation = useLogoutMutation(refetchUser, navigate);
+  const loginProviderMutation = useLoginProviderMutation();
+  const signupMutation = useSignupMutation();
 
-  // Login mutation
-  const loginMutation = useMutation({
-    mutationFn: authApis.login,
-    onSuccess: () => {
-      localStorage.setItem('isAuthenticated', JSON.stringify(true));
-      refetchUser();
-      navigate('/');
-    },
-    onError: () => {
-      // TODO: Handle login error (e.g., show notification)
-      console.log("error logging in");
-    }
-  });
-
-  // Logout mutation
-  const logoutMutation = useMutation({
-    mutationFn: authApis.logout,
-    onSuccess: () => {
-      localStorage.setItem('isAuthenticated', JSON.stringify(false));
-      refetchUser();
-      navigate('/login');
-    },
-    onError: () => { 
-      //TODO: Handle logout error (e.g., show notification)
-      console.log("error logging out");
-    } 
-
-  });
-
-  const login = (loginRequest: LoginRequest) => {
+  const login = useCallback((loginRequest: LoginRequest) => {
     loginMutation.mutate(loginRequest);
-  };
+  }, [loginMutation]);
 
-  const logout = () => {
+  const logout = useCallback(() => {
     logoutMutation.mutate();
-  };
+  }, [logoutMutation]);
+
+  const loginProvider = useCallback((provider: string) => {
+    loginProviderMutation.mutate(provider);
+  }, [loginProviderMutation]);
+
+  const signUp = useCallback((registerRequest: RegisterRequest, callbackFn?: () => void) => {
+    signupMutation.mutate(registerRequest, {
+      onSuccess: () => {
+        callbackFn?.();
+      }
+    });
+  }, [signupMutation]);
 
   if (error) {
     // redirect to 500 page, something is wrong with the server
@@ -64,10 +47,12 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const authInfo = useMemo(() => ({
     isAuthenticated: !!userInfo,
     user: userInfo ?? null,
-    login: login,
-    logout: logout,
-  }), [userInfo]);
+    login,
+    loginProvider,
+    logout,
+    signUp,
+  }), [userInfo, login, loginProvider, logout, signUp]);
   
-  return <AuthContext.Provider value={authInfo}>{children}</AuthContext.Provider>;
+  return <AuthContext value={authInfo}>{children}</AuthContext>;
 };
 export default AuthProvider;

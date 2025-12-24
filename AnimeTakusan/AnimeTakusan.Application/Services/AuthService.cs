@@ -87,7 +87,7 @@ public class AuthService : IAuthService, IInjectable
         }
 
         var user = await _userRepository.GetUserByRefreshToken(refreshToken);
-        return user?.Adapt<UserInfo>() ?? new UserInfo {  };
+        return user?.Adapt<UserInfo>();
     }
 
     /// <summary>
@@ -154,6 +154,7 @@ public class AuthService : IAuthService, IInjectable
     /// <exception cref="RegistrationFailedException">The registration process failed</exception>
     public async Task SignUp(RegisterRequest registerRequest)
     {
+        // TODO: Add data validation
         var user = await _userManager.FindByEmailAsync(registerRequest.Email);
 
         if(user != null)
@@ -164,10 +165,7 @@ public class AuthService : IAuthService, IInjectable
         user = new User
         {
             UserName = registerRequest.Username,
-            Email = registerRequest.Email,
-            FirstName = registerRequest.FirstName,
-            LastName = registerRequest.LastName,
-            ProfilePicture = registerRequest.ProfilePicture
+            Email = registerRequest.Email
         };
         user.PasswordHash = _userManager.PasswordHasher.HashPassword(user, registerRequest.Password);
         var result = await _userManager.CreateAsync(user);
@@ -210,7 +208,7 @@ public class AuthService : IAuthService, IInjectable
 
         var refreshToken = _jwtHandler.GenerateRefreshToken();
         _jwtHandler.WriteRefreshTokenCookie(refreshToken);
-        user.RefreshToken = _jwtHandler.GenerateRefreshToken();
+        user.RefreshToken = refreshToken;
         user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
         await _userManager.UpdateAsync(user);
         _logger.LogInformation($"User {user.Email} logged in with Google.");

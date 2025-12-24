@@ -1,5 +1,5 @@
 import { Outlet } from "react-router";
-import Login from "../auth/Login";
+import { Toaster } from "@/components/ui/sonner";
 
 const AppLayout = () => {
   return (
@@ -9,6 +9,7 @@ const AppLayout = () => {
       </header>
       <main>
         <Outlet />
+        <Toaster />
       </main>
       <footer>
 

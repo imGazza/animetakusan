@@ -6,10 +6,14 @@ export const AuthContext = createContext<{
     isAuthenticated: boolean,
     user: User | null,
     login: (loginRequest: LoginRequest) => void,
-    logout: () => void
+    loginProvider: (provider: string) => void,
+    logout: () => void,
+    signUp: (registerRequest: any, callbackFn?: () => void) => void,
 }>({
     isAuthenticated: false,
     user: null,
     login: () => {},
-    logout: () => {}
+    loginProvider: () => {},
+    logout: () => {},
+    signUp: () => {},
 })

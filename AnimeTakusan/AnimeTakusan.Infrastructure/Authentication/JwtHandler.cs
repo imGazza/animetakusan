@@ -117,7 +117,18 @@ public class JwtHandler : IJwtHandler
 
     public void DeleteRefreshTokenCookie()
     {
-        _httpContextAccessor.HttpContext.Response.Cookies.Delete(RefreshTokenCookieId);
+        _httpContextAccessor.HttpContext.Response.Cookies.Append(
+            RefreshTokenCookieId,
+            string.Empty,
+            new CookieOptions
+            {
+                HttpOnly = true,
+                Expires = DateTime.UtcNow.AddDays(-1),
+                IsEssential = true,
+                Secure = true,
+                SameSite = Enum.Parse<SameSiteMode>(_configuration["CookiesSettings:SameSite"] ?? "Lax"),
+                Domain = _configuration["CookiesSettings:Domain"]
+            });
     }
 
     private (string jwtKey, string jwtIssuer, string jwtAudience) ValidateJwtConfig()

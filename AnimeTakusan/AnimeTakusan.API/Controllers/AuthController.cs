@@ -53,7 +53,7 @@ namespace AnimeTakusan.API.Controllers
         }        
 
         [Authorize(Roles = "Guest")]
-        [HttpPost("sign-up")]
+        [HttpPost("signup")]
         public async Task<IActionResult> SignUp(RegisterRequest registerRequest)
         {
             if (_configuration["Authentication:Logged:RedirectUri"] == null)

@@ -1,10 +1,15 @@
+import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/useAuth";
 
 const Home = () => {
 
-  
+  const {logout} = useAuth();
 
   return (
-    <>HOMEPAGE</>
+    <>
+      <div>Home Page</div>
+      <Button onClick={logout}>Logout</Button>
+    </>
   )
 }
 export default Home;

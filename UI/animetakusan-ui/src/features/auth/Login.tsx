@@ -1,7 +1,13 @@
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LoginForm } from "./LoginForm";
 import Logo from "@/components/ui/logo";
+import SignUpForm from "./SignUpForm";
+import { useState } from "react";
 
 const Login = () => {
+
+  const [ selectedTab, setSelectedTab ] = useState<'login' | 'signup'>('login');
+
   return (
     <div className="grid min-h-svh lg:grid-cols-2">
       <div className="flex flex-col justify-center gap-4 p-6 md:p-10">
@@ -10,7 +16,18 @@ const Login = () => {
         </div>
         <div className="flex items-center justify-center">
           <div className="w-full max-w-xs">
-            <LoginForm />
+            <Tabs value={selectedTab} onValueChange={(value) => setSelectedTab(value as 'login' | 'signup')}>
+              <TabsList className="w-full">
+                <TabsTrigger value="login">Login</TabsTrigger>
+                <TabsTrigger value="signup">Signup</TabsTrigger>
+              </TabsList>
+              <TabsContent value="login" className="p-4">
+                <LoginForm />
+              </TabsContent>
+              <TabsContent value="signup" className="p-4">
+                <SignUpForm setSelectedTab={setSelectedTab} />
+              </TabsContent>
+            </Tabs>
           </div>
         </div>
       </div>
