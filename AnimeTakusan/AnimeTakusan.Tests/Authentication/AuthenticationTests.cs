@@ -4,9 +4,11 @@ using AnimeTakusan.Application.Interfaces;
 using AnimeTakusan.Application.Services;
 using AnimeTakusan.Domain.Entities;
 using AnimeTakusan.Domain.Exceptions;
+using AnimeTakusan.Infrastructure.DataPersistence.Migrations;
 using AnimeTakusan.Tests.Authentication.Bogus;
 using Bogus;
 using FluentAssertions;
+using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -25,6 +27,8 @@ public class AuthenticationTests
     private readonly Mock<UserManager<User>> _mockUserManager;
     private readonly Mock<RoleManager<IdentityRole<Guid>>> _mockRoleManager;
     private readonly Mock<IPasswordHasher<User>> _mockPasswordHasher;
+    private readonly Mock<IValidator<LoginRequest>> _mockLoginRequestValidator;
+    private readonly Mock<IValidator<RegisterRequest>> _mockRegisterRequestValidator;
     private readonly AuthService _authService;
     private readonly Faker<User> _userFaker;
     private readonly Faker<RegisterRequest> _registerRequestFaker;
@@ -37,12 +41,14 @@ public class AuthenticationTests
         _mockJwtHandler = new Mock<IJwtHandler>();
         _mockLogger = new Mock<ILogger<AuthService>>();
         _mockPasswordHasher = new Mock<IPasswordHasher<User>>();
-        
+        _mockLoginRequestValidator = new Mock<IValidator<LoginRequest>>();
+        _mockRegisterRequestValidator = new Mock<IValidator<RegisterRequest>>();
+
         // Mock UserManager (requires complex setup due to concrete class with many dependencies)
         var userStore = new Mock<IUserStore<User>>();
         _mockUserManager = new Mock<UserManager<User>>(
             userStore.Object, null, _mockPasswordHasher.Object, null, null, null, null, null, null);
-        
+
         // Mock RoleManager
         var roleStore = new Mock<IRoleStore<IdentityRole<Guid>>>();
         _mockRoleManager = new Mock<RoleManager<IdentityRole<Guid>>>(
@@ -54,7 +60,9 @@ public class AuthenticationTests
             _mockJwtHandler.Object,
             _mockLogger.Object,
             _mockUserManager.Object,
-            _mockRoleManager.Object
+            _mockRoleManager.Object,
+            _mockLoginRequestValidator.Object,
+            _mockRegisterRequestValidator.Object
         );
 
         // Setup Bogus fakers for test data using centralized mock configuration
@@ -91,7 +99,7 @@ public class AuthenticationTests
         var guestToken = "guest-access-token";
         var expiresAt = DateTime.UtcNow.AddMinutes(15);
         var invalidRefreshToken = "invalid-token";
-        
+
         _mockJwtHandler.Setup(x => x.GetRefreshToken()).Returns(invalidRefreshToken);
         _mockUserRepository.Setup(x => x.GetUserByRefreshToken(invalidRefreshToken))
             .ReturnsAsync((User)null);
@@ -116,7 +124,7 @@ public class AuthenticationTests
         var user = _userFaker.Generate();
         user.RefreshToken = expiredRefreshToken;
         user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(-1); // Expired
-        
+
         _mockJwtHandler.Setup(x => x.GetRefreshToken()).Returns(expiredRefreshToken);
         _mockUserRepository.Setup(x => x.GetUserByRefreshToken(expiredRefreshToken))
             .ReturnsAsync(user);
@@ -143,7 +151,7 @@ public class AuthenticationTests
         user.RefreshToken = validRefreshToken;
         user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7); // Valid
         var roles = new List<string> { "User" };
-        
+
         _mockJwtHandler.Setup(x => x.GetRefreshToken()).Returns(validRefreshToken);
         _mockUserRepository.Setup(x => x.GetUserByRefreshToken(validRefreshToken))
             .ReturnsAsync(user);
@@ -161,8 +169,8 @@ public class AuthenticationTests
         result.AccessToken.Should().Be(accessToken);
         result.ExpiresAt.Should().Be(expiresAt);
         _mockJwtHandler.Verify(x => x.WriteRefreshTokenCookie(newRefreshToken), Times.Once);
-        _mockUserManager.Verify(x => x.UpdateAsync(It.Is<User>(u => 
-            u.RefreshToken == newRefreshToken && 
+        _mockUserManager.Verify(x => x.UpdateAsync(It.Is<User>(u =>
+            u.RefreshToken == newRefreshToken &&
             u.RefreshTokenExpiryTime > DateTime.UtcNow)), Times.Once);
     }
 
@@ -192,7 +200,7 @@ public class AuthenticationTests
         var loginRequest = _loginRequestFaker.Generate();
         var user = _userFaker.Generate();
         user.Email = loginRequest.Email;
-        
+
         _mockUserManager.Setup(x => x.FindByEmailAsync(loginRequest.Email))
             .ReturnsAsync(user);
         _mockUserManager.Setup(x => x.CheckPasswordAsync(user, loginRequest.Password))
@@ -213,7 +221,7 @@ public class AuthenticationTests
         var user = _userFaker.Generate();
         user.Email = loginRequest.Email;
         var newRefreshToken = "new-refresh-token";
-        
+
         _mockUserManager.Setup(x => x.FindByEmailAsync(loginRequest.Email))
             .ReturnsAsync(user);
         _mockUserManager.Setup(x => x.CheckPasswordAsync(user, loginRequest.Password))
@@ -226,8 +234,8 @@ public class AuthenticationTests
 
         // Assert
         _mockJwtHandler.Verify(x => x.WriteRefreshTokenCookie(newRefreshToken), Times.Once);
-        _mockUserManager.Verify(x => x.UpdateAsync(It.Is<User>(u => 
-            u.RefreshToken == newRefreshToken && 
+        _mockUserManager.Verify(x => x.UpdateAsync(It.Is<User>(u =>
+            u.RefreshToken == newRefreshToken &&
             u.RefreshTokenExpiryTime > DateTime.UtcNow)), Times.Once);
     }
 
@@ -240,7 +248,7 @@ public class AuthenticationTests
         user.Email = loginRequest.Email;
         var newRefreshToken = "new-refresh-token";
         var roles = new List<string> { "User" };
-        
+
         _mockUserManager.Setup(x => x.FindByEmailAsync(loginRequest.Email))
             .ReturnsAsync(user);
         _mockUserManager.Setup(x => x.CheckPasswordAsync(user, loginRequest.Password))
@@ -261,6 +269,64 @@ public class AuthenticationTests
 
     #endregion
 
+    #region Logout Method Tests
+
+    [Fact(DisplayName = "Logout should return when refresh token doesn't exist")]
+    public async Task Logout_NoRefreshToken_Returns()
+    {
+        // Arrange
+        _mockJwtHandler.Setup(x => x.GetRefreshToken()).Returns((string)null);
+
+        // Act
+        await _authService.Logout();
+
+        // Assert
+        _mockUserManager.Verify(x => x.UpdateAsync(It.IsAny<User>()), Times.Never);
+        _mockJwtHandler.Verify(x => x.DeleteRefreshTokenCookie(), Times.Never);
+    }
+
+    [Fact(DisplayName = "Logout should return when no user is found for refresh token")]
+    public async Task Logout_NoUserFoundForRefreshToken_Returns()
+    {
+        // Arrange
+        var refreshToken = "refresh-token";
+        _mockJwtHandler.Setup(x => x.GetRefreshToken()).Returns(refreshToken);
+        _mockUserRepository.Setup(x => x.GetUserByRefreshToken(refreshToken))
+            .ReturnsAsync((User)null);
+
+        // Act
+        await _authService.Logout();
+
+        // Assert
+        _mockUserManager.Verify(x => x.UpdateAsync(It.IsAny<User>()), Times.Never);
+        _mockJwtHandler.Verify(x => x.DeleteRefreshTokenCookie(), Times.Never);
+    }
+
+    [Fact(DisplayName = "Logout should clear refresh token and expiry time")]
+    public async Task Logout_ClearsRefreshTokenAndExpiryTime()
+    {
+        // Arrange
+        var refreshToken = "refresh-token";
+        _mockJwtHandler.Setup(x => x.GetRefreshToken()).Returns(refreshToken);
+        var user = _userFaker.Generate();
+        user.RefreshToken = refreshToken;
+        user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
+        _mockUserRepository.Setup(x => x.GetUserByRefreshToken(refreshToken))
+            .ReturnsAsync(user);
+        _mockUserManager.Setup(x => x.UpdateAsync(user)).ReturnsAsync(IdentityResult.Success);
+
+        //Act
+        await _authService.Logout();
+
+        // Assert
+        _mockUserManager.Verify(x => x.UpdateAsync(It.Is<User>(u =>
+            u.RefreshToken == null &&
+            u.RefreshTokenExpiryTime == null)), Times.Once);
+        _mockJwtHandler.Verify(x => x.DeleteRefreshTokenCookie(), Times.Once);
+    }
+
+    #endregion
+
     #region SignUp Method Tests
 
     [Fact(DisplayName = "SignUp should throw UserAlreadySignedUpException when email already exists")]
@@ -270,7 +336,7 @@ public class AuthenticationTests
         var registerRequest = _registerRequestFaker.Generate();
         var existingUser = _userFaker.Generate();
         existingUser.Email = registerRequest.Email;
-        
+
         _mockUserManager.Setup(x => x.FindByEmailAsync(registerRequest.Email))
             .ReturnsAsync(existingUser);
 
@@ -287,11 +353,11 @@ public class AuthenticationTests
     {
         // Arrange
         var registerRequest = _registerRequestFaker.Generate();
-        var identityErrors = new[] 
-        { 
-            new IdentityError { Code = "Error1", Description = "Error description" } 
+        var identityErrors = new[]
+        {
+            new IdentityError { Code = "Error1", Description = "Error description" }
         };
-        
+
         _mockUserManager.Setup(x => x.FindByEmailAsync(registerRequest.Email))
             .ReturnsAsync((User)null);
         _mockPasswordHasher.Setup(x => x.HashPassword(It.IsAny<User>(), registerRequest.Password))
@@ -313,7 +379,7 @@ public class AuthenticationTests
         // Arrange
         var registerRequest = _registerRequestFaker.Generate();
         var hashedPassword = "hashed-password";
-        
+
         _mockUserManager.Setup(x => x.FindByEmailAsync(registerRequest.Email))
             .ReturnsAsync((User)null);
         _mockPasswordHasher.Setup(x => x.HashPassword(It.IsAny<User>(), registerRequest.Password))
@@ -321,6 +387,9 @@ public class AuthenticationTests
         _mockUserManager.Setup(x => x.CreateAsync(It.IsAny<User>()))
             .ReturnsAsync(IdentityResult.Success);
         _mockRoleManager.Setup(x => x.RoleExistsAsync("User")).ReturnsAsync(true);
+        _mockRoleManager.Setup(x => x.RoleExistsAsync("Guest")).ReturnsAsync(true);
+        _mockUserManager.Setup(x => x.AddToRoleAsync(It.IsAny<User>(), "Guest"))
+            .ReturnsAsync(IdentityResult.Success);
         _mockUserManager.Setup(x => x.AddToRoleAsync(It.IsAny<User>(), "User"))
             .ReturnsAsync(IdentityResult.Success);
 
@@ -331,9 +400,6 @@ public class AuthenticationTests
         _mockUserManager.Verify(x => x.CreateAsync(It.Is<User>(u =>
             u.UserName == registerRequest.Username &&
             u.Email == registerRequest.Email &&
-            u.FirstName == registerRequest.FirstName &&
-            u.LastName == registerRequest.LastName &&
-            u.ProfilePicture == registerRequest.ProfilePicture &&
             u.PasswordHash == hashedPassword)), Times.Once);
     }
 
@@ -342,14 +408,17 @@ public class AuthenticationTests
     {
         // Arrange
         var registerRequest = _registerRequestFaker.Generate();
-        
+
         _mockUserManager.Setup(x => x.FindByEmailAsync(registerRequest.Email))
             .ReturnsAsync((User)null);
         _mockPasswordHasher.Setup(x => x.HashPassword(It.IsAny<User>(), registerRequest.Password))
             .Returns("hashed-password");
         _mockUserManager.Setup(x => x.CreateAsync(It.IsAny<User>()))
             .ReturnsAsync(IdentityResult.Success);
+        _mockRoleManager.Setup(x => x.RoleExistsAsync("Guest")).ReturnsAsync(true);
         _mockRoleManager.Setup(x => x.RoleExistsAsync("User")).ReturnsAsync(true);
+        _mockUserManager.Setup(x => x.AddToRoleAsync(It.IsAny<User>(), "Guest"))
+            .ReturnsAsync(IdentityResult.Success);
         _mockUserManager.Setup(x => x.AddToRoleAsync(It.IsAny<User>(), "User"))
             .ReturnsAsync(IdentityResult.Success);
 
@@ -357,6 +426,7 @@ public class AuthenticationTests
         await _authService.SignUp(registerRequest);
 
         // Assert
+        _mockUserManager.Verify(x => x.AddToRoleAsync(It.IsAny<User>(), "Guest"), Times.Once);
         _mockUserManager.Verify(x => x.AddToRoleAsync(It.IsAny<User>(), "User"), Times.Once);
     }
 
@@ -365,7 +435,7 @@ public class AuthenticationTests
     {
         // Arrange
         var registerRequest = _registerRequestFaker.Generate();
-        
+
         _mockUserManager.Setup(x => x.FindByEmailAsync(registerRequest.Email))
             .ReturnsAsync((User)null);
         _mockPasswordHasher.Setup(x => x.HashPassword(It.IsAny<User>(), registerRequest.Password))
@@ -373,16 +443,19 @@ public class AuthenticationTests
         _mockUserManager.Setup(x => x.CreateAsync(It.IsAny<User>()))
             .ReturnsAsync(IdentityResult.Success);
         _mockRoleManager.Setup(x => x.RoleExistsAsync("User")).ReturnsAsync(false);
+        _mockRoleManager.Setup(x => x.RoleExistsAsync("Guest")).ReturnsAsync(true);
         _mockRoleManager.Setup(x => x.CreateAsync(It.IsAny<IdentityRole<Guid>>()))
             .ReturnsAsync(IdentityResult.Success);
         _mockUserManager.Setup(x => x.AddToRoleAsync(It.IsAny<User>(), "User"))
             .ReturnsAsync(IdentityResult.Success);
+        _mockUserManager.Setup(x => x.AddToRoleAsync(It.IsAny<User>(), "Guest"))
+        .ReturnsAsync(IdentityResult.Success);
 
         // Act
         await _authService.SignUp(registerRequest);
 
         // Assert
-        _mockRoleManager.Verify(x => x.CreateAsync(It.Is<IdentityRole<Guid>>(r => r.Name == "User")), Times.Once);
+        _mockRoleManager.Verify(x => x.CreateAsync(It.Is<IdentityRole<Guid>>(r => r.Name == "User")), Times.Once);        
     }
 
     [Fact(DisplayName = "SignUp should throw RoleCreationException when role creation fails")]
@@ -390,11 +463,11 @@ public class AuthenticationTests
     {
         // Arrange
         var registerRequest = _registerRequestFaker.Generate();
-        var identityErrors = new[] 
-        { 
-            new IdentityError { Code = "RoleError", Description = "Role creation failed" } 
+        var identityErrors = new[]
+        {
+            new IdentityError { Code = "RoleError", Description = "Role creation failed" }
         };
-        
+
         _mockUserManager.Setup(x => x.FindByEmailAsync(registerRequest.Email))
             .ReturnsAsync((User)null);
         _mockPasswordHasher.Setup(x => x.HashPassword(It.IsAny<User>(), registerRequest.Password))
@@ -410,7 +483,7 @@ public class AuthenticationTests
 
         // Assert
         await act.Should().ThrowAsync<RoleCreationException>()
-            .WithMessage("*User*");
+            .WithMessage("*Role creation failed*");
     }
 
     [Fact(DisplayName = "SignUp should throw RoleAssignmentException when role assignment fails")]
@@ -418,11 +491,11 @@ public class AuthenticationTests
     {
         // Arrange
         var registerRequest = _registerRequestFaker.Generate();
-        var identityErrors = new[] 
-        { 
-            new IdentityError { Code = "AssignmentError", Description = "Role assignment failed" } 
+        var identityErrors = new[]
+        {
+            new IdentityError { Code = "AssignmentError", Description = "Role assignment failed" }
         };
-        
+
         _mockUserManager.Setup(x => x.FindByEmailAsync(registerRequest.Email))
             .ReturnsAsync((User)null);
         _mockPasswordHasher.Setup(x => x.HashPassword(It.IsAny<User>(), registerRequest.Password))
@@ -432,13 +505,16 @@ public class AuthenticationTests
         _mockRoleManager.Setup(x => x.RoleExistsAsync("User")).ReturnsAsync(true);
         _mockUserManager.Setup(x => x.AddToRoleAsync(It.IsAny<User>(), "User"))
             .ReturnsAsync(IdentityResult.Failed(identityErrors));
+        _mockRoleManager.Setup(x => x.RoleExistsAsync("Guest")).ReturnsAsync(true);
+        _mockUserManager.Setup(x => x.AddToRoleAsync(It.IsAny<User>(), "Guest"))
+            .ReturnsAsync(IdentityResult.Success);
 
         // Act
         var act = async () => await _authService.SignUp(registerRequest);
 
         // Assert
         await act.Should().ThrowAsync<RoleAssignmentException>()
-            .WithMessage("*User*");
+            .WithMessage("*Role assignment failed*");
     }
 
     #endregion
@@ -506,7 +582,7 @@ public class AuthenticationTests
         var firstName = "John";
         var lastName = "Doe";
         var picture = "https://avatar.url";
-        
+
         var claims = new List<Claim>
         {
             new Claim(ClaimTypes.Email, email),
@@ -516,7 +592,9 @@ public class AuthenticationTests
             new Claim("picture", picture)
         };
         var claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(claims));
-        
+
+        _mockUserManager.Setup(x => x.GetLoginsAsync(It.IsAny<User>()))
+            .ReturnsAsync(new List<UserLoginInfo>());
         _mockUserManager.Setup(x => x.FindByEmailAsync(email))
             .ReturnsAsync((User)null);
         _mockUserManager.Setup(x => x.CreateAsync(It.IsAny<User>()))
@@ -548,7 +626,7 @@ public class AuthenticationTests
         var googleId = "google-id-456";
         var user = _userFaker.Generate();
         user.Email = email;
-        
+
         var claims = new List<Claim>
         {
             new Claim(ClaimTypes.Email, email),
@@ -557,7 +635,9 @@ public class AuthenticationTests
             new Claim(ClaimTypes.Surname, "Smith")
         };
         var claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(claims));
-        
+
+        _mockUserManager.Setup(x => x.GetLoginsAsync(user))
+            .ReturnsAsync(new List<UserLoginInfo>());
         _mockUserManager.Setup(x => x.FindByEmailAsync(email))
             .ReturnsAsync(user);
         _mockUserManager.Setup(x => x.AddLoginAsync(user, It.IsAny<UserLoginInfo>()))
@@ -581,14 +661,16 @@ public class AuthenticationTests
         var refreshToken = "new-refresh-token";
         var user = _userFaker.Generate();
         user.Email = email;
-        
+
         var claims = new List<Claim>
         {
             new Claim(ClaimTypes.Email, email),
             new Claim(ClaimTypes.NameIdentifier, "google-id-789")
         };
         var claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(claims));
-        
+
+        _mockUserManager.Setup(x => x.GetLoginsAsync(user))
+            .ReturnsAsync(new List<UserLoginInfo>());
         _mockUserManager.Setup(x => x.FindByEmailAsync(email))
             .ReturnsAsync(user);
         _mockUserManager.Setup(x => x.AddLoginAsync(user, It.IsAny<UserLoginInfo>()))
@@ -610,18 +692,20 @@ public class AuthenticationTests
         var email = "user@gmail.com";
         var user = _userFaker.Generate();
         user.Email = email;
-        var identityErrors = new[] 
-        { 
-            new IdentityError { Code = "LoginError", Description = "Login failed" } 
+        var identityErrors = new[]
+        {
+            new IdentityError { Code = "LoginError", Description = "Login failed" }
         };
-        
+
         var claims = new List<Claim>
         {
             new Claim(ClaimTypes.Email, email),
             new Claim(ClaimTypes.NameIdentifier, "google-id-999")
         };
         var claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(claims));
-        
+
+        _mockUserManager.Setup(x => x.GetLoginsAsync(user))
+            .ReturnsAsync(new List<UserLoginInfo>());
         _mockUserManager.Setup(x => x.FindByEmailAsync(email))
             .ReturnsAsync(user);
         _mockUserManager.Setup(x => x.AddLoginAsync(user, It.IsAny<UserLoginInfo>()))
@@ -646,7 +730,9 @@ public class AuthenticationTests
             new Claim(ClaimTypes.NameIdentifier, "google-id-111")
         };
         var claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(claims));
-        
+
+        _mockUserManager.Setup(x => x.GetLoginsAsync(It.IsAny<User>()))
+            .ReturnsAsync(new List<UserLoginInfo>());
         _mockUserManager.Setup(x => x.FindByEmailAsync(email))
             .ReturnsAsync((User)null);
         _mockUserManager.Setup(x => x.CreateAsync(It.IsAny<User>()))

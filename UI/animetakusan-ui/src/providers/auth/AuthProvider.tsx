@@ -6,10 +6,7 @@ import type { RegisterRequest } from "@/models/auth/RegisterRequest";
 import { useNavigate } from "react-router";
 
 const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  
-  // Customizza toast con il font giusto (https://sonner.emilkowal.ski/styling)
-  // Customizza il componente dei tab con il round basso
-  // Change the accent color to match the orange of the logo
+    
   // Aggiungi validazione dati Signup sul backend, restituisci errori parlanti in caso di validazione fallita
 
   const navigate = useNavigate();

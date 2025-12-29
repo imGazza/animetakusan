@@ -4,6 +4,7 @@ using AnimeTakusan.Application.DTOs.Authentication.Responses;
 using AnimeTakusan.Application.Interfaces;
 using AnimeTakusan.Domain.Entities;
 using AnimeTakusan.Domain.Exceptions;
+using FluentValidation;
 using Mapster;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
@@ -17,19 +18,25 @@ public class AuthService : IAuthService, IInjectable
     private readonly UserManager<User> _userManager;
     private readonly RoleManager<IdentityRole<Guid>> _roleManager;
     private readonly IJwtHandler _jwtHandler;
+    private readonly IValidator<LoginRequest> _loginRequestValidator;
+    private readonly IValidator<RegisterRequest> _registerRequestValidator;
 
     public AuthService(
         IUserRepository userRepository, 
         IJwtHandler jwtHandler, 
         ILogger<AuthService> logger, 
         UserManager<User> userManager, 
-        RoleManager<IdentityRole<Guid>> roleManager)
+        RoleManager<IdentityRole<Guid>> roleManager,
+        IValidator<LoginRequest> loginRequestValidator,
+        IValidator<RegisterRequest> registerRequestValidator)
     {
         _logger = logger;
         _userRepository = userRepository;
         _jwtHandler = jwtHandler;
         _userManager = userManager;
         _roleManager = roleManager;
+        _loginRequestValidator = loginRequestValidator;
+        _registerRequestValidator = registerRequestValidator;
     }
 
     /// <summary>
@@ -98,6 +105,8 @@ public class AuthService : IAuthService, IInjectable
     /// <exception cref="LoginFailedException">Invalid email or password</exception>
     public async Task Login(LoginRequest loginRequest)
     {
+        _loginRequestValidator.ValidateAndThrow(loginRequest);
+
         var user = await _userManager.FindByEmailAsync(loginRequest.Email);
         if(user == null || !await _userManager.CheckPasswordAsync(user, loginRequest.Password))
         {
@@ -154,7 +163,8 @@ public class AuthService : IAuthService, IInjectable
     /// <exception cref="RegistrationFailedException">The registration process failed</exception>
     public async Task SignUp(RegisterRequest registerRequest)
     {
-        // TODO: Add data validation
+        _registerRequestValidator.ValidateAndThrow(registerRequest);
+        
         var user = await _userManager.FindByEmailAsync(registerRequest.Email);
 
         if(user != null)

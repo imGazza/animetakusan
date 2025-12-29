@@ -58,6 +58,6 @@ export const useSignupMutation = () =>
       toast.success("Signup successful! You can now log in.");
     },
     onError: (error) => {
-      toast.error(error.message || "Error during the signup process. Please try again.");
+      toast.error(error.message || "Error during the signup process. Please try again.");      
     }
   });

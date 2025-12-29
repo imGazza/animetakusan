@@ -1,5 +1,5 @@
+import CustomToaster from "@/components/ui/custom-toaster";
 import { Outlet } from "react-router";
-import { Toaster } from "@/components/ui/sonner";
 
 const AppLayout = () => {
   return (
@@ -9,7 +9,7 @@ const AppLayout = () => {
       </header>
       <main>
         <Outlet />
-        <Toaster />
+        <CustomToaster />
       </main>
       <footer>
 

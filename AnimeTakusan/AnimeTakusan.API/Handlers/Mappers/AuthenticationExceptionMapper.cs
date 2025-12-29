@@ -2,6 +2,7 @@ using System;
 using AnimeTakusan.Application.DTOs.Common.Responses;
 using AnimeTakusan.Application.Interfaces;
 using AnimeTakusan.Domain.Exceptions;
+using FluentValidation;
 
 namespace AnimeTakusan.API.Handlers.Mappers;
 
@@ -38,6 +39,11 @@ public class AuthenticationExceptionMapper : IExceptionMapper
             {
                 StatusCode = System.Net.HttpStatusCode.Conflict,
                 Message = exception.Message
+            },
+            ValidationException => new ExceptionDetails
+            {
+                StatusCode = System.Net.HttpStatusCode.Unauthorized,
+                Message = string.Join("; ", ((ValidationException)exception).Errors.Select(e => $"{e.PropertyName}: {e.ErrorMessage}"))
             },
             // Should never reach here due to CanHandle check.
             // GlobalExceptionHandler will use default mapping in that case.

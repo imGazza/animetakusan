@@ -16,15 +16,15 @@ const Login = () => {
         </div>
         <div className="flex items-center justify-center">
           <div className="w-full max-w-xs">
-            <Tabs value={selectedTab} onValueChange={(value) => setSelectedTab(value as 'login' | 'signup')}>
+            <Tabs value={selectedTab} onValueChange={(value) => setSelectedTab(value as 'login' | 'signup')} className="p-4 gap-6">
               <TabsList className="w-full">
                 <TabsTrigger value="login">Login</TabsTrigger>
                 <TabsTrigger value="signup">Signup</TabsTrigger>
               </TabsList>
-              <TabsContent value="login" className="p-4">
+              <TabsContent value="login">
                 <LoginForm />
               </TabsContent>
-              <TabsContent value="signup" className="p-4">
+              <TabsContent value="signup">
                 <SignUpForm setSelectedTab={setSelectedTab} />
               </TabsContent>
             </Tabs>

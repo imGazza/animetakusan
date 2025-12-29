@@ -1,8 +1,9 @@
 using AnimeTakusan.API.Extensions;
-using AnimeTakusan.API.Handlers;
 using AnimeTakusan.Application.Interfaces;
+using AnimeTakusan.Application.Validators;
 using AnimeTakusan.Infrastructure.Authentication;
 using AnimeTakusan.Infrastructure.Contexts;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
@@ -22,6 +23,7 @@ builder.Services.AddSwaggerGen();
 // Services
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IJwtHandler, JwtHandler>();
+builder.Services.AddValidatorsFromAssemblyContaining<ICustomValidator>();
 builder.AddServices();
 
 // Authentication

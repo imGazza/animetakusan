@@ -9,9 +9,6 @@ namespace AnimeTakusan.Tests.Authentication.Bogus;
 /// </summary>
 public static class AuthenticationMock
 {
-    /// <summary>
-    /// Creates a faker for generating User entities with realistic test data.
-    /// </summary>
     public static Faker<User> UserFaker => new Faker<User>()
         .RuleFor(u => u.Id, f => Guid.NewGuid())
         .RuleFor(u => u.UserName, f => f.Internet.UserName())
@@ -24,27 +21,13 @@ public static class AuthenticationMock
         .RuleFor(u => u.CreatedAt, f => DateTime.UtcNow)
         .RuleFor(u => u.UpdatedAt, f => DateTime.UtcNow);
 
-    /// <summary>
-    /// Creates a faker for generating RegisterRequest DTOs with realistic test data.
-    /// </summary>
     public static Faker<RegisterRequest> RegisterRequestFaker => new Faker<RegisterRequest>()
-        .CustomInstantiator(f => new RegisterRequest
-        {
-            Username = f.Internet.UserName(),
-            Email = f.Internet.Email(),
-            Password = f.Internet.Password(),
-            FirstName = f.Name.FirstName(),
-            LastName = f.Name.LastName(),
-            ProfilePicture = f.Internet.Avatar()
-        });
+        .RuleFor(r => r.Username, f => f.Internet.UserName())
+        .RuleFor(r => r.Email, f => f.Internet.Email())
+        .RuleFor(r => r.Password, f => f.Internet.Password())
+        .RuleFor(r => r.ConfirmPassword, (f, r) => r.Password);
 
-    /// <summary>
-    /// Creates a faker for generating LoginRequest DTOs with realistic test data.
-    /// </summary>
     public static Faker<LoginRequest> LoginRequestFaker => new Faker<LoginRequest>()
-        .CustomInstantiator(f => new LoginRequest
-        {
-            Email = f.Internet.Email(),
-            Password = f.Internet.Password()
-        });
+        .RuleFor(r => r.Email, f => f.Internet.Email())
+        .RuleFor(r => r.Password, f => f.Internet.Password());
 }
