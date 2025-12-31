@@ -1,13 +1,14 @@
 using AnimeTakusan.Application.DTOs.Authentication.Requests;
 using AnimeTakusan.Domain.Entities;
 using Bogus;
+using Microsoft.AspNetCore.Identity;
 
-namespace AnimeTakusan.Tests.Authentication.Bogus;
+namespace AnimeTakusan.Tests.TestHelpers.Fakers;
 
 /// <summary>
 /// Provides Bogus faker configurations for authentication-related test data.
 /// </summary>
-public static class AuthenticationMock
+public static class AuthenticationFakers
 {
     public static Faker<User> UserFaker => new Faker<User>()
         .RuleFor(u => u.Id, f => Guid.NewGuid())

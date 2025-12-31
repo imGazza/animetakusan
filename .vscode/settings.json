@@ -1,6 +1,6 @@
 {
     "coverage-gutters.coverageFileNames": [
-        "AnimeTakusan/AnimeTakusan.Tests/coverage/lcov.info",
+        "AnimeTakusan.Tests/coverage/lcov.info"
     ],
     "coverage-gutters.showLineCoverage": true,
     "coverage-gutters.showRulerCoverage": true,

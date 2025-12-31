@@ -1,3 +1,5 @@
+using AnimeTakusan.AnimeProviders;
+using AnimeTakusan.AnimeProviders.Queries;
 using AnimeTakusan.API.Extensions;
 using AnimeTakusan.Application.Interfaces;
 using AnimeTakusan.Application.Validators;
@@ -23,8 +25,12 @@ builder.Services.AddSwaggerGen();
 // Services
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IJwtHandler, JwtHandler>();
+builder.Services.AddAnimeProvider();
 builder.Services.AddValidatorsFromAssemblyContaining<ICustomValidator>();
 builder.AddServices();
+
+// Rate Limiting
+builder.Services.AddRateLimiting();
 
 // Authentication
 builder

@@ -1,0 +1,27 @@
+using AnimeTakusan.Application.Interfaces;
+using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
+
+namespace AnimeTakusan.API.Controllers
+{    
+    [ApiController]
+    [EnableCors("Public")]
+    [EnableRateLimiting("anime")]
+    [Route("api/[controller]")]
+    public class AnimeController : ControllerBase
+    {
+        private readonly IAnimeService _animeService;
+
+        public AnimeController(IAnimeService animeService)
+        {
+            _animeService = animeService;
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetAnimeById(int id)
+        {
+            return Ok(await _animeService.GetAnimeById(id));
+        }
+    }
+}

@@ -4,8 +4,7 @@ using AnimeTakusan.Application.Interfaces;
 using AnimeTakusan.Application.Services;
 using AnimeTakusan.Domain.Entities;
 using AnimeTakusan.Domain.Exceptions;
-using AnimeTakusan.Infrastructure.DataPersistence.Migrations;
-using AnimeTakusan.Tests.Authentication.Bogus;
+using AnimeTakusan.Tests.TestHelpers.Fakers;
 using Bogus;
 using FluentAssertions;
 using FluentValidation;
@@ -13,13 +12,13 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Moq;
 
-namespace AnimeTakusan.Tests;
+namespace AnimeTakusan.Tests.Unit.Application.Services;
 
 /// <summary>
 /// Unit tests for AuthService following DDD principles and SOLID design.
 /// Tests validate application service orchestration, business rules, and error handling.
 /// </summary>
-public class AuthenticationTests
+public class AuthServiceTests
 {
     private readonly Mock<IUserRepository> _mockUserRepository;
     private readonly Mock<IJwtHandler> _mockJwtHandler;
@@ -34,7 +33,7 @@ public class AuthenticationTests
     private readonly Faker<RegisterRequest> _registerRequestFaker;
     private readonly Faker<LoginRequest> _loginRequestFaker;
 
-    public AuthenticationTests()
+    public AuthServiceTests()
     {
         // Setup mocks
         _mockUserRepository = new Mock<IUserRepository>();
@@ -66,9 +65,9 @@ public class AuthenticationTests
         );
 
         // Setup Bogus fakers for test data using centralized mock configuration
-        _userFaker = AuthenticationMock.UserFaker;
-        _registerRequestFaker = AuthenticationMock.RegisterRequestFaker;
-        _loginRequestFaker = AuthenticationMock.LoginRequestFaker;
+        _userFaker = AuthenticationFakers.UserFaker;
+        _registerRequestFaker = AuthenticationFakers.RegisterRequestFaker;
+        _loginRequestFaker = AuthenticationFakers.LoginRequestFaker;
     }
 
     #region Token Method Tests
@@ -172,6 +171,57 @@ public class AuthenticationTests
         _mockUserManager.Verify(x => x.UpdateAsync(It.Is<User>(u =>
             u.RefreshToken == newRefreshToken &&
             u.RefreshTokenExpiryTime > DateTime.UtcNow)), Times.Once);
+    }
+
+    #endregion
+
+    #region User Info Tests
+
+    [Fact(DisplayName = "GetUserInfo should return null when no refresh token exists")]
+    public async Task GetUserInfo_NoRefreshToken_ReturnsNull()
+    {
+        // Arrange
+        _mockJwtHandler.Setup(x => x.GetRefreshToken()).Returns(string.Empty);
+
+        // Act
+        var act = await _authService.GetUserInfo();
+
+        // Assert
+        act.Should().BeNull();
+    }
+
+    [Fact(DisplayName = "GetUserInfo should return null if user is not found")]
+    public async Task GetUserInfo_UserNotFound_ReturnsNull()
+    {
+        // Arrange
+        var refreshToken = "refresh-token";
+        _mockJwtHandler.Setup(x => x.GetRefreshToken()).Returns(refreshToken);
+        _mockUserRepository.Setup(x => x.GetUserByRefreshToken(refreshToken))
+            .ReturnsAsync((User)null);
+
+        // Act
+        var act = await _authService.GetUserInfo();
+
+        // Assert
+        act.Should().BeNull();
+    }
+
+    [Fact(DisplayName = "GetUserInfo should the user with the refresh token")]
+    public async Task GetUserInfo_FoundUser_ReturnsUser()
+    {
+        // Arrange
+        var user = _userFaker.Generate();
+        var refreshToken = "refresh-token";
+        _mockJwtHandler.Setup(x => x.GetRefreshToken()).Returns(refreshToken);
+        _mockUserRepository.Setup(x => x.GetUserByRefreshToken(refreshToken))
+            .ReturnsAsync(user);
+
+        // Act
+        var act = await _authService.GetUserInfo();
+
+        // Assert
+        _mockUserRepository.Verify(x => x.GetUserByRefreshToken(refreshToken), Times.Once);
+        act.Should().NotBeNull();
     }
 
     #endregion
@@ -717,6 +767,39 @@ public class AuthenticationTests
         // Assert
         await act.Should().ThrowAsync<ExternalLoginException>()
             .WithMessage("*Google*");
+    }
+
+    [Fact(DisplayName = "AuthenticateWithGoogle should skip adding login if it already exists")]
+    public async Task AuthenticateWithGoogle_LoginAlreadyExists_SkipAddLogin()
+    {
+        // Arrange
+        var email = "user@gmail.com";
+        var refreshToken = "new-refresh-token";
+        var user = _userFaker.Generate();
+        user.Email = email;
+
+        var claims = new List<Claim>
+        {
+            new Claim(ClaimTypes.Email, email),
+            new Claim(ClaimTypes.NameIdentifier, "google-id-999")
+        };
+        var claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(claims));
+
+        var existingLoginInfo = new UserLoginInfo("Google", "google-id-999", "Google");
+
+        _mockUserManager.Setup(x => x.FindByEmailAsync(email))
+            .ReturnsAsync(user);
+        _mockUserManager.Setup(x => x.GetLoginsAsync(user))
+            .ReturnsAsync(new List<UserLoginInfo> { existingLoginInfo });
+        _mockJwtHandler.Setup(x => x.GenerateRefreshToken()).Returns(refreshToken);
+        _mockUserManager.Setup(x => x.UpdateAsync(user)).ReturnsAsync(IdentityResult.Success);
+
+        // Act
+        await _authService.AuthenticateWithGoogle(claimsPrincipal);
+
+        // Assert
+        _mockUserManager.Verify(x => x.AddLoginAsync(It.IsAny<User>(), It.IsAny<UserLoginInfo>()), Times.Never);
+        _mockUserManager.Verify(x => x.GetLoginsAsync(user), Times.Once);
     }
 
     [Fact(DisplayName = "AuthenticateWithGoogle should assign User role to new Google user")]

@@ -32,6 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AnimeTakusan.AnimeProviders\AnimeTakusan.AnimeProviders.csproj" />
     <ProjectReference Include="..\AnimeTakusan.Infrastructure\AnimeTakusan.Infrastructure.csproj" />
   </ItemGroup>
 

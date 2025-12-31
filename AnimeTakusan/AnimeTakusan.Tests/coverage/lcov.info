@@ -493,54 +493,54 @@ BRDA:126,21,1,2
 BRDA:126,41,0,1
 BRDA:126,41,1,1
 FN:227,System.Void AnimeTakusan.Application.Services.AuthService::ValidateGoogleUserData(System.Security.Claims.ClaimsPrincipal,System.String&)
-FNDA:8,System.Void AnimeTakusan.Application.Services.AuthService::ValidateGoogleUserData(System.Security.Claims.ClaimsPrincipal,System.String&)
-DA:228,8
-DA:229,8
+FNDA:9,System.Void AnimeTakusan.Application.Services.AuthService::ValidateGoogleUserData(System.Security.Claims.ClaimsPrincipal,System.String&)
+DA:228,9
+DA:229,9
 DA:230,1
 DA:231,1
-DA:234,7
-DA:235,7
+DA:234,8
+DA:235,8
 DA:236,2
 DA:237,2
-DA:240,5
-DA:241,5
+DA:240,6
+DA:241,6
 BRDA:229,7,0,1
-BRDA:229,7,1,7
-BRDA:235,39,0,6
+BRDA:229,7,1,8
+BRDA:235,39,0,7
 BRDA:235,39,1,1
 BRDA:235,57,0,2
-BRDA:235,57,1,5
+BRDA:235,57,1,6
 FN:23,System.Void AnimeTakusan.Application.Services.AuthService::.ctor(AnimeTakusan.Application.Interfaces.IUserRepository,AnimeTakusan.Application.Interfaces.IJwtHandler,Microsoft.Extensions.Logging.ILogger`1<AnimeTakusan.Application.Services.AuthService>,Microsoft.AspNetCore.Identity.UserManager`1<AnimeTakusan.Domain.Entities.User>,Microsoft.AspNetCore.Identity.RoleManager`1<Microsoft.AspNetCore.Identity.IdentityRole`1<System.Guid>>,FluentValidation.IValidator`1<AnimeTakusan.Application.DTOs.Authentication.Requests.LoginRequest>,FluentValidation.IValidator`1<AnimeTakusan.Application.DTOs.Authentication.Requests.RegisterRequest>)
-FNDA:26,System.Void AnimeTakusan.Application.Services.AuthService::.ctor(AnimeTakusan.Application.Interfaces.IUserRepository,AnimeTakusan.Application.Interfaces.IJwtHandler,Microsoft.Extensions.Logging.ILogger`1<AnimeTakusan.Application.Services.AuthService>,Microsoft.AspNetCore.Identity.UserManager`1<AnimeTakusan.Domain.Entities.User>,Microsoft.AspNetCore.Identity.RoleManager`1<Microsoft.AspNetCore.Identity.IdentityRole`1<System.Guid>>,FluentValidation.IValidator`1<AnimeTakusan.Application.DTOs.Authentication.Requests.LoginRequest>,FluentValidation.IValidator`1<AnimeTakusan.Application.DTOs.Authentication.Requests.RegisterRequest>)
-DA:24,26
-DA:25,26
-DA:26,26
-DA:27,26
-DA:28,26
-DA:29,26
-DA:30,26
-DA:31,26
-DA:32,26
-DA:33,26
-DA:34,26
-DA:35,26
-DA:36,26
-DA:37,26
-DA:38,26
-DA:39,26
-DA:40,26
+FNDA:30,System.Void AnimeTakusan.Application.Services.AuthService::.ctor(AnimeTakusan.Application.Interfaces.IUserRepository,AnimeTakusan.Application.Interfaces.IJwtHandler,Microsoft.Extensions.Logging.ILogger`1<AnimeTakusan.Application.Services.AuthService>,Microsoft.AspNetCore.Identity.UserManager`1<AnimeTakusan.Domain.Entities.User>,Microsoft.AspNetCore.Identity.RoleManager`1<Microsoft.AspNetCore.Identity.IdentityRole`1<System.Guid>>,FluentValidation.IValidator`1<AnimeTakusan.Application.DTOs.Authentication.Requests.LoginRequest>,FluentValidation.IValidator`1<AnimeTakusan.Application.DTOs.Authentication.Requests.RegisterRequest>)
+DA:24,30
+DA:25,30
+DA:26,30
+DA:27,30
+DA:28,30
+DA:29,30
+DA:30,30
+DA:31,30
+DA:32,30
+DA:33,30
+DA:34,30
+DA:35,30
+DA:36,30
+DA:37,30
+DA:38,30
+DA:39,30
+DA:40,30
 FN:246,System.Boolean AnimeTakusan.Application.Services.AuthService/<>c::<AddGoogleLogin>b__16_1(Microsoft.AspNetCore.Identity.UserLoginInfo)
-FNDA:5,System.Boolean AnimeTakusan.Application.Services.AuthService/<>c::<AddGoogleLogin>b__16_1(Microsoft.AspNetCore.Identity.UserLoginInfo)
-DA:247,5
+FNDA:7,System.Boolean AnimeTakusan.Application.Services.AuthService/<>c::<AddGoogleLogin>b__16_1(Microsoft.AspNetCore.Identity.UserLoginInfo)
+DA:247,7
 FN:260,System.String AnimeTakusan.Application.Services.AuthService/<>c::<AddGoogleLogin>b__16_0(Microsoft.AspNetCore.Identity.IdentityError)
 FNDA:2,System.String AnimeTakusan.Application.Services.AuthService/<>c::<AddGoogleLogin>b__16_0(Microsoft.AspNetCore.Identity.IdentityError)
 DA:261,2
 FN:243,System.Void AnimeTakusan.Application.Services.AuthService/<AddGoogleLogin>d__16::MoveNext()
-FNDA:5,System.Void AnimeTakusan.Application.Services.AuthService/<AddGoogleLogin>d__16::MoveNext()
-DA:244,5
-DA:246,5
-DA:248,0
-DA:249,0
+FNDA:6,System.Void AnimeTakusan.Application.Services.AuthService/<AddGoogleLogin>d__16::MoveNext()
+DA:244,6
+DA:246,6
+DA:248,1
+DA:249,1
 DA:252,5
 DA:253,5
 DA:254,5
@@ -548,8 +548,8 @@ DA:256,5
 DA:258,5
 DA:259,1
 DA:260,1
-DA:263,4
-BRDA:247,209,0,0
+DA:263,5
+BRDA:247,209,0,1
 BRDA:247,209,1,5
 BRDA:252,240,0,0
 BRDA:252,240,1,5
@@ -577,11 +577,11 @@ BRDA:267,168,1,10
 BRDA:277,522,0,1
 BRDA:277,522,1,9
 FN:196,System.Void AnimeTakusan.Application.Services.AuthService/<AuthenticateWithGoogle>d__14::MoveNext()
-FNDA:8,System.Void AnimeTakusan.Application.Services.AuthService/<AuthenticateWithGoogle>d__14::MoveNext()
-DA:197,8
-DA:198,8
-DA:200,5
-DA:201,5
+FNDA:9,System.Void AnimeTakusan.Application.Services.AuthService/<AuthenticateWithGoogle>d__14::MoveNext()
+DA:197,9
+DA:198,9
+DA:200,6
+DA:201,6
 DA:202,2
 DA:203,2
 DA:204,2
@@ -595,14 +595,14 @@ DA:211,2
 DA:212,2
 DA:214,2
 DA:215,2
-DA:217,5
-DA:219,4
-DA:220,4
-DA:221,4
-DA:222,4
-DA:223,4
-DA:224,4
-DA:225,4
+DA:217,6
+DA:219,5
+DA:220,5
+DA:221,5
+DA:222,5
+DA:223,5
+DA:224,5
+DA:225,5
 BRDA:201,229,0,2
 BRDA:203,297,0,1
 BRDA:203,297,1,1
@@ -616,21 +616,21 @@ BRDA:203,385,0,1
 BRDA:203,385,1,1
 BRDA:203,397,0,1
 BRDA:203,397,1,2
-BRDA:201,229,1,5
+BRDA:201,229,1,6
 FN:88,System.Void AnimeTakusan.Application.Services.AuthService/<GetUserInfo>d__9::MoveNext()
-FNDA:0,System.Void AnimeTakusan.Application.Services.AuthService/<GetUserInfo>d__9::MoveNext()
-DA:89,0
-DA:90,0
-DA:91,0
-DA:92,0
-DA:93,0
-DA:96,0
-DA:97,0
-DA:98,0
-BRDA:91,50,0,0
-BRDA:91,50,1,0
-BRDA:97,204,0,0
-BRDA:97,204,1,0
+FNDA:3,System.Void AnimeTakusan.Application.Services.AuthService/<GetUserInfo>d__9::MoveNext()
+DA:89,3
+DA:90,3
+DA:91,3
+DA:92,1
+DA:93,1
+DA:96,2
+DA:97,2
+DA:98,3
+BRDA:91,50,0,1
+BRDA:91,50,1,2
+BRDA:97,204,0,1
+BRDA:97,204,1,1
 FN:106,System.Void AnimeTakusan.Application.Services.AuthService/<Login>d__10::MoveNext()
 FNDA:4,System.Void AnimeTakusan.Application.Services.AuthService/<Login>d__10::MoveNext()
 DA:107,4
@@ -728,11 +728,11 @@ BRDA:59,305,1,1
 BRDA:59,334,0,2
 BRDA:59,334,1,1
 LF:164
-LH:154
+LH:164
 BRF:58
-BRH:51
+BRH:56
 FNF:13
-FNH:12
+FNH:13
 end_of_record
 SF:C:\Users\gazza\Desktop\anime-takusan\animetakusan\AnimeTakusan\AnimeTakusan.Application\Validators\CustomValidator.cs
 FN:10,System.Void AnimeTakusan.Application.Validators.CustomValidator`1::RaiseValidationException(FluentValidation.ValidationContext`1<T>,FluentValidation.Results.ValidationResult)
@@ -827,29 +827,29 @@ FNH:2
 end_of_record
 SF:C:\Users\gazza\Desktop\anime-takusan\animetakusan\AnimeTakusan\AnimeTakusan.Application\DTOs\Authentication\Responses\UserInfo.cs
 FN:6,System.Guid AnimeTakusan.Application.DTOs.Authentication.Responses.UserInfo::get_Id()
-FNDA:0,System.Guid AnimeTakusan.Application.DTOs.Authentication.Responses.UserInfo::get_Id()
-DA:7,0
+FNDA:1,System.Guid AnimeTakusan.Application.DTOs.Authentication.Responses.UserInfo::get_Id()
+DA:7,1
 FN:7,System.String AnimeTakusan.Application.DTOs.Authentication.Responses.UserInfo::get_Email()
-FNDA:0,System.String AnimeTakusan.Application.DTOs.Authentication.Responses.UserInfo::get_Email()
-DA:8,0
+FNDA:1,System.String AnimeTakusan.Application.DTOs.Authentication.Responses.UserInfo::get_Email()
+DA:8,1
 FN:8,System.String AnimeTakusan.Application.DTOs.Authentication.Responses.UserInfo::get_UserName()
-FNDA:0,System.String AnimeTakusan.Application.DTOs.Authentication.Responses.UserInfo::get_UserName()
-DA:9,0
+FNDA:1,System.String AnimeTakusan.Application.DTOs.Authentication.Responses.UserInfo::get_UserName()
+DA:9,1
 FN:9,System.String AnimeTakusan.Application.DTOs.Authentication.Responses.UserInfo::get_ProfilePicture()
-FNDA:0,System.String AnimeTakusan.Application.DTOs.Authentication.Responses.UserInfo::get_ProfilePicture()
-DA:10,0
+FNDA:1,System.String AnimeTakusan.Application.DTOs.Authentication.Responses.UserInfo::get_ProfilePicture()
+DA:10,1
 FN:10,System.String AnimeTakusan.Application.DTOs.Authentication.Responses.UserInfo::get_FirstName()
-FNDA:0,System.String AnimeTakusan.Application.DTOs.Authentication.Responses.UserInfo::get_FirstName()
-DA:11,0
+FNDA:1,System.String AnimeTakusan.Application.DTOs.Authentication.Responses.UserInfo::get_FirstName()
+DA:11,1
 FN:11,System.String AnimeTakusan.Application.DTOs.Authentication.Responses.UserInfo::get_LastName()
-FNDA:0,System.String AnimeTakusan.Application.DTOs.Authentication.Responses.UserInfo::get_LastName()
-DA:12,0
+FNDA:1,System.String AnimeTakusan.Application.DTOs.Authentication.Responses.UserInfo::get_LastName()
+DA:12,1
 LF:6
-LH:0
+LH:6
 BRF:0
 BRH:0
 FNF:6
-FNH:0
+FNH:6
 end_of_record
 SF:C:\Users\gazza\Desktop\anime-takusan\animetakusan\AnimeTakusan\AnimeTakusan.Application\DTOs\Authentication\Requests\LoginRequest.cs
 FN:4,System.String AnimeTakusan.Application.DTOs.Authentication.Requests.LoginRequest::get_Email()
@@ -978,26 +978,26 @@ FNH:0
 end_of_record
 SF:C:\Users\gazza\Desktop\anime-takusan\animetakusan\AnimeTakusan\AnimeTakusan.Domain\Entities\User.cs
 FN:6,System.String AnimeTakusan.Domain.Entities.User::get_FirstName()
-FNDA:13,System.String AnimeTakusan.Domain.Entities.User::get_FirstName()
-DA:7,13
+FNDA:16,System.String AnimeTakusan.Domain.Entities.User::get_FirstName()
+DA:7,16
 FN:7,System.String AnimeTakusan.Domain.Entities.User::get_LastName()
-FNDA:13,System.String AnimeTakusan.Domain.Entities.User::get_LastName()
-DA:8,13
+FNDA:16,System.String AnimeTakusan.Domain.Entities.User::get_LastName()
+DA:8,16
 FN:8,System.String AnimeTakusan.Domain.Entities.User::get_ProfilePicture()
-FNDA:13,System.String AnimeTakusan.Domain.Entities.User::get_ProfilePicture()
-DA:9,13
+FNDA:16,System.String AnimeTakusan.Domain.Entities.User::get_ProfilePicture()
+DA:9,16
 FN:9,System.String AnimeTakusan.Domain.Entities.User::get_RefreshToken()
-FNDA:28,System.String AnimeTakusan.Domain.Entities.User::get_RefreshToken()
-DA:10,28
+FNDA:31,System.String AnimeTakusan.Domain.Entities.User::get_RefreshToken()
+DA:10,31
 FN:10,System.Nullable`1<System.DateTime> AnimeTakusan.Domain.Entities.User::get_RefreshTokenExpiryTime()
-FNDA:28,System.Nullable`1<System.DateTime> AnimeTakusan.Domain.Entities.User::get_RefreshTokenExpiryTime()
-DA:11,28
+FNDA:31,System.Nullable`1<System.DateTime> AnimeTakusan.Domain.Entities.User::get_RefreshTokenExpiryTime()
+DA:11,31
 FN:11,System.DateTime AnimeTakusan.Domain.Entities.User::get_CreatedAt()
-FNDA:28,System.DateTime AnimeTakusan.Domain.Entities.User::get_CreatedAt()
-DA:12,28
+FNDA:32,System.DateTime AnimeTakusan.Domain.Entities.User::get_CreatedAt()
+DA:12,32
 FN:12,System.DateTime AnimeTakusan.Domain.Entities.User::get_UpdatedAt()
-FNDA:28,System.DateTime AnimeTakusan.Domain.Entities.User::get_UpdatedAt()
-DA:13,28
+FNDA:32,System.DateTime AnimeTakusan.Domain.Entities.User::get_UpdatedAt()
+DA:13,32
 LF:7
 LH:7
 BRF:0
