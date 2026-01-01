@@ -1,4 +1,4 @@
-using AnimeTakusan.Application.DTOs.AnimeProvider;
+using AnimeTakusan.Application.DTOs.AnimeProvider.Responses;
 
 namespace AnimeTakusan.Application.Interfaces;
 

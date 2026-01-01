@@ -1,24 +1,25 @@
 using AnimeTakusan.AnimeProviders.Helpers;
 using AnimeTakusan.AnimeProviders.ProviderModels.AniList;
 using AnimeTakusan.AnimeProviders.Queries;
-using AnimeTakusan.Application.DTOs.AnimeProvider;
+using AnimeTakusan.Application.DTOs.AnimeProvider.Responses;
 using AnimeTakusan.Application.Interfaces;
 using GraphQL;
-using GraphQL.Client.Http;
-using GraphQL.Client.Serializer.SystemTextJson;
 using Mapster;
+using Microsoft.Extensions.Logging;
 
 namespace AnimeTakusan.AnimeProviders;
 
 public class AniListProvider : IAnimeProvider
 {
-    private readonly GraphQLHttpClient _client;
-    private readonly QueryLoader _queryLoader;
+    private readonly GraphQLClientHelper _client;
+    private readonly IQueryLoader _queryLoader;
+    private readonly ILogger<AniListProvider> _logger;
 
-    public AniListProvider(QueryLoader queryLoader)
+    public AniListProvider(GraphQLClientHelper client, IQueryLoader queryLoader, ILogger<AniListProvider> logger)
     {
-        _client = new GraphQLHttpClient("https://graphql.anilist.co", new SystemTextJsonSerializer());
+        _client = client;
         _queryLoader = queryLoader;
+        _logger = logger;
     }
 
     public async Task<AnimeResponse> GetAnimeById(int id)
@@ -31,7 +32,7 @@ public class AniListProvider : IAnimeProvider
             Variables = new { id }
         };
 
-        var response = await _client.SendQueryAsync<AniListAnimeResponse>(request);
+        var response = await _client.SendQueryAsync<AniListResponse<AniListAnime>>(request);
 
         return response.Data.Media.Adapt<AnimeResponse>();
     }

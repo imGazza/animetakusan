@@ -1,23 +1,23 @@
+using System.Collections.Concurrent;
 using System.Reflection;
-using Microsoft.Extensions.Logging;
 
 namespace AnimeTakusan.AnimeProviders.Helpers;
 
-public class QueryLoader
+public interface IQueryLoader
 {
-    private static readonly Dictionary<string, string> _cache = new();
-    private readonly ILogger<QueryLoader> _logger;
+    Task<string> LoadQueryAsync(string queryFileName);
+}
 
-    public QueryLoader(ILogger<QueryLoader> logger)
-    {
-        _logger = logger;
-    }
+public class QueryLoader : IQueryLoader
+{
+    // Concurrent dictionary to grant thread-safe caching and avoid race conditions
+    private static readonly ConcurrentDictionary<string, string> _cache = new();
 
     public async Task<string> LoadQueryAsync(string queryFileName)
     {
-        if (_cache.ContainsKey(queryFileName))
+        if (_cache.TryGetValue(queryFileName, out var cachedQuery))
         {
-            return _cache[queryFileName];
+            return cachedQuery;
         }
 
         var assembly = Assembly.GetExecutingAssembly();
@@ -30,7 +30,7 @@ public class QueryLoader
         using var reader = new StreamReader(stream);
 
         string query = await reader.ReadToEndAsync();
-        _cache[queryFileName] = query;
+        _cache.TryAdd(queryFileName, query);
 
         return query;
     }

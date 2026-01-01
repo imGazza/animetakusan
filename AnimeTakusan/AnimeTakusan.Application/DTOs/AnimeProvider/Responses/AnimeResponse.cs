@@ -1,4 +1,4 @@
-namespace AnimeTakusan.Application.DTOs.AnimeProvider;
+namespace AnimeTakusan.Application.DTOs.AnimeProvider.Responses;
 
 public record AnimeResponse
 {

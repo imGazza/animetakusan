@@ -1,11 +1,7 @@
+
 namespace AnimeTakusan.AnimeProviders.ProviderModels.AniList;
 
-public class AniListAnimeResponse
-{
-    public AniListMedia Media { get; set; }
-}
-
-public class AniListMedia
+public class AniListAnime
 {
     public int Id { get; set; }
     public Title Title { get; set; }
