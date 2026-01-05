@@ -5,6 +5,7 @@ services:
     build:
       context: .
       dockerfile: AnimeTakusan.API/Dockerfile
+      target: final-debug
     ports:
       - 5016:8081
     environment:

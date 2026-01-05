@@ -1,3 +1,4 @@
+using AnimeTakusan.Application.DTOs.AnimeProvider.Requests;
 using AnimeTakusan.Application.Interfaces;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
@@ -23,5 +24,12 @@ namespace AnimeTakusan.API.Controllers
         {
             return Ok(await _animeService.GetAnimeById(id));
         }
+
+        [HttpPost("seasonal")]
+        public async Task<IActionResult> GetSeasonalAnime([FromBody] AnimeSeasonalRequest animeSeasonalRequest)
+        {
+            return Ok(await _animeService.GetSeasonalAnime(animeSeasonalRequest));
+        }
     }
+    
 }

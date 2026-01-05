@@ -1,7 +1,6 @@
 using AnimeTakusan.Application.DTOs.Authentication.Requests;
 using AnimeTakusan.Domain.Entities;
 using Bogus;
-using Microsoft.AspNetCore.Identity;
 
 namespace AnimeTakusan.Tests.TestHelpers.Fakers;
 

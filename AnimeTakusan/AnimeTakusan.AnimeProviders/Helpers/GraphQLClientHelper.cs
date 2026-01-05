@@ -5,14 +5,19 @@ using GraphQL.Client.Serializer.SystemTextJson;
 
 namespace AnimeTakusan.AnimeProviders.Helpers;
 
+public interface IGraphQLClientHelper
+{
+    Task<T> SendQueryAsync<T>(GraphQLRequest request);
+}
+
 /// <summary>
 /// Wrapper for GraphQLHttpClient based on IHttpClientFactory to correctly manage HttpClient disposition
 /// Definition in Program.cs
 /// </summary>
-public class GraphQLClientHelper
+public class GraphQLClientHelper : IGraphQLClientHelper
 {
     private readonly HttpClient _httpClient;
-    private GraphQLHttpClient _graphQlClient;
+    private readonly GraphQLHttpClient _graphQlClient;
 
     public GraphQLClientHelper(HttpClient httpClient)
     {
@@ -20,7 +25,7 @@ public class GraphQLClientHelper
         _graphQlClient = new GraphQLHttpClient(_httpClient.BaseAddress, new SystemTextJsonSerializer(), _httpClient);
     }
 
-    public async Task<GraphQLResponse<T>> SendQueryAsync<T>(GraphQLRequest request)
+    public async Task<T> SendQueryAsync<T>(GraphQLRequest request)
     {
         if (request == null)
         {
@@ -34,7 +39,7 @@ public class GraphQLClientHelper
             throw new QueryFailedException(response.Errors.Select(e => e.Message).ToList());
         }
 
-        return response;
+        return response.Data;
     }
 
 }

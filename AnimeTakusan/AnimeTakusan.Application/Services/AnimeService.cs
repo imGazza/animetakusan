@@ -1,3 +1,4 @@
+using AnimeTakusan.Application.DTOs.AnimeProvider.Requests;
 using AnimeTakusan.Application.DTOs.AnimeProvider.Responses;
 using AnimeTakusan.Application.Interfaces;
 
@@ -15,5 +16,10 @@ public class AnimeService : IAnimeService, IInjectable
     public Task<AnimeResponse> GetAnimeById(int id)
     {        
         return _animeProvider.GetAnimeById(id);
+    }
+
+    public Task<List<AnimeResponse>> GetSeasonalAnime(AnimeSeasonalRequest animeSeasonalRequest)
+    {
+        return _animeProvider.GetSeasonalAnime(animeSeasonalRequest);
     }
 }

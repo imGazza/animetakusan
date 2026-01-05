@@ -1,6 +1,30 @@
 {
     "version": "0.2.0",
     "configurations": [
-        
+        {
+            "name": "Docker .NET Attach",
+            "type": "docker",
+            "request": "attach",
+            "platform": "netCore",
+            "sourceFileMap": {
+                "/src": "${workspaceFolder}/AnimeTakusan"
+            }
+        },
+        {
+            "name": ".NET Core Docker Attach (Manual)",
+            "type": "coreclr",
+            "request": "attach",
+            "processId": "${command:pickRemoteProcess}",
+            "pipeTransport": {
+                "pipeProgram": "docker",
+                "pipeArgs": ["exec", "-i", "animetakusan-animetakusanapi-1"],
+                "debuggerPath": "/vsdbg/vsdbg",
+                "pipeCwd": "${workspaceRoot}",
+                "quoteArgs": false
+            },
+            "sourceFileMap": {
+                "/src": "${workspaceFolder}/AnimeTakusan"
+            }
+        }
     ]
 }

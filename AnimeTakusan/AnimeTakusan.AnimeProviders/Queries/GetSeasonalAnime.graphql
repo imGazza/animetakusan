@@ -1,0 +1,17 @@
+query($season: MediaSeason, $seasonYear: Int, $sort: [MediaSort], $page: Int, $perPage: Int)  { 
+  Page(page: $page, perPage: $perPage) {
+    pageInfo {
+      currentPage
+      hasNextPage,
+      perPage
+    }
+    media(season: $season, seasonYear: $seasonYear, sort: $sort) {
+      id
+      title {
+        english,
+        romaji,
+        native
+      }
+    }    
+  }
+}

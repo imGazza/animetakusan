@@ -15,7 +15,7 @@ public static class AnimeProviderExtensions
         services.AddSingleton<IQueryLoader, QueryLoader>();
         services.AddScoped<IAnimeProvider, AniListProvider>();
 
-        services.AddHttpClient<GraphQLClientHelper>(client =>
+        services.AddHttpClient<IGraphQLClientHelper, GraphQLClientHelper>(client =>
         {
             client.BaseAddress = new Uri(configuration["AniList:ApiUrl"]!);
         })
