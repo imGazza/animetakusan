@@ -2,13 +2,13 @@ namespace AnimeTakusan.AnimeProviders.ProviderModels.AniList.Responses;
 
 public record AniListPageResponse<T>
 {
-    public AniListPage<T> Page { get; set; }
+    public required AniListPage<T> Page { get; set; }
 }
 
 public record AniListPage<T>
 {
-    public AniListPageInfo PageInfo { get; init; }
-    public List<T> Media { get; init; }
+    public required AniListPageInfo PageInfo { get; init; }
+    public required List<T> Media { get; init; }
 }
 
 public record AniListPageInfo

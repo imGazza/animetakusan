@@ -1,28 +1,29 @@
 SF:c:\Users\gazza\Desktop\anime-takusan\animetakusan\AnimeTakusan\AnimeTakusan.AnimeProviders\AniListProvider.cs
-FN:20,System.Void AnimeTakusan.AnimeProviders.AniListProvider::.ctor(AnimeTakusan.AnimeProviders.Helpers.IGraphQLClientHelper,AnimeTakusan.AnimeProviders.Helpers.IQueryLoader,Microsoft.Extensions.Configuration.IConfiguration)
-FNDA:0,System.Void AnimeTakusan.AnimeProviders.AniListProvider::.ctor(AnimeTakusan.AnimeProviders.Helpers.IGraphQLClientHelper,AnimeTakusan.AnimeProviders.Helpers.IQueryLoader,Microsoft.Extensions.Configuration.IConfiguration)
+FN:19,System.Void AnimeTakusan.AnimeProviders.AniListProvider::.ctor(AnimeTakusan.AnimeProviders.Helpers.IGraphQLClientHelper,AnimeTakusan.AnimeProviders.Helpers.IQueryLoader)
+FNDA:0,System.Void AnimeTakusan.AnimeProviders.AniListProvider::.ctor(AnimeTakusan.AnimeProviders.Helpers.IGraphQLClientHelper,AnimeTakusan.AnimeProviders.Helpers.IQueryLoader)
+DA:20,0
 DA:21,0
 DA:22,0
 DA:23,0
 DA:24,0
-DA:25,0
-DA:26,0
-FN:28,System.Void AnimeTakusan.AnimeProviders.AniListProvider/<GetAnimeById>d__4::MoveNext()
+FN:26,System.Void AnimeTakusan.AnimeProviders.AniListProvider/<GetAnimeById>d__4::MoveNext()
 FNDA:0,System.Void AnimeTakusan.AnimeProviders.AniListProvider/<GetAnimeById>d__4::MoveNext()
-DA:29,0
+DA:27,0
+DA:28,0
 DA:30,0
+DA:31,0
 DA:32,0
 DA:33,0
 DA:34,0
-DA:35,0
 DA:36,0
 DA:38,0
-DA:40,0
-DA:41,0
-FN:43,System.Void AnimeTakusan.AnimeProviders.AniListProvider/<GetSeasonalAnime>d__5::MoveNext()
+DA:39,0
+FN:41,System.Void AnimeTakusan.AnimeProviders.AniListProvider/<GetSeasonalAnime>d__5::MoveNext()
 FNDA:0,System.Void AnimeTakusan.AnimeProviders.AniListProvider/<GetSeasonalAnime>d__5::MoveNext()
-DA:44,0
+DA:42,0
+DA:43,0
 DA:45,0
+DA:46,0
 DA:47,0
 DA:48,0
 DA:49,0
@@ -33,20 +34,21 @@ DA:53,0
 DA:54,0
 DA:55,0
 DA:56,0
-DA:57,0
 DA:58,0
+DA:59,0
 DA:60,0
-DA:61,0
-DA:62,0
-BRDA:47,240,0,0
-BRDA:47,240,1,0
-BRDA:47,308,0,0
-BRDA:47,308,1,0
-LF:33
+BRDA:45,240,0,0
+BRDA:45,240,1,0
+FN:62,System.Void AnimeTakusan.AnimeProviders.AniListProvider/<SendQuery>d__6`1::MoveNext()
+FNDA:0,System.Void AnimeTakusan.AnimeProviders.AniListProvider/<SendQuery>d__6`1::MoveNext()
+DA:63,0
+DA:64,0
+DA:65,0
+LF:35
 LH:0
-BRF:4
+BRF:2
 BRH:0
-FNF:3
+FNF:4
 FNH:0
 end_of_record
 SF:c:\Users\gazza\Desktop\anime-takusan\animetakusan\AnimeTakusan\AnimeTakusan.AnimeProviders\FakeAnimeProvider.cs
@@ -57,8 +59,8 @@ DA:20,0
 DA:21,0
 DA:22,0
 DA:23,0
-FN:25,System.Threading.Tasks.Task`1<System.Collections.Generic.List`1<AnimeTakusan.Application.DTOs.AnimeProvider.Responses.AnimeResponse>> AnimeTakusan.AnimeProviders.FakeAnimeProvider::GetSeasonalAnime(AnimeTakusan.Application.DTOs.AnimeProvider.Requests.AnimeSeasonalRequest)
-FNDA:0,System.Threading.Tasks.Task`1<System.Collections.Generic.List`1<AnimeTakusan.Application.DTOs.AnimeProvider.Responses.AnimeResponse>> AnimeTakusan.AnimeProviders.FakeAnimeProvider::GetSeasonalAnime(AnimeTakusan.Application.DTOs.AnimeProvider.Requests.AnimeSeasonalRequest)
+FN:25,System.Threading.Tasks.Task`1<AnimeTakusan.Application.DTOs.AnimeProvider.Responses.AnimePageResponse> AnimeTakusan.AnimeProviders.FakeAnimeProvider::GetSeasonalAnime(AnimeTakusan.Application.DTOs.AnimeProvider.Requests.AnimeSeasonalRequest)
+FNDA:0,System.Threading.Tasks.Task`1<AnimeTakusan.Application.DTOs.AnimeProvider.Responses.AnimePageResponse> AnimeTakusan.AnimeProviders.FakeAnimeProvider::GetSeasonalAnime(AnimeTakusan.Application.DTOs.AnimeProvider.Requests.AnimeSeasonalRequest)
 DA:26,0
 DA:27,0
 FN:12,System.Void AnimeTakusan.AnimeProviders.FakeAnimeProvider::.ctor()
@@ -120,26 +122,29 @@ FNF:5
 FNH:0
 end_of_record
 SF:c:\Users\gazza\Desktop\anime-takusan\animetakusan\AnimeTakusan\AnimeTakusan.AnimeProviders\ProviderModels\AniList\AniListPageResponse.cs
-FN:4,AnimeTakusan.AnimeProviders.ProviderModels.AniList.Responses.AniListPageInfo AnimeTakusan.AnimeProviders.ProviderModels.AniList.Responses.AniListPageResponse`1::get_PageInfo()
-FNDA:0,AnimeTakusan.AnimeProviders.ProviderModels.AniList.Responses.AniListPageInfo AnimeTakusan.AnimeProviders.ProviderModels.AniList.Responses.AniListPageResponse`1::get_PageInfo()
+FN:4,AnimeTakusan.AnimeProviders.ProviderModels.AniList.Responses.AniListPage`1<T> AnimeTakusan.AnimeProviders.ProviderModels.AniList.Responses.AniListPageResponse`1::get_Page()
+FNDA:0,AnimeTakusan.AnimeProviders.ProviderModels.AniList.Responses.AniListPage`1<T> AnimeTakusan.AnimeProviders.ProviderModels.AniList.Responses.AniListPageResponse`1::get_Page()
 DA:5,0
-FN:5,System.Collections.Generic.List`1<T> AnimeTakusan.AnimeProviders.ProviderModels.AniList.Responses.AniListPageResponse`1::get_Media()
-FNDA:0,System.Collections.Generic.List`1<T> AnimeTakusan.AnimeProviders.ProviderModels.AniList.Responses.AniListPageResponse`1::get_Media()
-DA:6,0
-FN:10,System.Int32 AnimeTakusan.AnimeProviders.ProviderModels.AniList.Responses.AniListPageInfo::get_PerPage()
-FNDA:0,System.Int32 AnimeTakusan.AnimeProviders.ProviderModels.AniList.Responses.AniListPageInfo::get_PerPage()
+FN:9,AnimeTakusan.AnimeProviders.ProviderModels.AniList.Responses.AniListPageInfo AnimeTakusan.AnimeProviders.ProviderModels.AniList.Responses.AniListPage`1::get_PageInfo()
+FNDA:0,AnimeTakusan.AnimeProviders.ProviderModels.AniList.Responses.AniListPageInfo AnimeTakusan.AnimeProviders.ProviderModels.AniList.Responses.AniListPage`1::get_PageInfo()
+DA:10,0
+FN:10,System.Collections.Generic.List`1<T> AnimeTakusan.AnimeProviders.ProviderModels.AniList.Responses.AniListPage`1::get_Media()
+FNDA:0,System.Collections.Generic.List`1<T> AnimeTakusan.AnimeProviders.ProviderModels.AniList.Responses.AniListPage`1::get_Media()
 DA:11,0
-FN:11,System.Int32 AnimeTakusan.AnimeProviders.ProviderModels.AniList.Responses.AniListPageInfo::get_CurrentPage()
+FN:15,System.Int32 AnimeTakusan.AnimeProviders.ProviderModels.AniList.Responses.AniListPageInfo::get_PerPage()
+FNDA:0,System.Int32 AnimeTakusan.AnimeProviders.ProviderModels.AniList.Responses.AniListPageInfo::get_PerPage()
+DA:16,0
+FN:16,System.Int32 AnimeTakusan.AnimeProviders.ProviderModels.AniList.Responses.AniListPageInfo::get_CurrentPage()
 FNDA:0,System.Int32 AnimeTakusan.AnimeProviders.ProviderModels.AniList.Responses.AniListPageInfo::get_CurrentPage()
-DA:12,0
-FN:12,System.Boolean AnimeTakusan.AnimeProviders.ProviderModels.AniList.Responses.AniListPageInfo::get_HasNextPage()
+DA:17,0
+FN:17,System.Boolean AnimeTakusan.AnimeProviders.ProviderModels.AniList.Responses.AniListPageInfo::get_HasNextPage()
 FNDA:0,System.Boolean AnimeTakusan.AnimeProviders.ProviderModels.AniList.Responses.AniListPageInfo::get_HasNextPage()
-DA:13,0
-LF:5
+DA:18,0
+LF:6
 LH:0
 BRF:0
 BRH:0
-FNF:5
+FNF:6
 FNH:0
 end_of_record
 SF:c:\Users\gazza\Desktop\anime-takusan\animetakusan\AnimeTakusan\AnimeTakusan.AnimeProviders\ProviderModels\AniList\Responses\AniListAnimeResponse.cs
@@ -165,6 +170,21 @@ BRH:0
 FNF:5
 FNH:0
 end_of_record
+SF:c:\Users\gazza\Desktop\anime-takusan\animetakusan\AnimeTakusan\AnimeTakusan.AnimeProviders\Mappers\AniListMappingConfig.cs
+FN:13,System.Void AnimeTakusan.AnimeProviders.Mappers.AniListMappingConfig::Register(Mapster.TypeAdapterConfig)
+FNDA:0,System.Void AnimeTakusan.AnimeProviders.Mappers.AniListMappingConfig::Register(Mapster.TypeAdapterConfig)
+DA:14,0
+DA:15,0
+DA:16,0
+DA:17,0
+DA:18,0
+LF:5
+LH:0
+BRF:0
+BRH:0
+FNF:1
+FNH:0
+end_of_record
 SF:c:\Users\gazza\Desktop\anime-takusan\animetakusan\AnimeTakusan\AnimeTakusan.AnimeProviders\Helpers\GraphQLClientHelper.cs
 FN:21,System.Void AnimeTakusan.AnimeProviders.Helpers.GraphQLClientHelper::.ctor(System.Net.Http.HttpClient)
 FNDA:0,System.Void AnimeTakusan.AnimeProviders.Helpers.GraphQLClientHelper::.ctor(System.Net.Http.HttpClient)
@@ -173,9 +193,9 @@ DA:23,0
 DA:24,0
 DA:25,0
 DA:26,0
-FN:38,System.String AnimeTakusan.AnimeProviders.Helpers.GraphQLClientHelper/<>c__3`1::<SendQueryAsync>b__3_0(GraphQL.GraphQLError)
+FN:43,System.String AnimeTakusan.AnimeProviders.Helpers.GraphQLClientHelper/<>c__3`1::<SendQueryAsync>b__3_0(GraphQL.GraphQLError)
 FNDA:0,System.String AnimeTakusan.AnimeProviders.Helpers.GraphQLClientHelper/<>c__3`1::<SendQueryAsync>b__3_0(GraphQL.GraphQLError)
-DA:39,0
+DA:44,0
 FN:28,System.Void AnimeTakusan.AnimeProviders.Helpers.GraphQLClientHelper/<SendQueryAsync>d__3`1::MoveNext()
 FNDA:0,System.Void AnimeTakusan.AnimeProviders.Helpers.GraphQLClientHelper/<SendQueryAsync>d__3`1::MoveNext()
 DA:29,0
@@ -185,19 +205,24 @@ DA:32,0
 DA:35,0
 DA:37,0
 DA:38,0
+DA:39,0
 DA:42,0
 DA:43,0
+DA:47,0
+DA:48,0
 BRDA:30,29,0,0
 BRDA:30,29,1,0
-BRDA:37,196,0,0
-BRDA:37,196,1,0
-BRDA:37,221,0,0
-BRDA:39,241,0,0
-BRDA:39,241,1,0
-BRDA:37,221,1,0
-LF:15
+BRDA:37,207,0,0
+BRDA:37,207,1,0
+BRDA:42,238,0,0
+BRDA:42,238,1,0
+BRDA:42,263,0,0
+BRDA:44,289,0,0
+BRDA:44,289,1,0
+BRDA:42,263,1,0
+LF:18
 LH:0
-BRF:8
+BRF:10
 BRH:0
 FNF:3
 FNH:0
@@ -276,41 +301,42 @@ DA:21,0
 DA:22,0
 DA:23,0
 DA:26,0
-DA:27,0
-DA:28,0
 DA:29,0
 DA:30,0
+DA:31,0
+DA:32,0
 DA:33,0
 DA:36,0
-DA:37,0
-DA:38,0
 DA:39,0
 DA:40,0
+DA:41,0
+DA:42,0
 DA:43,0
 DA:46,0
-DA:48,0
 DA:49,0
-DA:50,0
+DA:51,0
 DA:52,0
-DA:54,0
+DA:53,0
+DA:55,0
 DA:57,0
-DA:58,0
-DA:59,0
 DA:60,0
 DA:61,0
+DA:62,0
 DA:63,0
-DA:65,0
-DA:67,0
-DA:69,0
+DA:64,0
+DA:66,0
+DA:68,0
 DA:70,0
 DA:72,0
 DA:73,0
-DA:74,0
+DA:75,0
 DA:76,0
-DA:78,0
-BRDA:57,412,0,0
-BRDA:57,412,1,0
-LF:42
+DA:77,0
+DA:79,0
+DA:81,0
+BRDA:60,429,0,0
+BRDA:60,429,1,0
+LF:43
 LH:0
 BRF:2
 BRH:0
@@ -367,6 +393,10 @@ FNDA:0,System.Boolean AnimeTakusan.API.Handlers.Mappers.AniListExceptionMapper::
 DA:10,0
 DA:11,0
 DA:12,0
+BRDA:11,7,0,0
+BRDA:11,7,1,0
+BRDA:11,15,1,0
+BRDA:11,15,0,0
 FN:14,AnimeTakusan.Application.DTOs.Common.Responses.ExceptionDetails AnimeTakusan.API.Handlers.Mappers.AniListExceptionMapper::MapException(System.Exception)
 FNDA:0,AnimeTakusan.Application.DTOs.Common.Responses.ExceptionDetails AnimeTakusan.API.Handlers.Mappers.AniListExceptionMapper::MapException(System.Exception)
 DA:15,0
@@ -388,7 +418,7 @@ BRDA:17,19,1,0
 BRDA:17,19,0,0
 LF:16
 LH:0
-BRF:4
+BRF:8
 BRH:0
 FNF:2
 FNH:0
@@ -682,6 +712,24 @@ BRH:0
 FNF:1
 FNH:0
 end_of_record
+SF:c:\Users\gazza\Desktop\anime-takusan\animetakusan\AnimeTakusan\AnimeTakusan.API\Extensions\MapsterExtensions.cs
+FN:21,Microsoft.Extensions.DependencyInjection.IServiceCollection AnimeTakusan.API.Extensions.MapsterExtensions::AddMapster(Microsoft.Extensions.DependencyInjection.IServiceCollection)
+FNDA:0,Microsoft.Extensions.DependencyInjection.IServiceCollection AnimeTakusan.API.Extensions.MapsterExtensions::AddMapster(Microsoft.Extensions.DependencyInjection.IServiceCollection)
+DA:22,0
+DA:24,0
+DA:25,0
+DA:26,0
+DA:27,0
+DA:29,0
+DA:31,0
+DA:32,0
+LF:8
+LH:0
+BRF:0
+BRH:0
+FNF:1
+FNH:0
+end_of_record
 SF:c:\Users\gazza\Desktop\anime-takusan\animetakusan\AnimeTakusan\AnimeTakusan.API\Extensions\RateLimitingExtensions.cs
 FN:7,Microsoft.Extensions.DependencyInjection.IServiceCollection AnimeTakusan.API.Extensions.RateLimitingExtensions::AddRateLimiting(Microsoft.Extensions.DependencyInjection.IServiceCollection)
 FNDA:0,Microsoft.Extensions.DependencyInjection.IServiceCollection AnimeTakusan.API.Extensions.RateLimitingExtensions::AddRateLimiting(Microsoft.Extensions.DependencyInjection.IServiceCollection)
@@ -837,22 +885,22 @@ FNF:8
 FNH:0
 end_of_record
 SF:c:\Users\gazza\Desktop\anime-takusan\animetakusan\AnimeTakusan\AnimeTakusan.Application\Services\AnimeService.cs
-FN:16,System.Threading.Tasks.Task`1<AnimeTakusan.Application.DTOs.AnimeProvider.Responses.AnimeResponse> AnimeTakusan.Application.Services.AnimeService::GetAnimeById(System.Int32)
-FNDA:0,System.Threading.Tasks.Task`1<AnimeTakusan.Application.DTOs.AnimeProvider.Responses.AnimeResponse> AnimeTakusan.Application.Services.AnimeService::GetAnimeById(System.Int32)
-DA:17,0
-DA:18,0
-DA:19,0
-FN:21,System.Threading.Tasks.Task`1<System.Collections.Generic.List`1<AnimeTakusan.Application.DTOs.AnimeProvider.Responses.AnimeResponse>> AnimeTakusan.Application.Services.AnimeService::GetSeasonalAnime(AnimeTakusan.Application.DTOs.AnimeProvider.Requests.AnimeSeasonalRequest)
-FNDA:0,System.Threading.Tasks.Task`1<System.Collections.Generic.List`1<AnimeTakusan.Application.DTOs.AnimeProvider.Responses.AnimeResponse>> AnimeTakusan.Application.Services.AnimeService::GetSeasonalAnime(AnimeTakusan.Application.DTOs.AnimeProvider.Requests.AnimeSeasonalRequest)
-DA:22,0
-DA:23,0
-DA:24,0
 FN:10,System.Void AnimeTakusan.Application.Services.AnimeService::.ctor(AnimeTakusan.Application.Interfaces.IAnimeProvider)
 FNDA:0,System.Void AnimeTakusan.Application.Services.AnimeService::.ctor(AnimeTakusan.Application.Interfaces.IAnimeProvider)
 DA:11,0
 DA:12,0
 DA:13,0
 DA:14,0
+FN:16,System.Void AnimeTakusan.Application.Services.AnimeService/<GetAnimeById>d__2::MoveNext()
+FNDA:0,System.Void AnimeTakusan.Application.Services.AnimeService/<GetAnimeById>d__2::MoveNext()
+DA:17,0
+DA:18,0
+DA:19,0
+FN:21,System.Void AnimeTakusan.Application.Services.AnimeService/<GetSeasonalAnime>d__3::MoveNext()
+FNDA:0,System.Void AnimeTakusan.Application.Services.AnimeService/<GetSeasonalAnime>d__3::MoveNext()
+DA:22,0
+DA:23,0
+DA:24,0
 LF:10
 LH:0
 BRF:0
@@ -1267,6 +1315,29 @@ BRH:0
 FNF:4
 FNH:0
 end_of_record
+SF:c:\Users\gazza\Desktop\anime-takusan\animetakusan\AnimeTakusan\AnimeTakusan.Application\DTOs\AnimeProvider\Responses\AnimePageResponse.cs
+FN:4,AnimeTakusan.Application.DTOs.AnimeProvider.Responses.AnimePageInfo AnimeTakusan.Application.DTOs.AnimeProvider.Responses.AnimePageResponse::get_Page()
+FNDA:0,AnimeTakusan.Application.DTOs.AnimeProvider.Responses.AnimePageInfo AnimeTakusan.Application.DTOs.AnimeProvider.Responses.AnimePageResponse::get_Page()
+DA:5,0
+FN:5,System.Collections.Generic.List`1<AnimeTakusan.Application.DTOs.AnimeProvider.Responses.AnimeResponse> AnimeTakusan.Application.DTOs.AnimeProvider.Responses.AnimePageResponse::get_Data()
+FNDA:0,System.Collections.Generic.List`1<AnimeTakusan.Application.DTOs.AnimeProvider.Responses.AnimeResponse> AnimeTakusan.Application.DTOs.AnimeProvider.Responses.AnimePageResponse::get_Data()
+DA:6,0
+FN:10,System.Int32 AnimeTakusan.Application.DTOs.AnimeProvider.Responses.AnimePageInfo::get_PerPage()
+FNDA:0,System.Int32 AnimeTakusan.Application.DTOs.AnimeProvider.Responses.AnimePageInfo::get_PerPage()
+DA:11,0
+FN:11,System.Int32 AnimeTakusan.Application.DTOs.AnimeProvider.Responses.AnimePageInfo::get_CurrentPage()
+FNDA:0,System.Int32 AnimeTakusan.Application.DTOs.AnimeProvider.Responses.AnimePageInfo::get_CurrentPage()
+DA:12,0
+FN:12,System.Boolean AnimeTakusan.Application.DTOs.AnimeProvider.Responses.AnimePageInfo::get_HasNextPage()
+FNDA:0,System.Boolean AnimeTakusan.Application.DTOs.AnimeProvider.Responses.AnimePageInfo::get_HasNextPage()
+DA:13,0
+LF:5
+LH:0
+BRF:0
+BRH:0
+FNF:5
+FNH:0
+end_of_record
 SF:c:\Users\gazza\Desktop\anime-takusan\animetakusan\AnimeTakusan\AnimeTakusan.Application\DTOs\AnimeProvider\Responses\AnimeResponse.cs
 FN:4,System.Int32 AnimeTakusan.Application.DTOs.AnimeProvider.Responses.AnimeResponse::get_Id()
 FNDA:0,System.Int32 AnimeTakusan.Application.DTOs.AnimeProvider.Responses.AnimeResponse::get_Id()
@@ -1303,11 +1374,14 @@ DA:7,0
 FN:7,System.Int32 AnimeTakusan.Application.DTOs.AnimeProvider.Requests.AnimeSeasonalRequest::get_page()
 FNDA:0,System.Int32 AnimeTakusan.Application.DTOs.AnimeProvider.Requests.AnimeSeasonalRequest::get_page()
 DA:8,0
-LF:4
+FN:8,System.Int32 AnimeTakusan.Application.DTOs.AnimeProvider.Requests.AnimeSeasonalRequest::get_perPage()
+FNDA:0,System.Int32 AnimeTakusan.Application.DTOs.AnimeProvider.Requests.AnimeSeasonalRequest::get_perPage()
+DA:9,0
+LF:5
 LH:0
 BRF:0
 BRH:0
-FNF:4
+FNF:5
 FNH:0
 end_of_record
 SF:c:\Users\gazza\Desktop\anime-takusan\animetakusan\AnimeTakusan\AnimeTakusan.Domain\Exceptions\AuthenticationExceptions\ExternalLoginException.cs
@@ -1401,12 +1475,12 @@ BRH:0
 FNF:1
 FNH:0
 end_of_record
-SF:c:\Users\gazza\Desktop\anime-takusan\animetakusan\AnimeTakusan\AnimeTakusan.Domain\Exceptions\AniListProviderExceptions\MissingRequestException.cs
-FN:6,System.Void AnimeTakusan.Domain.Exceptions.AniListProviderExceptions.MissingRequestException::.ctor()
-FNDA:0,System.Void AnimeTakusan.Domain.Exceptions.AniListProviderExceptions.MissingRequestException::.ctor()
-DA:7,0
+SF:c:\Users\gazza\Desktop\anime-takusan\animetakusan\AnimeTakusan\AnimeTakusan.Domain\Exceptions\GraphQLExceptions\GraphQLMissingRequestException.cs
+FN:4,System.Void AnimeTakusan.Domain.Exceptions.GraphQLExceptions.GraphQLMissingRequestException::.ctor(System.String)
+FNDA:0,System.Void AnimeTakusan.Domain.Exceptions.GraphQLExceptions.GraphQLMissingRequestException::.ctor(System.String)
+DA:5,0
+DA:6,0
 DA:8,0
-DA:10,0
 LF:3
 LH:0
 BRF:0
@@ -1414,17 +1488,22 @@ BRH:0
 FNF:1
 FNH:0
 end_of_record
-SF:c:\Users\gazza\Desktop\anime-takusan\animetakusan\AnimeTakusan\AnimeTakusan.Domain\Exceptions\AniListProviderExceptions\QueryFailedException.cs
-FN:6,System.Void AnimeTakusan.Domain.Exceptions.AniListProviderExceptions.QueryFailedException::.ctor(System.Collections.Generic.List`1<System.String>)
-FNDA:0,System.Void AnimeTakusan.Domain.Exceptions.AniListProviderExceptions.QueryFailedException::.ctor(System.Collections.Generic.List`1<System.String>)
-DA:7,0
+SF:c:\Users\gazza\Desktop\anime-takusan\animetakusan\AnimeTakusan\AnimeTakusan.Domain\Exceptions\GraphQLExceptions\GraphQLQueryFailedException.cs
+FN:4,System.Void AnimeTakusan.Domain.Exceptions.GraphQLExceptions.GraphQLQueryFailedException::.ctor(System.String,System.Collections.Generic.List`1<System.String>)
+FNDA:0,System.Void AnimeTakusan.Domain.Exceptions.GraphQLExceptions.GraphQLQueryFailedException::.ctor(System.String,System.Collections.Generic.List`1<System.String>)
+DA:5,0
+DA:6,0
 DA:8,0
+FN:9,System.Void AnimeTakusan.Domain.Exceptions.GraphQLExceptions.GraphQLQueryFailedException::.ctor(System.String,System.String)
+FNDA:0,System.Void AnimeTakusan.Domain.Exceptions.GraphQLExceptions.GraphQLQueryFailedException::.ctor(System.String,System.String)
 DA:10,0
-LF:3
+DA:11,0
+DA:13,0
+LF:6
 LH:0
 BRF:0
 BRH:0
-FNF:1
+FNF:2
 FNH:0
 end_of_record
 SF:c:\Users\gazza\Desktop\anime-takusan\animetakusan\AnimeTakusan\AnimeTakusan.Domain\Entities\User.cs

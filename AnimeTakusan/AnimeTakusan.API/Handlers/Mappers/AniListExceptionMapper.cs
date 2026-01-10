@@ -1,6 +1,6 @@
 using AnimeTakusan.Application.DTOs.Common.Responses;
 using AnimeTakusan.Application.Interfaces;
-using AnimeTakusan.Domain.Exceptions.AniListProviderExceptions;
+using AnimeTakusan.Domain.Exceptions.GraphQLExceptions;
 
 namespace AnimeTakusan.API.Handlers.Mappers;
 
@@ -8,7 +8,7 @@ public class AniListExceptionMapper : IExceptionMapper
 {
     public bool CanHandle(Exception exception)
     {
-        return exception is QueryFailedException;
+        return exception is GraphQLQueryFailedException or GraphQLMissingRequestException;
     }
 
     public ExceptionDetails MapException(Exception exception)
@@ -16,7 +16,7 @@ public class AniListExceptionMapper : IExceptionMapper
 
         return exception switch
         {
-            QueryFailedException or MissingRequestException => new ExceptionDetails
+            GraphQLQueryFailedException or GraphQLMissingRequestException => new ExceptionDetails
             {
                 StatusCode = System.Net.HttpStatusCode.BadRequest,
                 Message = exception.Message

@@ -13,13 +13,13 @@ public class AnimeService : IAnimeService, IInjectable
         _animeProvider = animeProvider;
     }
 
-    public Task<AnimeResponse> GetAnimeById(int id)
+    public async Task<AnimeResponse> GetAnimeById(int id)
     {        
-        return _animeProvider.GetAnimeById(id);
+        return await _animeProvider.GetAnimeById(id);
     }
 
-    public Task<List<AnimeResponse>> GetSeasonalAnime(AnimeSeasonalRequest animeSeasonalRequest)
+    public async Task<AnimePageResponse> GetSeasonalAnime(AnimeSeasonalRequest animeSeasonalRequest)
     {
-        return _animeProvider.GetSeasonalAnime(animeSeasonalRequest);
+        return await _animeProvider.GetSeasonalAnime(animeSeasonalRequest);
     }
 }

@@ -6,5 +6,5 @@ namespace AnimeTakusan.Application.Interfaces;
 public interface IAnimeService
 {
     Task<AnimeResponse> GetAnimeById(int id);
-    Task<List<AnimeResponse>> GetSeasonalAnime(AnimeSeasonalRequest animeSeasonalRequest);
+    Task<AnimePageResponse> GetSeasonalAnime(AnimeSeasonalRequest animeSeasonalRequest);
 }

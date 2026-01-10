@@ -2,5 +2,5 @@ namespace AnimeTakusan.AnimeProviders.ProviderModels.AniList;
 
 public record AniListResponse<T>
 {
-    public T Media { get; set; }
+    public required T Media { get; set; }
 }

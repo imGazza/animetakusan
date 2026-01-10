@@ -22,7 +22,7 @@ public class FakeAnimeProvider : IAnimeProvider
         return Task.FromResult(animeResponse);
     }
 
-    public Task<List<AnimeResponse>> GetSeasonalAnime(AnimeSeasonalRequest animeSeasonalRequest)
+    public Task<AnimePageResponse> GetSeasonalAnime(AnimeSeasonalRequest animeSeasonalRequest)
     {
         throw new NotImplementedException();
     }
