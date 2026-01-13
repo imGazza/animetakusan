@@ -1,4 +1,3 @@
-using System;
 using FluentValidation;
 
 namespace AnimeTakusan.Application.Validators;

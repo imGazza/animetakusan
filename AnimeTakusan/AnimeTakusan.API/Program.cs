@@ -1,5 +1,3 @@
-using AnimeTakusan.AnimeProviders;
-using AnimeTakusan.AnimeProviders.Queries;
 using AnimeTakusan.API.Extensions;
 using AnimeTakusan.Application.Interfaces;
 using AnimeTakusan.Application.Validators;

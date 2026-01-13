@@ -8,21 +8,13 @@
 
   <ItemGroup>
     <PackageReference Include="Bogus" Version="35.6.5" />
-    <PackageReference Include="GraphQL.Client" Version="6.1.0" />
-    <PackageReference Include="GraphQL.Client.Serializer.SystemTextJson" Version="6.1.0" />
     <PackageReference Include="Mapster" Version="7.4.0" />
+    <PackageReference Include="StrawberryShake.Server" Version="15.1.11" />
+    <PackageReference Include="StrawberryShake.Transport.Http" Version="15.1.11" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\AnimeTakusan.Application\AnimeTakusan.Application.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="Queries\**\*.graphql" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="ProviderModels\AniList\Requests\" />
   </ItemGroup>
 
 </Project>

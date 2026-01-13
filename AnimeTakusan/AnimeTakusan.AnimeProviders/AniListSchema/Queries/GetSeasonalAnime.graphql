@@ -1,0 +1,12 @@
+query GetSeasonalAnime ($season: MediaSeason, $seasonYear: Int, $sort: [MediaSort], $page: Int, $perPage: Int)  { 
+  Page(page: $page, perPage: $perPage) {
+    pageInfo {
+      currentPage
+      hasNextPage,
+      perPage
+    }
+    media(type: ANIME, season: $season, seasonYear: $seasonYear, sort: $sort) {
+      ...Anime
+    }    
+  }
+}

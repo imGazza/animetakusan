@@ -1,4 +1,4 @@
-using AnimeTakusan.AnimeProviders.ProviderModels.AniList.Responses;
+using AnimeTakusan.AnimeProviders.AniListSchema;
 using AnimeTakusan.Application.DTOs.AnimeProvider.Responses;
 using Mapster;
 
@@ -12,7 +12,7 @@ public class AniListMappingConfig : IRegister, IAnimeProviderMapper
 {
     public void Register(TypeAdapterConfig config)
     {        
-        config.NewConfig<AniListPage<AniListAnimeResponse>, AnimePageResponse>()
+        config.NewConfig<IGetSeasonalAnime_Page, AnimePageResponse>()
             .Map(dest => dest.Page, src => src.PageInfo)
             .Map(dest => dest.Data, src => src.Media);
     }
