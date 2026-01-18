@@ -1,0 +1,42 @@
+query GetBrowseSection($season: MediaSeason, $seasonYear: Int, $nextSeason: MediaSeason, $nextSeasonYear: Int, $lastSeason: MediaSeason, $lastSeasonYear: Int) {  
+  season: Page(perPage: 6, page: 1) {
+    pageInfo {
+      hasNextPage
+      currentPage
+      perPage
+    } 
+    media(season: $season, seasonYear: $seasonYear, sort: POPULARITY_DESC, type: ANIME) {
+      ...Anime
+    }
+  }
+  nextSeason: Page(perPage: 6, page: 1) {
+    pageInfo {
+      hasNextPage
+      currentPage
+      perPage
+    }
+    media(season: $nextSeason, seasonYear: $nextSeasonYear, sort: POPULARITY_DESC, type: ANIME) {
+      ...Anime
+    }
+  }
+  topLastSeason: Page(perPage: 6, page: 1) {
+    pageInfo {
+      hasNextPage
+      currentPage
+      perPage
+    }
+    media(season: $lastSeason, seasonYear: $lastSeasonYear, status: FINISHED, sort: SCORE_DESC, type: ANIME) {
+      ...Anime
+    }
+  }
+  top: Page(page: 1, perPage: 10) {
+    pageInfo {
+      hasNextPage
+      currentPage
+      perPage
+    }
+    media(sort: SCORE_DESC, type: ANIME) {
+      ...Anime
+    }
+  }
+}

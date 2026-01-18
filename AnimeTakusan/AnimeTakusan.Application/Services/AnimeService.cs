@@ -22,4 +22,9 @@ public class AnimeService : IAnimeService, IInjectable
     {
         return await _animeProvider.GetSeasonalAnime(animeSeasonalRequest);
     }
+
+    public async Task<AnimeBrowseResponse> GetAnimeBrowseSection(AnimeBroseSectionRequest animeBroseSectionRequest)
+    {
+        return await _animeProvider.GetAnimeBrowseSection(animeBroseSectionRequest);
+    }
 }

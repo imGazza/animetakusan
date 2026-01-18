@@ -29,16 +29,9 @@ fragment Anime on Media {
   status(version: 2)
   episodes
   duration
-  chapters
-  volumes
   genres
   isAdult
   averageScore
-  popularity
-  mediaListEntry {
-    id
-    status
-  }
   nextAiringEpisode {
     airingAt
     timeUntilAiring

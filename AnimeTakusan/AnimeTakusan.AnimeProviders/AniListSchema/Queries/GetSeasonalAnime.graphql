@@ -7,6 +7,6 @@ query GetSeasonalAnime ($season: MediaSeason, $seasonYear: Int, $sort: [MediaSor
     }
     media(type: ANIME, season: $season, seasonYear: $seasonYear, sort: $sort) {
       ...Anime
-    }    
+    }
   }
 }

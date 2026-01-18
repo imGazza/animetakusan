@@ -7,4 +7,5 @@ public interface IAnimeProvider
 {
     Task<AnimePageResponse> GetSeasonalAnime(AnimeSeasonalRequest animeSeasonalRequest);
     Task<AnimeResponse> GetAnimeById(int id);
+    Task<AnimeBrowseResponse> GetAnimeBrowseSection(AnimeBroseSectionRequest animeBroseSectionRequest);
 }

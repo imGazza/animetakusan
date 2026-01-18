@@ -17,12 +17,16 @@ public class FakeAnimeProvider : IAnimeProvider
 
     public Task<AnimeResponse> GetAnimeById(int id)
     {
-        var animeResponse = _faker.Generate();
-        animeResponse.Id = id;
+        var animeResponse = _faker.RuleFor(a => a.Id, _ => id).Generate();
         return Task.FromResult(animeResponse);
     }
 
     public Task<AnimePageResponse> GetSeasonalAnime(AnimeSeasonalRequest animeSeasonalRequest)
+    {
+        throw new NotImplementedException();
+    }    
+
+    public Task<AnimeBrowseResponse> GetAnimeBrowseSection(AnimeBroseSectionRequest animeBroseSectionRequest)
     {
         throw new NotImplementedException();
     }

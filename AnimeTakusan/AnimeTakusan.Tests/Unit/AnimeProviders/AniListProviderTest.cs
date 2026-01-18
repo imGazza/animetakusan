@@ -1,619 +1,545 @@
-// using System.Net;
-// using AnimeTakusan.AnimeProviders;
-// using AnimeTakusan.AnimeProviders.Helpers;
-// using AnimeTakusan.AnimeProviders.Helpers.Fakers;
-// using AnimeTakusan.AnimeProviders.ProviderModels.AniList;
-// using AnimeTakusan.AnimeProviders.ProviderModels.AniList.Common;
-// using AnimeTakusan.AnimeProviders.ProviderModels.AniList.Responses;
-// using AnimeTakusan.Application.DTOs.AnimeProvider.Requests;
-// using AnimeTakusan.Tests.TestHelpers;
-// using Bogus;
-// using FluentAssertions;
-// using GraphQL;
-// using GraphQL.Client.Http;
-// using Moq;
+using AnimeTakusan.AnimeProviders;
+using AnimeTakusan.AnimeProviders.AniListSchema;
+using AnimeTakusan.Application.DTOs.AnimeProvider.Requests;
+using AnimeTakusan.Domain.Exceptions.GraphQLExceptions;
+using AnimeTakusan.Tests.TestHelpers;
+using AnimeTakusan.Tests.TestHelpers.Fakers;
+using Bogus;
+using FluentAssertions;
+using Moq;
+using StrawberryShake;
 
-// namespace AnimeTakusan.Tests.Unit.AnimeProviders;
+namespace AnimeTakusan.Tests.Unit.AnimeProviders;
 
-// /// <summary>
-// /// Unit tests for AniListProvider.
-// /// Partially generated using AI assistance.
-// /// </summary>
-// public class AniListProviderTest
-// {
-//     private readonly Mock<IGraphQLClientHelper> _mockGraphQLClient;
-//     private readonly AniListProvider _aniListProvider;
-//     private readonly Faker<AniListAnimeResponse> _anilistAnimeResponseFaker;
-//     private const string ProviderName = "AniList";
+/// <summary>
+/// Unit tests for AniListProvider.
+/// Partially generated using AI assistance.
+/// </summary>
+public class AniListProviderTest
+{
+    private readonly Mock<IAniListClient> _mockAniListClient;
+    private readonly Mock<IGetAnimeByIdQuery> _mockGetAnimeByIdQuery;
+    private readonly Mock<IGetSeasonalAnimeQuery> _mockGetSeasonalAnimeQuery;
+    private readonly AniListProvider _aniListProvider;
+    private readonly Faker<GetAnimeById_Media_Media> _animeFaker;
+    private readonly Faker<GetSeasonalAnime_Page_Media_Media> _pageAnimeFaker;
 
-//     public AniListProviderTest()
-//     {
-//         // Configure Mapster mappings before running tests
-//         MapsterTestConfiguration.ConfigureMapster();
+    private const string ProviderName = "AniList";
+
+    public AniListProviderTest()
+    {
+        // Configure Mapster mappings before running tests
+        MapsterTestConfiguration.ConfigureMapster();
         
-//         _mockGraphQLClient = new Mock<IGraphQLClientHelper>();
-//         _mockQueryLoader = new Mock<IQueryLoader>();
-//         _aniListProvider = new AniListProvider(_mockGraphQLClient.Object, _mockQueryLoader.Object);
-//         _anilistAnimeResponseFaker = AnimeProviderFakers.AniListAnimeFaker;
-//     }
-
-//     #region GetAnimeById Tests
-
-//     [Fact(DisplayName = "GetAnimeById should load correct GraphQL query")]
-//     public async Task GetAnimeById_ValidId_LoadsCorrectQuery()
-//     {
-//         // Arrange
-//         var animeId = 1;
-//         var expectedQuery = "query ($id: Int) { Media(id: $id) { id title { romaji english native } } }";
+        _mockAniListClient = new Mock<IAniListClient>();
+        _mockGetAnimeByIdQuery = new Mock<IGetAnimeByIdQuery>();
+        _mockGetSeasonalAnimeQuery = new Mock<IGetSeasonalAnimeQuery>();
         
-//         _mockQueryLoader
-//             .Setup(x => x.LoadQueryAsync(AniListQueryIndex.GetAnimeById))
-//             .ReturnsAsync(expectedQuery);
+        _mockAniListClient.Setup(x => x.GetAnimeById).Returns(_mockGetAnimeByIdQuery.Object);
+        _mockAniListClient.Setup(x => x.GetSeasonalAnime).Returns(_mockGetSeasonalAnimeQuery.Object);
         
-//         _mockGraphQLClient
-//             .Setup(x => x.SendQueryAsync<AniListResponse<AniListAnimeResponse>>(It.IsAny<GraphQLRequest>(), ProviderName))
-//             .ReturnsAsync(new AniListResponse<AniListAnimeResponse> 
-//             { 
-//                 Media = new AniListAnimeResponse { Id = animeId } 
-//             });
+        _aniListProvider = new AniListProvider(_mockAniListClient.Object);
+        _animeFaker = AniListProviderFakers.AniListAnimeFaker;
+        _pageAnimeFaker = AniListProviderFakers.AniListPageAnimeFaker;
+    }
 
-//         // Act
-//         await _aniListProvider.GetAnimeById(animeId);
+    #region GetAnimeById Tests
 
-//         // Assert
-//         _mockQueryLoader.Verify(x => x.LoadQueryAsync(AniListQueryIndex.GetAnimeById), Times.Once);
-//     }
-
-//     [Fact(DisplayName = "GetAnimeById should send GraphQL request with correct ID variable")]
-//     public async Task GetAnimeById_ValidId_SendsRequestWithCorrectIdVariable()
-//     {
-//         // Arrange
-//         var animeId = 42;
-//         var query = "query";
-//         GraphQLRequest capturedRequest = null;
+    [Fact(DisplayName = "GetAnimeById should execute query with correct ID")]
+    public async Task GetAnimeById_ValidId_ExecutesQueryWithCorrectId()
+    {
+        // Arrange
+        var animeId = 42;
+        var mockResult = CreateMockOperationResult<IGetAnimeByIdResult>(
+            new Mock<IGetAnimeByIdResult>().Object);
         
-//         _mockQueryLoader
-//             .Setup(x => x.LoadQueryAsync(It.IsAny<string>()))
-//             .ReturnsAsync(query);
+        _mockGetAnimeByIdQuery
+            .Setup(x => x.ExecuteAsync(animeId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(mockResult);
+
+        // Act
+        await _aniListProvider.GetAnimeById(animeId);
+
+        // Assert
+        _mockGetAnimeByIdQuery.Verify(
+            x => x.ExecuteAsync(animeId, It.IsAny<CancellationToken>()), 
+            Times.Once);
+    }
+
+    [Fact(DisplayName = "GetAnimeById should return mapped AnimeResponse")]
+    public async Task GetAnimeById_ValidResponse_ReturnsMappedAnimeResponse()
+    {
+        // Arrange
+        var mockMedia = _animeFaker.Generate();
+        var mockResultData = CreateMockGetAnimeByIdResult(mockMedia);
+        var mockResult = CreateMockOperationResult(mockResultData);
         
-//         _mockGraphQLClient
-//             .Setup(x => x.SendQueryAsync<AniListResponse<AniListAnimeResponse>>(It.IsAny<GraphQLRequest>(), ProviderName))
-//             .Callback<GraphQLRequest, string>((req, provider) => capturedRequest = req)
-//             .ReturnsAsync(new AniListResponse<AniListAnimeResponse> 
-//             { 
-//                 Media = new AniListAnimeResponse { Id = animeId } 
-//             });
+        _mockGetAnimeByIdQuery
+            .Setup(x => x.ExecuteAsync(mockMedia.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(mockResult);
 
-//         // Act
-//         await _aniListProvider.GetAnimeById(animeId);
+        // Act
+        var result = await _aniListProvider.GetAnimeById(mockMedia.Id);
 
-//         // Assert
-//         capturedRequest.Should().NotBeNull();
-//         capturedRequest!.Query.Should().Be(query);
-//         _mockGraphQLClient.Verify(x => x.SendQueryAsync<AniListResponse<AniListAnimeResponse>>(
-//             It.IsAny<GraphQLRequest>(), ProviderName), 
-//             Times.Once);
-//     }
+        // Assert
+        result.Should().NotBeNull();
+        result.Id.Should().Be(mockMedia.Id);
+    }
 
-//     [Fact(DisplayName = "GetAnimeById should return mapped AnimeResponse")]
-//     public async Task GetAnimeById_ValidResponse_ReturnsMappedAnimeResponse()
-//     {
-//         // Arrange
-//         int aniListAnimeId = 123;
-//         var aniListAnime = _anilistAnimeResponseFaker.Generate();
-//         aniListAnime.Id = aniListAnimeId;
+    [Fact(DisplayName = "GetAnimeById should throw GraphQLQueryFailedException on errors")]
+    public async Task GetAnimeById_GraphQLErrors_ThrowsGraphQLQueryFailedException()
+    {
+        // Arrange
+        var animeId = 1;
+        var errors = new List<IClientError>
+        {
+            CreateMockClientError("Not found"),
+            CreateMockClientError("Invalid ID")
+        };
+        var mockResult = CreateMockOperationResultWithErrors<IGetAnimeByIdResult>(errors);
         
-//         _mockQueryLoader
-//             .Setup(x => x.LoadQueryAsync(It.IsAny<string>()))
-//             .ReturnsAsync("query");
+        _mockGetAnimeByIdQuery
+            .Setup(x => x.ExecuteAsync(animeId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(mockResult);
+
+        // Act & Assert
+        var act = async () => await _aniListProvider.GetAnimeById(animeId);
+        await act.Should().ThrowAsync<GraphQLQueryFailedException>()
+            .WithMessage($"{ProviderName} query failed: Not found, Invalid ID");
+    }
+
+    #endregion
+
+    #region GetSeasonalAnime Tests
+
+    [Fact(DisplayName = "GetSeasonalAnime should execute query with correct parameters")]
+    public async Task GetSeasonalAnime_ValidRequest_ExecutesQueryWithCorrectParameters()
+    {
+        // Arrange
+        var seasonalRequest = new AnimeSeasonalRequest
+        {
+            Season = "SPRING",
+            SeasonYear = 2023,
+            Page = 1,
+            PerPage = 10,
+            Sort = "POPULARITY_DESC"
+        };
         
-//         _mockGraphQLClient
-//             .Setup(x => x.SendQueryAsync<AniListResponse<AniListAnimeResponse>>(It.IsAny<GraphQLRequest>(), ProviderName))
-//             .ReturnsAsync(new AniListResponse<AniListAnimeResponse> { Media = aniListAnime });
-
-//         // Act
-//         var result = await _aniListProvider.GetAnimeById(aniListAnimeId);
-
-//         // Assert
-//         result.Should().NotBeNull();
-//         result.Id.Should().Be(aniListAnimeId);
-//         result.Title.Should().NotBeNull();
-//         result.Title.Romaji.Should().Be(aniListAnime.Title.Romaji);
-//         result.Title.English.Should().Be(aniListAnime.Title.English);
-//         result.Title.Native.Should().Be(aniListAnime.Title.Native);
-//     }
-
-//     [Fact(DisplayName = "GetAnimeById should propagate GraphQL exceptions")]
-//     public async Task GetAnimeById_GraphQLClientThrowsException_PropagatesException()
-//     {
-//         // Arrange
-//         _mockQueryLoader
-//             .Setup(x => x.LoadQueryAsync(It.IsAny<string>()))
-//             .ReturnsAsync("query");
+        var mockPage = CreateMockPage(new List<GetSeasonalAnime_Page_Media_Media>());
+        var mockResultData = CreateMockGetSeasonalAnimeResult(mockPage);
+        var mockResult = CreateMockOperationResult(mockResultData);
         
-//         _mockGraphQLClient
-//             .Setup(x => x.SendQueryAsync<AniListResponse<AniListAnimeResponse>>(It.IsAny<GraphQLRequest>(), ProviderName))
-//             .ThrowsAsync(new GraphQLHttpRequestException(HttpStatusCode.BadRequest, null, null));
+        _mockGetSeasonalAnimeQuery
+            .Setup(x => x.ExecuteAsync(
+                MediaSeason.Spring,
+                2023,
+                It.Is<IReadOnlyList<MediaSort?>>(list => list.Count == 1 && list[0] == MediaSort.PopularityDesc),
+                1,
+                10,
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(mockResult);
 
-//         // Act & Assert
-//         var act = async () => await _aniListProvider.GetAnimeById(1);
-//         await act.Should().ThrowAsync<GraphQLHttpRequestException>()
-//             .WithMessage("*request failed*");
-//     }
+        // Act
+        await _aniListProvider.GetSeasonalAnime(seasonalRequest);
 
-//     #endregion
+        // Assert
+        _mockGetSeasonalAnimeQuery.Verify(
+            x => x.ExecuteAsync(
+                MediaSeason.Spring,
+                2023,
+                It.Is<IReadOnlyList<MediaSort?>>(list => list.Count == 1 && list[0] == MediaSort.PopularityDesc),
+                1,
+                10,
+                It.IsAny<CancellationToken>()), 
+            Times.Once);
+    }
 
-//     #region GetSeasonalAnime Tests
-
-//     [Fact(DisplayName = "GetSeasonalAnime should load correct GraphQL query")]
-//     public async Task GetSeasonalAnime_ValidRequest_LoadsCorrectQuery()
-//     {
-//         // Arrange
-//         var seasonalRequest = new AnimeSeasonalRequest
-//         {
-//             season = "SPRING",
-//             seasonYear = 2023,
-//             page = 1,
-//             perPage = 10,
-//             sort = "POPULARITY_DESC"
-//         };
-//         var expectedQuery = "query ($id: Int) { Media(id: $id) { id title { romaji english native } } }";
+    [Fact(DisplayName = "GetSeasonalAnime should return mapped list of AnimeResponses")]
+    public async Task GetSeasonalAnime_ValidResponse_ReturnsMappedAnimeList()
+    {
+        // Arrange
+        var seasonalRequest = new AnimeSeasonalRequest
+        {
+            Season = "SUMMER",
+            SeasonYear = 2023,
+            Page = 1,
+            PerPage = 5,
+            Sort = "POPULARITY_DESC"
+        };
         
-//         _mockQueryLoader
-//             .Setup(x => x.LoadQueryAsync(AniListQueryIndex.GetSeasonalAnime))
-//             .ReturnsAsync(expectedQuery);
+        var mockMediaList = _pageAnimeFaker.Generate(3);
         
-//         _mockGraphQLClient
-//             .Setup(x => x.SendQueryAsync<AniListPageResponse<AniListAnimeResponse>>(It.IsAny<GraphQLRequest>(), ProviderName))
-//             .ReturnsAsync(new AniListPageResponse<AniListAnimeResponse> 
-//             { 
-//                 Page = new AniListPage<AniListAnimeResponse>
-//                 {
-//                     Media = new List<AniListAnimeResponse>(),
-//                     PageInfo = new AniListPageInfo
-//                     {
-//                         CurrentPage = 1,
-//                         PerPage = 10,
-//                         HasNextPage = false
-//                     }
-//                 }
-//             });
-
-//         // Act
-//         await _aniListProvider.GetSeasonalAnime(seasonalRequest);
+        var mockPage = CreateMockPage(mockMediaList, 1, 5, false);
+        var mockResultData = CreateMockGetSeasonalAnimeResult(mockPage);
+        var mockResult = CreateMockOperationResult(mockResultData);
         
-//         // Assert
-//         _mockQueryLoader.Verify(x => x.LoadQueryAsync(AniListQueryIndex.GetSeasonalAnime), Times.Once);
-//     }
+        _mockGetSeasonalAnimeQuery
+            .Setup(x => x.ExecuteAsync(
+                It.IsAny<MediaSeason?>(),
+                It.IsAny<int?>(),
+                It.IsAny<IReadOnlyList<MediaSort?>>(),
+                It.IsAny<int?>(),
+                It.IsAny<int?>(),
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(mockResult);
 
-//     [Fact(DisplayName = "GetSeasonalAnime should send GraphQL request with correct parameters")]
-//     public async Task GetSeasonalAnime_ValidRequest_SendsRequestWithCorrectParameters()
-//     {
-//         // Arrange
-//         var seasonalRequest = new AnimeSeasonalRequest
-//         {
-//             season = "WINTER",
-//             seasonYear = 2024,
-//             page = 2,
-//             perPage = 20,
-//             sort = "POPULARITY_DESC"
-//         };
-//         var query = "query";
-//         GraphQLRequest capturedRequest = null;
+        // Act
+        var result = await _aniListProvider.GetSeasonalAnime(seasonalRequest);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.Data.Should().HaveCount(3);
+        result.Page.Should().NotBeNull();
+        result.Page.CurrentPage.Should().Be(1);
+        result.Page.PerPage.Should().Be(5);
+        result.Page.HasNextPage.Should().BeFalse();
         
-//         _mockQueryLoader
-//             .Setup(x => x.LoadQueryAsync(It.IsAny<string>()))
-//             .ReturnsAsync(query);
+        result.Data[0].Id.Should().Be(mockMediaList[0].Id);
+        result.Data[0].Title.Romaji.Should().Be(mockMediaList[0].Title.Romaji);
+        result.Data[1].Id.Should().Be(mockMediaList[1].Id);
+        result.Data[2].Id.Should().Be(mockMediaList[2].Id);
+    }
+
+    [Fact(DisplayName = "GetSeasonalAnime should handle empty result list")]
+    public async Task GetSeasonalAnime_EmptyResult_ReturnsEmptyList()
+    {
+        // Arrange
+        var seasonalRequest = new AnimeSeasonalRequest
+        {
+            Season = "FALL",
+            SeasonYear = 1990,
+            Page = 1,
+            PerPage = 10,
+            Sort = "POPULARITY_DESC"
+        };
         
-//         _mockGraphQLClient
-//             .Setup(x => x.SendQueryAsync<AniListPageResponse<AniListAnimeResponse>>(It.IsAny<GraphQLRequest>(), ProviderName))
-//             .Callback<GraphQLRequest, string>((req, provider) => capturedRequest = req)
-//             .ReturnsAsync(new AniListPageResponse<AniListAnimeResponse> 
-//             { 
-//                 Page = new AniListPage<AniListAnimeResponse>
-//                 {
-//                     Media = new List<AniListAnimeResponse>(),
-//                     PageInfo = new AniListPageInfo
-//                     {
-//                         CurrentPage = 2,
-//                         PerPage = 20,
-//                         HasNextPage = true
-//                     }
-//                 }
-//             });
-
-//         // Act
-//         await _aniListProvider.GetSeasonalAnime(seasonalRequest);
-
-//         // Assert
-//         capturedRequest.Should().NotBeNull();
-//         capturedRequest!.Query.Should().Be(query);
-//         _mockGraphQLClient.Verify(x => x.SendQueryAsync<AniListPageResponse<AniListAnimeResponse>>(
-//             It.IsAny<GraphQLRequest>(), ProviderName), 
-//             Times.Once);
-//     }
-
-//     [Fact(DisplayName = "GetSeasonalAnime should return mapped list of AnimeResponses")]
-//     public async Task GetSeasonalAnime_ValidResponse_ReturnsMappedAnimeList()
-//     {
-//         // Arrange
-//         var seasonalRequest = new AnimeSeasonalRequest
-//         {
-//             season = "SUMMER",
-//             seasonYear = 2023,
-//             page = 1,
-//             perPage = 5,
-//             sort = "POPULARITY_DESC"
-//         };
+        var mockPage = CreateMockPage(new List<GetSeasonalAnime_Page_Media_Media>(), 1, 10, false);
+        var mockResultData = CreateMockGetSeasonalAnimeResult(mockPage);
+        var mockResult = CreateMockOperationResult(mockResultData);
         
-//         var aniListAnimes = _anilistAnimeResponseFaker.Generate(3);
+        _mockGetSeasonalAnimeQuery
+            .Setup(x => x.ExecuteAsync(
+                It.IsAny<MediaSeason?>(),
+                It.IsAny<int?>(),
+                It.IsAny<IReadOnlyList<MediaSort?>>(),
+                It.IsAny<int?>(),
+                It.IsAny<int?>(),
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(mockResult);
+
+        // Act
+        var result = await _aniListProvider.GetSeasonalAnime(seasonalRequest);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.Data.Should().BeEmpty();
+        result.Page.HasNextPage.Should().BeFalse();
+    }
+
+    [Fact(DisplayName = "GetSeasonalAnime should handle pagination correctly")]
+    public async Task GetSeasonalAnime_PaginatedRequest_ReturnsCorrectPageInfo()
+    {
+        // Arrange
+        var seasonalRequest = new AnimeSeasonalRequest
+        {
+            Season = "SPRING",
+            SeasonYear = 2023,
+            Page = 3,
+            PerPage = 15,
+            Sort = "POPULARITY_DESC"
+        };
         
-//         _mockQueryLoader
-//             .Setup(x => x.LoadQueryAsync(It.IsAny<string>()))
-//             .ReturnsAsync("query");
+        var mockMediaList = _pageAnimeFaker.Generate(15);
         
-//         _mockGraphQLClient
-//             .Setup(x => x.SendQueryAsync<AniListPageResponse<AniListAnimeResponse>>(It.IsAny<GraphQLRequest>(), ProviderName))
-//             .ReturnsAsync(new AniListPageResponse<AniListAnimeResponse> 
-//             { 
-//                 Page = new AniListPage<AniListAnimeResponse>
-//                 {
-//                     Media = aniListAnimes,
-//                     PageInfo = new AniListPageInfo
-//                     {
-//                         CurrentPage = 1,
-//                         PerPage = 5,
-//                         HasNextPage = false
-//                     }
-//                 }
-//             });
-
-//         // Act
-//         var result = await _aniListProvider.GetSeasonalAnime(seasonalRequest);
-
-//         // Assert
-//         result.Should().NotBeNull();
-//         result.Data.Should().HaveCount(3);
-//         result.Page.Should().NotBeNull();
-//         result.Page.CurrentPage.Should().Be(1);
-//         result.Page.PerPage.Should().Be(5);
-//         result.Page.HasNextPage.Should().BeFalse();
+        var mockPage = CreateMockPage(mockMediaList, 3, 15, true);
+        var mockResultData = CreateMockGetSeasonalAnimeResult(mockPage);
+        var mockResult = CreateMockOperationResult(mockResultData);
         
-//         for (int i = 0; i < aniListAnimes.Count; i++)
-//         {
-//             result.Data[i].Id.Should().Be(aniListAnimes[i].Id);
-//             result.Data[i].Title.Romaji.Should().Be(aniListAnimes[i].Title.Romaji);
-//         }
-//     }
+        _mockGetSeasonalAnimeQuery
+            .Setup(x => x.ExecuteAsync(
+                It.IsAny<MediaSeason?>(),
+                It.IsAny<int?>(),
+                It.IsAny<IReadOnlyList<MediaSort?>>(),
+                It.IsAny<int?>(),
+                It.IsAny<int?>(),
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(mockResult);
 
-//     [Fact(DisplayName = "GetSeasonalAnime should handle empty result list")]
-//     public async Task GetSeasonalAnime_EmptyResult_ReturnsEmptyList()
-//     {
-//         // Arrange
-//         var seasonalRequest = new AnimeSeasonalRequest
-//         {
-//             season = "FALL",
-//             seasonYear = 1990,
-//             page = 1,
-//             perPage = 10,
-//             sort = "POPULARITY_DESC"
-//         };
+        // Act
+        var result = await _aniListProvider.GetSeasonalAnime(seasonalRequest);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.Data.Should().HaveCount(15);
+        result.Page.CurrentPage.Should().Be(3);
+        result.Page.PerPage.Should().Be(15);
+        result.Page.HasNextPage.Should().BeTrue();
+    }
+
+    [Fact(DisplayName = "GetSeasonalAnime should throw GraphQLQueryFailedException on errors")]
+    public async Task GetSeasonalAnime_GraphQLErrors_ThrowsGraphQLQueryFailedException()
+    {
+        // Arrange
+        var seasonalRequest = new AnimeSeasonalRequest
+        {
+            Season = "SPRING",
+            SeasonYear = 2023,
+            Page = 1,
+            PerPage = 10,
+            Sort = "POPULARITY_DESC"
+        };
         
-//         _mockQueryLoader
-//             .Setup(x => x.LoadQueryAsync(It.IsAny<string>()))
-//             .ReturnsAsync("query");
+        var errors = new List<IClientError>
+        {
+            CreateMockClientError("Service unavailable")
+        };
+        var mockResult = CreateMockOperationResultWithErrors<IGetSeasonalAnimeResult>(errors);
         
-//         _mockGraphQLClient
-//             .Setup(x => x.SendQueryAsync<AniListPageResponse<AniListAnimeResponse>>(It.IsAny<GraphQLRequest>(), ProviderName))
-//             .ReturnsAsync(new AniListPageResponse<AniListAnimeResponse> 
-//             { 
-//                 Page = new AniListPage<AniListAnimeResponse>
-//                 {
-//                     Media = new List<AniListAnimeResponse>(),
-//                     PageInfo = new AniListPageInfo
-//                     {
-//                         CurrentPage = 1,
-//                         PerPage = 10,
-//                         HasNextPage = false
-//                     }
-//                 }
-//             });
+        _mockGetSeasonalAnimeQuery
+            .Setup(x => x.ExecuteAsync(
+                It.IsAny<MediaSeason?>(),
+                It.IsAny<int?>(),
+                It.IsAny<IReadOnlyList<MediaSort?>>(),
+                It.IsAny<int?>(),
+                It.IsAny<int?>(),
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(mockResult);
 
-//         // Act
-//         var result = await _aniListProvider.GetSeasonalAnime(seasonalRequest);
+        // Act & Assert
+        var act = async () => await _aniListProvider.GetSeasonalAnime(seasonalRequest);
+        await act.Should().ThrowAsync<GraphQLQueryFailedException>()
+            .WithMessage($"{ProviderName} query failed: Service unavailable");
+    }
 
-//         // Assert
-//         result.Should().NotBeNull();
-//         result.Data.Should().BeEmpty();
-//         result.Page.HasNextPage.Should().BeFalse();
-//     }
-
-//     [Fact(DisplayName = "GetSeasonalAnime should handle pagination correctly")]
-//     public async Task GetSeasonalAnime_PaginatedRequest_ReturnsCorrectPageInfo()
-//     {
-//         // Arrange
-//         var seasonalRequest = new AnimeSeasonalRequest
-//         {
-//             season = "SPRING",
-//             seasonYear = 2023,
-//             page = 3,
-//             perPage = 15,
-//             sort = "POPULARITY_DESC"
-//         };
+    [Theory(DisplayName = "GetSeasonalAnime should handle different seasons correctly")]
+    [InlineData("WINTER", MediaSeason.Winter)]
+    [InlineData("SPRING", MediaSeason.Spring)]
+    [InlineData("SUMMER", MediaSeason.Summer)]
+    [InlineData("FALL", MediaSeason.Fall)]
+    public async Task GetSeasonalAnime_DifferentSeasons_ProcessesCorrectly(string season, MediaSeason expectedSeason)
+    {
+        // Arrange
+        var seasonalRequest = new AnimeSeasonalRequest
+        {
+            Season = season,
+            SeasonYear = 2023,
+            Page = 1,
+            PerPage = 10,
+            Sort = "POPULARITY_DESC"
+        };
         
-//         var aniListAnimes = _anilistAnimeResponseFaker.Generate(15);
+        var mockPage = CreateMockPage(new List<GetSeasonalAnime_Page_Media_Media>());
+        var mockResultData = CreateMockGetSeasonalAnimeResult(mockPage);
+        var mockResult = CreateMockOperationResult(mockResultData);
         
-//         _mockQueryLoader
-//             .Setup(x => x.LoadQueryAsync(It.IsAny<string>()))
-//             .ReturnsAsync("query");
+        _mockGetSeasonalAnimeQuery
+            .Setup(x => x.ExecuteAsync(
+                expectedSeason,
+                It.IsAny<int?>(),
+                It.IsAny<IReadOnlyList<MediaSort?>>(),
+                It.IsAny<int?>(),
+                It.IsAny<int?>(),
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(mockResult);
+
+        // Act
+        await _aniListProvider.GetSeasonalAnime(seasonalRequest);
+
+        // Assert
+        _mockGetSeasonalAnimeQuery.Verify(
+            x => x.ExecuteAsync(
+                expectedSeason,
+                2023,
+                It.IsAny<IReadOnlyList<MediaSort?>>(),
+                1,
+                10,
+                It.IsAny<CancellationToken>()), 
+            Times.Once);
+    }
+
+    [Fact(DisplayName = "GetSeasonalAnime should use default sort when sort is null")]
+    public async Task GetSeasonalAnime_NullSort_UsesDefaultSort()
+    {
+        // Arrange
+        var seasonalRequest = new AnimeSeasonalRequest
+        {
+            Season = "SPRING",
+            SeasonYear = 2023,
+            Page = 1,
+            PerPage = 10,
+            Sort = null
+        };
         
-//         _mockGraphQLClient
-//             .Setup(x => x.SendQueryAsync<AniListPageResponse<AniListAnimeResponse>>(It.IsAny<GraphQLRequest>(), ProviderName))
-//             .ReturnsAsync(new AniListPageResponse<AniListAnimeResponse> 
-//             { 
-//                 Page = new AniListPage<AniListAnimeResponse>
-//                 {
-//                     Media = aniListAnimes,
-//                     PageInfo = new AniListPageInfo
-//                     {
-//                         CurrentPage = 3,
-//                         PerPage = 15,
-//                         HasNextPage = true
-//                     }
-//                 }
-//             });
-
-//         // Act
-//         var result = await _aniListProvider.GetSeasonalAnime(seasonalRequest);
-
-//         // Assert
-//         result.Should().NotBeNull();
-//         result.Data.Should().HaveCount(15);
-//         result.Page.CurrentPage.Should().Be(3);
-//         result.Page.PerPage.Should().Be(15);
-//         result.Page.HasNextPage.Should().BeTrue();
-//     }
-
-//     [Fact(DisplayName = "GetSeasonalAnime should propagate GraphQL exceptions")]
-//     public async Task GetSeasonalAnime_GraphQLClientThrowsException_PropagatesException()
-//     {
-//         // Arrange
-//         var seasonalRequest = new AnimeSeasonalRequest
-//         {
-//             season = "SPRING",
-//             seasonYear = 2023,
-//             page = 1,
-//             perPage = 10,
-//             sort = "POPULARITY_DESC"
-//         };
+        var mockPage = CreateMockPage(new List<GetSeasonalAnime_Page_Media_Media>());
+        var mockResultData = CreateMockGetSeasonalAnimeResult(mockPage);
+        var mockResult = CreateMockOperationResult(mockResultData);
         
-//         _mockQueryLoader
-//             .Setup(x => x.LoadQueryAsync(It.IsAny<string>()))
-//             .ReturnsAsync("query");
+        _mockGetSeasonalAnimeQuery
+            .Setup(x => x.ExecuteAsync(
+                It.IsAny<MediaSeason?>(),
+                It.IsAny<int?>(),
+                It.Is<IReadOnlyList<MediaSort?>>(list => list.Count == 1 && list[0] == MediaSort.PopularityDesc),
+                It.IsAny<int?>(),
+                It.IsAny<int?>(),
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(mockResult);
+
+        // Act
+        await _aniListProvider.GetSeasonalAnime(seasonalRequest);
+
+        // Assert
+        _mockGetSeasonalAnimeQuery.Verify(
+            x => x.ExecuteAsync(
+                MediaSeason.Spring,
+                2023,
+                It.Is<IReadOnlyList<MediaSort?>>(list => list.Count == 1 && list[0] == MediaSort.PopularityDesc),
+                1,
+                10,
+                It.IsAny<CancellationToken>()), 
+            Times.Once);
+    }
+
+    [Theory(DisplayName = "GetSeasonalAnime should parse sort case-insensitively")]
+    [InlineData("popularity_desc")]
+    [InlineData("POPULARITY_DESC")]
+    [InlineData("Popularity_Desc")]
+    public async Task GetSeasonalAnime_CaseInsensitiveSort_ParsesCorrectly(string sortValue)
+    {
+        // Arrange
+        var seasonalRequest = new AnimeSeasonalRequest
+        {
+            Season = "SPRING",
+            SeasonYear = 2023,
+            Page = 1,
+            PerPage = 10,
+            Sort = sortValue
+        };
         
-//         _mockGraphQLClient
-//             .Setup(x => x.SendQueryAsync<AniListPageResponse<AniListAnimeResponse>>(It.IsAny<GraphQLRequest>(), ProviderName))
-//             .ThrowsAsync(new GraphQLHttpRequestException(HttpStatusCode.ServiceUnavailable, null, null));
-
-//         // Act & Assert
-//         var act = async () => await _aniListProvider.GetSeasonalAnime(seasonalRequest);
-//         await act.Should().ThrowAsync<GraphQLHttpRequestException>()
-//             .WithMessage("*request failed*");
-//     }
-
-//     [Theory(DisplayName = "GetSeasonalAnime should handle different seasons correctly")]
-//     [InlineData("WINTER")]
-//     [InlineData("SPRING")]
-//     [InlineData("SUMMER")]
-//     [InlineData("FALL")]
-//     public async Task GetSeasonalAnime_DifferentSeasons_ProcessesCorrectly(string season)
-//     {
-//         // Arrange
-//         var seasonalRequest = new AnimeSeasonalRequest
-//         {
-//             season = season,
-//             seasonYear = 2023,
-//             page = 1,
-//             perPage = 10,
-//             sort = "POPULARITY_DESC"
-//         };
+        var mockPage = CreateMockPage(new List<GetSeasonalAnime_Page_Media_Media>());
+        var mockResultData = CreateMockGetSeasonalAnimeResult(mockPage);
+        var mockResult = CreateMockOperationResult(mockResultData);
         
-//         var aniListAnimes = _anilistAnimeResponseFaker.Generate(5);
+        _mockGetSeasonalAnimeQuery
+            .Setup(x => x.ExecuteAsync(
+                It.IsAny<MediaSeason?>(),
+                It.IsAny<int?>(),
+                It.Is<IReadOnlyList<MediaSort?>>(list => list.Count == 1 && list[0] == MediaSort.PopularityDesc),
+                It.IsAny<int?>(),
+                It.IsAny<int?>(),
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(mockResult);
+
+        // Act
+        await _aniListProvider.GetSeasonalAnime(seasonalRequest);
+
+        // Assert
+        _mockGetSeasonalAnimeQuery.Verify(
+            x => x.ExecuteAsync(
+                It.IsAny<MediaSeason?>(),
+                It.IsAny<int?>(),
+                It.Is<IReadOnlyList<MediaSort?>>(list => list.Count == 1 && list[0] == MediaSort.PopularityDesc),
+                It.IsAny<int?>(),
+                It.IsAny<int?>(),
+                It.IsAny<CancellationToken>()), 
+            Times.Once);
+    }
+
+    [Fact(DisplayName = "GetSeasonalAnime should use default for invalid sort")]
+    public async Task GetSeasonalAnime_InvalidSort_UsesDefault()
+    {
+        // Arrange
+        var seasonalRequest = new AnimeSeasonalRequest
+        {
+            Season = "SPRING",
+            SeasonYear = 2023,
+            Page = 1,
+            PerPage = 10,
+            Sort = "INVALID_SORT_VALUE"
+        };
         
-//         _mockQueryLoader
-//             .Setup(x => x.LoadQueryAsync(It.IsAny<string>()))
-//             .ReturnsAsync("query");
+        var mockPage = CreateMockPage(new List<GetSeasonalAnime_Page_Media_Media>());
+        var mockResultData = CreateMockGetSeasonalAnimeResult(mockPage);
+        var mockResult = CreateMockOperationResult(mockResultData);
         
-//         _mockGraphQLClient
-//             .Setup(x => x.SendQueryAsync<AniListPageResponse<AniListAnimeResponse>>(It.IsAny<GraphQLRequest>(), ProviderName))
-//             .ReturnsAsync(new AniListPageResponse<AniListAnimeResponse> 
-//             { 
-//                 Page = new AniListPage<AniListAnimeResponse>
-//                 {
-//                     Media = aniListAnimes,
-//                     PageInfo = new AniListPageInfo
-//                     {
-//                         CurrentPage = 1,
-//                         PerPage = 10,
-//                         HasNextPage = false
-//                     }
-//                 }
-//             });
+        _mockGetSeasonalAnimeQuery
+            .Setup(x => x.ExecuteAsync(
+                It.IsAny<MediaSeason?>(),
+                It.IsAny<int?>(),
+                It.Is<IReadOnlyList<MediaSort?>>(list => list.Count == 1 && list[0] == MediaSort.PopularityDesc),
+                It.IsAny<int?>(),
+                It.IsAny<int?>(),
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(mockResult);
 
-//         // Act
-//         var result = await _aniListProvider.GetSeasonalAnime(seasonalRequest);
+        // Act
+        await _aniListProvider.GetSeasonalAnime(seasonalRequest);
 
-//         // Assert
-//         result.Should().NotBeNull();
-//         result.Data.Should().HaveCount(5);
-//         _mockGraphQLClient.Verify(x => x.SendQueryAsync<AniListPageResponse<AniListAnimeResponse>>(
-//             It.IsAny<GraphQLRequest>(), ProviderName), 
-//             Times.Once);
-//     }
+        // Assert
+        _mockGetSeasonalAnimeQuery.Verify(
+            x => x.ExecuteAsync(
+                MediaSeason.Spring,
+                2023,
+                It.Is<IReadOnlyList<MediaSort?>>(list => list.Count == 1 && list[0] == MediaSort.PopularityDesc),
+                1,
+                10,
+                It.IsAny<CancellationToken>()), 
+            Times.Once);
+    }
 
-//     [Fact(DisplayName = "GetSeasonalAnime should correctly create request object")]
-//     public async Task GetSeasonalAnime_CorrectlyCreatesRequestObject()
-//     {
-//         // Arrange
-//         var seasonalRequest = new AnimeSeasonalRequest
-//         {
-//             season = "SPRING",
-//             seasonYear = 2023,
-//             page = 1,
-//             perPage = 10,
-//             sort = "POPULARITY_DESC"
-//         };
+    #endregion
 
-//         GraphQLRequest mockRequest = new GraphQLRequest{
-//             Query = "query",
-//             Variables = new AniListSeasonalRequest
-//             {
-//                 Season = AniListSeason.SPRING,
-//                 SeasonYear = 2023,
-//                 Sort = AniListSort.POPULARITY_DESC,
-//                 Page = 1,
-//                 PerPage = 10
-//             }
-//         };
-//         GraphQLRequest capturedRequest = null;
-        
-//         _mockQueryLoader
-//             .Setup(x => x.LoadQueryAsync(It.IsAny<string>()))
-//             .ReturnsAsync("query");
-        
-//         _mockGraphQLClient
-//             .Setup(x => x.SendQueryAsync<AniListPageResponse<AniListAnimeResponse>>(It.IsAny<GraphQLRequest>(), ProviderName))
-//             .Callback<GraphQLRequest, string>((req, provider) => capturedRequest = req)
-//             .ReturnsAsync(new AniListPageResponse<AniListAnimeResponse> 
-//             { 
-//                 Page = new AniListPage<AniListAnimeResponse>
-//                 {
-//                     Media = new List<AniListAnimeResponse>(),
-//                     PageInfo = new AniListPageInfo
-//                     {
-//                         CurrentPage = 1,
-//                         PerPage = 10,
-//                         HasNextPage = false
-//                     }
-//                 }
-//             });
+    #region Helper Methods
 
-//         // Act
-//         var act = await _aniListProvider.GetSeasonalAnime(seasonalRequest);
+    private static IOperationResult<T> CreateMockOperationResult<T>(T data) where T : class
+    {
+        var mockResult = new Mock<IOperationResult<T>>();
+        mockResult.Setup(x => x.Data).Returns(data);
+        mockResult.Setup(x => x.Errors).Returns(Array.Empty<IClientError>());
+        return mockResult.Object;
+    }
 
-//         // Assert
-//         capturedRequest.Should().NotBeNull();
-//         capturedRequest!.Query.Should().Be(mockRequest.Query);
-//         capturedRequest.Variables.Should().BeEquivalentTo(mockRequest.Variables);
-//     }
+    private static IOperationResult<T> CreateMockOperationResultWithErrors<T>(List<IClientError> errors) where T : class
+    {
+        var mockResult = new Mock<IOperationResult<T>>();
+        mockResult.Setup(x => x.Data).Returns((T)null);
+        mockResult.Setup(x => x.Errors).Returns(errors);
+        return mockResult.Object;
+    }
 
-//     [Fact(DisplayName = "GetSeasonalAnime should use default sort when sort is null")]
-//     public async Task GetSeasonalAnime_NullSort_UsesDefaultSort()
-//     {
-//         // Arrange
-//         var seasonalRequest = new AnimeSeasonalRequest
-//         {
-//             season = "SPRING",
-//             seasonYear = 2023,
-//             page = 1,
-//             perPage = 10,
-//             sort = null
-//         };
-        
-//         GraphQLRequest capturedRequest = null;
-//         _mockQueryLoader.Setup(x => x.LoadQueryAsync(It.IsAny<string>())).ReturnsAsync("query");
-//         _mockGraphQLClient
-//             .Setup(x => x.SendQueryAsync<AniListPageResponse<AniListAnimeResponse>>(It.IsAny<GraphQLRequest>(), ProviderName))
-//             .Callback<GraphQLRequest, string>((req, _) => capturedRequest = req)
-//             .ReturnsAsync(new AniListPageResponse<AniListAnimeResponse> 
-//             { 
-//                 Page = new AniListPage<AniListAnimeResponse>
-//                 {
-//                     Media = new List<AniListAnimeResponse>(),
-//                     PageInfo = new AniListPageInfo()
-//                 }
-//             });
+    private static IClientError CreateMockClientError(string message)
+    {
+        var mockError = new Mock<IClientError>();
+        mockError.Setup(x => x.Message).Returns(message);
+        return mockError.Object;
+    }
 
-//         // Act
-//         await _aniListProvider.GetSeasonalAnime(seasonalRequest);
+    private static IGetAnimeByIdResult CreateMockGetAnimeByIdResult(GetAnimeById_Media_Media media)
+    {
+        var mockResult = new Mock<IGetAnimeByIdResult>();
+        mockResult.Setup(x => x.Media).Returns(media);
+        return mockResult.Object;
+    }
 
-//         // Assert
-//         var variables = capturedRequest!.Variables as AniListSeasonalRequest;
-//         variables!.Sort.Should().Be(AniListSort.POPULARITY_DESC);
-//     }
+    private static GetSeasonalAnime_Page_Page CreateMockPage(List<GetSeasonalAnime_Page_Media_Media> mediaList, int currentPage = 1, int perPage = 20, bool hasNextPage = false)
+    {
+        var pageInfo = new GetSeasonalAnime_Page_PageInfo_PageInfo(
+            currentPage: currentPage,
+            hasNextPage: hasNextPage,
+            perPage: perPage
+        );
 
-//     [Theory(DisplayName = "GetSeasonalAnime should parse sort case-insensitively")]
-//     [InlineData("popularity_desc")]
-//     [InlineData("POPULARITY_DESC")]
-//     [InlineData("Popularity_Desc")]
-//     public async Task GetSeasonalAnime_CaseInsensitiveSort_ParsesCorrectly(string sortValue)
-//     {
-//         // Arrange
-//         var seasonalRequest = new AnimeSeasonalRequest
-//         {
-//             season = "SPRING",
-//             seasonYear = 2023,
-//             page = 1,
-//             perPage = 10,
-//             sort = sortValue
-//         };
-        
-//         GraphQLRequest capturedRequest = null;
-//         _mockQueryLoader.Setup(x => x.LoadQueryAsync(It.IsAny<string>())).ReturnsAsync("query");
-//         _mockGraphQLClient
-//             .Setup(x => x.SendQueryAsync<AniListPageResponse<AniListAnimeResponse>>(It.IsAny<GraphQLRequest>(), ProviderName))
-//             .Callback<GraphQLRequest, string>((req, _) => capturedRequest = req)
-//             .ReturnsAsync(new AniListPageResponse<AniListAnimeResponse> 
-//             { 
-//                 Page = new AniListPage<AniListAnimeResponse>
-//                 {
-//                     Media = new List<AniListAnimeResponse>(),
-//                     PageInfo = new AniListPageInfo()
-//                 }
-//             });
+        return new GetSeasonalAnime_Page_Page(
+            pageInfo: pageInfo,
+            media: mediaList.Cast<IGetSeasonalAnime_Page_Media>().ToList()
+        );
+    }
 
-//         // Act
-//         await _aniListProvider.GetSeasonalAnime(seasonalRequest);
+    private static IGetSeasonalAnimeResult CreateMockGetSeasonalAnimeResult(IGetSeasonalAnime_Page page)
+    {
+        var mockResult = new Mock<IGetSeasonalAnimeResult>();
+        mockResult.Setup(x => x.Page).Returns(page);
+        return mockResult.Object;
+    }
 
-//         // Assert
-//         var variables = capturedRequest!.Variables as AniListSeasonalRequest;
-//         variables!.Sort.Should().Be(AniListSort.POPULARITY_DESC);
-//     }
-
-//     [Fact(DisplayName = "GetSeasonalAnime should use default for invalid sort")]
-//     public async Task GetSeasonalAnime_InvalidSort_UsesDefault()
-//     {
-//         // Arrange
-//         var seasonalRequest = new AnimeSeasonalRequest
-//         {
-//             season = "SPRING",
-//             seasonYear = 2023,
-//             page = 1,
-//             perPage = 10,
-//             sort = "INVALID_SORT_VALUE"
-//         };
-        
-//         GraphQLRequest capturedRequest = null;
-//         _mockQueryLoader.Setup(x => x.LoadQueryAsync(It.IsAny<string>())).ReturnsAsync("query");
-//         _mockGraphQLClient
-//             .Setup(x => x.SendQueryAsync<AniListPageResponse<AniListAnimeResponse>>(It.IsAny<GraphQLRequest>(), ProviderName))
-//             .Callback<GraphQLRequest, string>((req, _) => capturedRequest = req)
-//             .ReturnsAsync(new AniListPageResponse<AniListAnimeResponse> 
-//             { 
-//                 Page = new AniListPage<AniListAnimeResponse>
-//                 {
-//                     Media = new List<AniListAnimeResponse>(),
-//                     PageInfo = new AniListPageInfo()
-//                 }
-//             });
-
-//         // Act
-//         await _aniListProvider.GetSeasonalAnime(seasonalRequest);
-
-//         // Assert
-//         var variables = capturedRequest!.Variables as AniListSeasonalRequest;
-//         variables!.Sort.Should().Be(AniListSort.POPULARITY_DESC);
-//     }
-
-//     #endregion
-// }
+    #endregion
+}

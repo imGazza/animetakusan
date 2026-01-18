@@ -30,6 +30,12 @@ namespace AnimeTakusan.API.Controllers
         {
             return Ok(await _animeService.GetSeasonalAnime(animeSeasonalRequest));
         }
+
+        [HttpPost("browse")]
+        public async Task<IActionResult> GetAnimeBrowseSection([FromBody] AnimeBroseSectionRequest animeBroseSectionRequest)
+        {
+            return Ok(await _animeService.GetAnimeBrowseSection(animeBroseSectionRequest));
+        }
     }
     
 }

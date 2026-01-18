@@ -40,6 +40,21 @@ public class AniListProvider : IAnimeProvider
         return response.Data.Page.Adapt<AnimePageResponse>();
     }
 
+    public async Task<AnimeBrowseResponse> GetAnimeBrowseSection(AnimeBroseSectionRequest animeBroseSectionRequest)
+    {
+        var response = await _client.GetBrowseSection.ExecuteAsync(
+            ParseEnumOrDefault(animeBroseSectionRequest.Season, MediaSeason.Winter),
+            animeBroseSectionRequest.SeasonYear,
+            ParseEnumOrDefault(animeBroseSectionRequest.NextSeason, MediaSeason.Winter),
+            animeBroseSectionRequest.NextSeasonYear,
+            ParseEnumOrDefault(animeBroseSectionRequest.LastSeason, MediaSeason.Winter),
+            animeBroseSectionRequest.LastSeasonYear
+        );
+
+        EnsureNoErrors(response);
+        return response.Data.Adapt<AnimeBrowseResponse>();
+    }
+
     // Currently declared the methods here as I don't plan to have multiple providers.
     // If more providers are added in the future, this will be probably moved in a base class.
     private void EnsureNoErrors(IOperationResult operationResult)
