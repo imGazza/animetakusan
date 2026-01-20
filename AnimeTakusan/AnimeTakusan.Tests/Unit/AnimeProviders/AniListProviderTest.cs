@@ -20,9 +20,15 @@ public class AniListProviderTest
     private readonly Mock<IAniListClient> _mockAniListClient;
     private readonly Mock<IGetAnimeByIdQuery> _mockGetAnimeByIdQuery;
     private readonly Mock<IGetSeasonalAnimeQuery> _mockGetSeasonalAnimeQuery;
+    private readonly Mock<IGetBrowseSectionQuery> _mockGetAnimeBrowseSectionQuery;
     private readonly AniListProvider _aniListProvider;
     private readonly Faker<GetAnimeById_Media_Media> _animeFaker;
-    private readonly Faker<GetSeasonalAnime_Page_Media_Media> _pageAnimeFaker;
+    private readonly Faker<GetSeasonalAnime_Page_Media_Media> _pageSeasonalAnimeFaker;
+    private readonly Faker<GetBrowseSection_Season_Media_Media> _pageBrowseSeasonAnimeFaker;
+    private readonly Faker<GetBrowseSection_Top_Media_Media> _pageBrowseTopAnimeFaker;
+    private readonly Faker<GetBrowseSection_NextSeason_Media_Media> _pageBrowseNextSeasonAnimeFaker;
+    private readonly Faker<GetBrowseSection_TopLastSeason_Media_Media> _pageTopLastSeasonAnimeFaker;
+
 
     private const string ProviderName = "AniList";
 
@@ -34,13 +40,18 @@ public class AniListProviderTest
         _mockAniListClient = new Mock<IAniListClient>();
         _mockGetAnimeByIdQuery = new Mock<IGetAnimeByIdQuery>();
         _mockGetSeasonalAnimeQuery = new Mock<IGetSeasonalAnimeQuery>();
-        
+        _mockGetAnimeBrowseSectionQuery = new Mock<IGetBrowseSectionQuery>();
         _mockAniListClient.Setup(x => x.GetAnimeById).Returns(_mockGetAnimeByIdQuery.Object);
         _mockAniListClient.Setup(x => x.GetSeasonalAnime).Returns(_mockGetSeasonalAnimeQuery.Object);
+        _mockAniListClient.Setup(x => x.GetBrowseSection).Returns(_mockGetAnimeBrowseSectionQuery.Object);
         
         _aniListProvider = new AniListProvider(_mockAniListClient.Object);
         _animeFaker = AniListProviderFakers.AniListAnimeFaker;
-        _pageAnimeFaker = AniListProviderFakers.AniListPageAnimeFaker;
+        _pageSeasonalAnimeFaker = AniListProviderFakers.AniListSeasonalAnimeFaker;
+        _pageBrowseSeasonAnimeFaker = AniListProviderFakers.AniListBrowseSeasonAnimeFaker;
+        _pageBrowseTopAnimeFaker = AniListProviderFakers.AniListBrowseTopAnimeFaker;
+        _pageBrowseNextSeasonAnimeFaker = AniListProviderFakers.AniListBrowseNextSeasonAnimeFaker;
+        _pageTopLastSeasonAnimeFaker = AniListProviderFakers.AniListBrowseTopLastSeasonAnimeFaker;
     }
 
     #region GetAnimeById Tests
@@ -167,7 +178,7 @@ public class AniListProviderTest
             Sort = "POPULARITY_DESC"
         };
         
-        var mockMediaList = _pageAnimeFaker.Generate(3);
+        var mockMediaList = _pageSeasonalAnimeFaker.Generate(3);
         
         var mockPage = CreateMockPage(mockMediaList, 1, 5, false);
         var mockResultData = CreateMockGetSeasonalAnimeResult(mockPage);
@@ -249,7 +260,7 @@ public class AniListProviderTest
             Sort = "POPULARITY_DESC"
         };
         
-        var mockMediaList = _pageAnimeFaker.Generate(15);
+        var mockMediaList = _pageSeasonalAnimeFaker.Generate(15);
         
         var mockPage = CreateMockPage(mockMediaList, 3, 15, true);
         var mockResultData = CreateMockGetSeasonalAnimeResult(mockPage);
@@ -488,6 +499,394 @@ public class AniListProviderTest
 
     #endregion
 
+    #region GetAnimeBrowseSection Tests
+
+    [Fact(DisplayName = "GetAnimeBrowseSection should execute query with correct parameters")]
+    public async Task GetAnimeBrowseSection_ValidRequest_ExecutesQueryWithCorrectParameters()
+    {
+        // Arrange
+        var request = new AnimeBroseSectionRequest
+        {
+            Season = "SPRING",
+            SeasonYear = 2023,
+            NextSeason = "SUMMER",
+            NextSeasonYear = 2023,
+            LastSeason = "WINTER",
+            LastSeasonYear = 2023
+        };
+
+        var mockData = CreateMockGetBrowseSectionResult(
+            new Mock<IGetBrowseSection_Season>().Object,
+            new Mock<IGetBrowseSection_NextSeason>().Object,
+            new Mock<IGetBrowseSection_TopLastSeason>().Object,
+            new Mock<IGetBrowseSection_Top>().Object);
+
+        var mockResult = CreateMockOperationResult(mockData);
+
+        _mockGetAnimeBrowseSectionQuery
+            .Setup(x => x.ExecuteAsync(
+                MediaSeason.Spring,
+                2023,
+                MediaSeason.Summer,
+                2023,
+                MediaSeason.Winter,
+                2023,
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(mockResult);
+
+        // Act
+        await _aniListProvider.GetAnimeBrowseSection(request);
+
+        // Assert
+        _mockGetAnimeBrowseSectionQuery.Verify(
+            x => x.ExecuteAsync(
+                MediaSeason.Spring,
+                2023,
+                MediaSeason.Summer,
+                2023,
+                MediaSeason.Winter,
+                2023,
+                It.IsAny<CancellationToken>()), 
+            Times.Once);
+    }
+
+    [Fact(DisplayName = "GetAnimeBrowseSection should return mapped AnimeBrowseResponse")]
+    public async Task GetAnimeBrowseSection_ValidResponse_ReturnsMappedAnimeBrowseResponse()
+    {
+        // Arrange
+        var request = new AnimeBroseSectionRequest
+        {
+            Season = "SPRING",
+            SeasonYear = 2023,
+            NextSeason = "SUMMER",
+            NextSeasonYear = 2023,
+            LastSeason = "WINTER",
+            LastSeasonYear = 2023
+        };
+
+        var mockSeason = _pageBrowseSeasonAnimeFaker.Generate(3);
+        var mockNextSeason = _pageBrowseNextSeasonAnimeFaker.Generate(3);
+        var mockTopLastSeason = _pageTopLastSeasonAnimeFaker.Generate(3);
+        var mockTop = _pageBrowseTopAnimeFaker.Generate(3);
+
+        var mockData = CreateMockBrowseSectionPages(mockSeason, mockNextSeason, mockTopLastSeason, mockTop);
+        var mockResult = CreateMockOperationResult(mockData);
+
+        _mockGetAnimeBrowseSectionQuery
+            .Setup(x => x.ExecuteAsync(
+                MediaSeason.Spring,
+                2023,
+                MediaSeason.Summer,
+                2023,
+                MediaSeason.Winter,
+                2023,
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(mockResult);
+
+        // Act
+        var result = await _aniListProvider.GetAnimeBrowseSection(request);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.Season.Should().NotBeNull();
+        result.NextSeason.Should().NotBeNull();
+        result.TopLastSeason.Should().NotBeNull();
+        result.Top.Should().NotBeNull();
+        result.Season.Data.Should().HaveCount(3);
+        result.NextSeason.Data.Should().HaveCount(3);
+        result.TopLastSeason.Data.Should().HaveCount(3);
+        result.Top.Data.Should().HaveCount(3);        
+    }
+
+    [Fact(DisplayName = "GetAnimeBrowseSection should throw GraphQLQueryFailedException on errors")]
+    public async Task GetAnimeBrowseSection_GraphQLErrors_ThrowsGraphQLQueryFailedException()
+    {
+        // Arrange
+        var request = new AnimeBroseSectionRequest
+        {
+            Season = "SPRING",
+            SeasonYear = 2023,
+            NextSeason = "SUMMER",
+            NextSeasonYear = 2023,
+            LastSeason = "WINTER",
+            LastSeasonYear = 2023
+        };
+        
+        var errors = new List<IClientError>
+        {
+            CreateMockClientError("Service unavailable"),
+            CreateMockClientError("Rate limit exceeded")
+        };
+        var mockResult = CreateMockOperationResultWithErrors<IGetBrowseSectionResult>(errors);
+        
+        _mockGetAnimeBrowseSectionQuery
+            .Setup(x => x.ExecuteAsync(
+                It.IsAny<MediaSeason?>(),
+                It.IsAny<int?>(),
+                It.IsAny<MediaSeason?>(),
+                It.IsAny<int?>(),
+                It.IsAny<MediaSeason?>(),
+                It.IsAny<int?>(),
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(mockResult);
+
+        // Act & Assert
+        var act = async () => await _aniListProvider.GetAnimeBrowseSection(request);
+        await act.Should().ThrowAsync<GraphQLQueryFailedException>()
+            .WithMessage($"{ProviderName} query failed: Service unavailable, Rate limit exceeded");
+    }
+
+    [Theory(DisplayName = "GetAnimeBrowseSection should handle different seasons correctly")]
+    [InlineData("WINTER", "SPRING", "FALL", MediaSeason.Winter, MediaSeason.Spring, MediaSeason.Fall)]
+    [InlineData("SPRING", "SUMMER", "WINTER", MediaSeason.Spring, MediaSeason.Summer, MediaSeason.Winter)]
+    [InlineData("SUMMER", "FALL", "SPRING", MediaSeason.Summer, MediaSeason.Fall, MediaSeason.Spring)]
+    [InlineData("FALL", "WINTER", "SUMMER", MediaSeason.Fall, MediaSeason.Winter, MediaSeason.Summer)]
+    public async Task GetAnimeBrowseSection_DifferentSeasons_ProcessesCorrectly(
+        string season, string nextSeason, string lastSeason,
+        MediaSeason expectedSeason, MediaSeason expectedNextSeason, MediaSeason expectedLastSeason)
+    {
+        // Arrange
+        var request = new AnimeBroseSectionRequest
+        {
+            Season = season,
+            SeasonYear = 2023,
+            NextSeason = nextSeason,
+            NextSeasonYear = 2023,
+            LastSeason = lastSeason,
+            LastSeasonYear = 2023
+        };
+        
+        var mockData = CreateMockGetBrowseSectionResult(
+            new Mock<IGetBrowseSection_Season>().Object,
+            new Mock<IGetBrowseSection_NextSeason>().Object,
+            new Mock<IGetBrowseSection_TopLastSeason>().Object,
+            new Mock<IGetBrowseSection_Top>().Object);
+        var mockResult = CreateMockOperationResult(mockData);
+        
+        _mockGetAnimeBrowseSectionQuery
+            .Setup(x => x.ExecuteAsync(
+                expectedSeason,
+                It.IsAny<int?>(),
+                expectedNextSeason,
+                It.IsAny<int?>(),
+                expectedLastSeason,
+                It.IsAny<int?>(),
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(mockResult);
+
+        // Act
+        await _aniListProvider.GetAnimeBrowseSection(request);
+
+        // Assert
+        _mockGetAnimeBrowseSectionQuery.Verify(
+            x => x.ExecuteAsync(
+                expectedSeason,
+                2023,
+                expectedNextSeason,
+                2023,
+                expectedLastSeason,
+                2023,
+                It.IsAny<CancellationToken>()), 
+            Times.Once);
+    }
+
+    [Fact(DisplayName = "GetAnimeBrowseSection should use default season when season is invalid")]
+    public async Task GetAnimeBrowseSection_InvalidSeasons_UsesDefaultSeasons()
+    {
+        // Arrange
+        var request = new AnimeBroseSectionRequest
+        {
+            Season = "INVALID_SEASON",
+            SeasonYear = 2023,
+            NextSeason = "ALSO_INVALID",
+            NextSeasonYear = 2023,
+            LastSeason = "NOT_A_SEASON",
+            LastSeasonYear = 2023
+        };
+        
+        var mockData = CreateMockGetBrowseSectionResult(
+            new Mock<IGetBrowseSection_Season>().Object,
+            new Mock<IGetBrowseSection_NextSeason>().Object,
+            new Mock<IGetBrowseSection_TopLastSeason>().Object,
+            new Mock<IGetBrowseSection_Top>().Object);
+        var mockResult = CreateMockOperationResult(mockData);
+        
+        _mockGetAnimeBrowseSectionQuery
+            .Setup(x => x.ExecuteAsync(
+                MediaSeason.Winter,
+                It.IsAny<int?>(),
+                MediaSeason.Winter,
+                It.IsAny<int?>(),
+                MediaSeason.Winter,
+                It.IsAny<int?>(),
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(mockResult);
+
+        // Act
+        await _aniListProvider.GetAnimeBrowseSection(request);
+
+        // Assert
+        _mockGetAnimeBrowseSectionQuery.Verify(
+            x => x.ExecuteAsync(
+                MediaSeason.Winter,
+                2023,
+                MediaSeason.Winter,
+                2023,
+                MediaSeason.Winter,
+                2023,
+                It.IsAny<CancellationToken>()), 
+            Times.Once);
+    }
+
+    [Fact(DisplayName = "GetAnimeBrowseSection should handle null season values")]
+    public async Task GetAnimeBrowseSection_NullSeasons_UsesDefaultSeasons()
+    {
+        // Arrange
+        var request = new AnimeBroseSectionRequest
+        {
+            Season = null,
+            SeasonYear = 2023,
+            NextSeason = null,
+            NextSeasonYear = 2023,
+            LastSeason = null,
+            LastSeasonYear = 2023
+        };
+        
+        var mockData = CreateMockGetBrowseSectionResult(
+            new Mock<IGetBrowseSection_Season>().Object,
+            new Mock<IGetBrowseSection_NextSeason>().Object,
+            new Mock<IGetBrowseSection_TopLastSeason>().Object,
+            new Mock<IGetBrowseSection_Top>().Object);
+        var mockResult = CreateMockOperationResult(mockData);
+        
+        _mockGetAnimeBrowseSectionQuery
+            .Setup(x => x.ExecuteAsync(
+                MediaSeason.Winter,
+                It.IsAny<int?>(),
+                MediaSeason.Winter,
+                It.IsAny<int?>(),
+                MediaSeason.Winter,
+                It.IsAny<int?>(),
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(mockResult);
+
+        // Act
+        await _aniListProvider.GetAnimeBrowseSection(request);
+
+        // Assert
+        _mockGetAnimeBrowseSectionQuery.Verify(
+            x => x.ExecuteAsync(
+                MediaSeason.Winter,
+                2023,
+                MediaSeason.Winter,
+                2023,
+                MediaSeason.Winter,
+                2023,
+                It.IsAny<CancellationToken>()), 
+            Times.Once);
+    }
+
+    [Theory(DisplayName = "GetAnimeBrowseSection should parse seasons case-insensitively")]
+    [InlineData("winter")]
+    [InlineData("WINTER")]
+    [InlineData("Winter")]
+    public async Task GetAnimeBrowseSection_CaseInsensitiveSeasons_ParsesCorrectly(string seasonValue)
+    {
+        // Arrange
+        var request = new AnimeBroseSectionRequest
+        {
+            Season = seasonValue,
+            SeasonYear = 2023,
+            NextSeason = seasonValue,
+            NextSeasonYear = 2023,
+            LastSeason = seasonValue,
+            LastSeasonYear = 2023
+        };
+        
+        var mockData = CreateMockGetBrowseSectionResult(
+            new Mock<IGetBrowseSection_Season>().Object,
+            new Mock<IGetBrowseSection_NextSeason>().Object,
+            new Mock<IGetBrowseSection_TopLastSeason>().Object,
+            new Mock<IGetBrowseSection_Top>().Object);
+        var mockResult = CreateMockOperationResult(mockData);
+        
+        _mockGetAnimeBrowseSectionQuery
+            .Setup(x => x.ExecuteAsync(
+                MediaSeason.Winter,
+                It.IsAny<int?>(),
+                MediaSeason.Winter,
+                It.IsAny<int?>(),
+                MediaSeason.Winter,
+                It.IsAny<int?>(),
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(mockResult);
+
+        // Act
+        await _aniListProvider.GetAnimeBrowseSection(request);
+
+        // Assert
+        _mockGetAnimeBrowseSectionQuery.Verify(
+            x => x.ExecuteAsync(
+                MediaSeason.Winter,
+                2023,
+                MediaSeason.Winter,
+                2023,
+                MediaSeason.Winter,
+                2023,
+                It.IsAny<CancellationToken>()), 
+            Times.Once);
+    }
+
+    [Fact(DisplayName = "GetAnimeBrowseSection should verify all season years are passed correctly")]
+    public async Task GetAnimeBrowseSection_WithSeasonYears_PassesAllYearsCorrectly()
+    {
+        // Arrange
+        var request = new AnimeBroseSectionRequest
+        {
+            Season = "SPRING",
+            SeasonYear = 2023,
+            NextSeason = "SUMMER",
+            NextSeasonYear = 2024,
+            LastSeason = "WINTER",
+            LastSeasonYear = 2022
+        };
+        
+        var mockData = CreateMockGetBrowseSectionResult(
+            new Mock<IGetBrowseSection_Season>().Object,
+            new Mock<IGetBrowseSection_NextSeason>().Object,
+            new Mock<IGetBrowseSection_TopLastSeason>().Object,
+            new Mock<IGetBrowseSection_Top>().Object);
+        var mockResult = CreateMockOperationResult(mockData);
+        
+        _mockGetAnimeBrowseSectionQuery
+            .Setup(x => x.ExecuteAsync(
+                MediaSeason.Spring,
+                2023,
+                MediaSeason.Summer,
+                2024,
+                MediaSeason.Winter,
+                2022,
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(mockResult);
+
+        // Act
+        await _aniListProvider.GetAnimeBrowseSection(request);
+
+        // Assert
+        _mockGetAnimeBrowseSectionQuery.Verify(
+            x => x.ExecuteAsync(
+                MediaSeason.Spring,
+                2023,
+                MediaSeason.Summer,
+                2024,
+                MediaSeason.Winter,
+                2022,
+                It.IsAny<CancellationToken>()), 
+            Times.Once);
+    }
+
+    #endregion
+
     #region Helper Methods
 
     private static IOperationResult<T> CreateMockOperationResult<T>(T data) where T : class
@@ -538,6 +937,72 @@ public class AniListProviderTest
     {
         var mockResult = new Mock<IGetSeasonalAnimeResult>();
         mockResult.Setup(x => x.Page).Returns(page);
+        return mockResult.Object;
+    }
+
+    private static IGetBrowseSectionResult CreateMockBrowseSectionPages(
+        List<GetBrowseSection_Season_Media_Media> seasonMedia,
+        List<GetBrowseSection_NextSeason_Media_Media> nextSeasonMedia,
+        List<GetBrowseSection_TopLastSeason_Media_Media> topLastSeasonMedia,
+        List<GetBrowseSection_Top_Media_Media> topMedia,
+        int currentPage = 1,
+        int perPage = 3,
+        bool hasNextPage = false)
+    {
+        var pageInfoSeason = new GetBrowseSection_Season_PageInfo_PageInfo(
+            currentPage: currentPage,
+            hasNextPage: hasNextPage,
+            perPage: perPage
+        );
+        var pageInfoNextSeason = new GetBrowseSection_NextSeason_PageInfo_PageInfo(
+            currentPage: currentPage,
+            hasNextPage: hasNextPage,
+            perPage: perPage
+        );
+        var pageInfoTopLastSeason = new GetBrowseSection_TopLastSeason_PageInfo_PageInfo(
+            currentPage: currentPage,
+            hasNextPage: hasNextPage,
+            perPage: perPage
+        );
+        var pageInfoTop = new GetBrowseSection_Top_PageInfo_PageInfo(
+            currentPage: currentPage,
+            hasNextPage: hasNextPage,
+            perPage: perPage
+        );
+
+
+        var season = new GetBrowseSection_Season_Page(
+            pageInfo: pageInfoSeason,
+            media: seasonMedia.Cast<IGetBrowseSection_Season_Media>().ToList()
+        );
+        var nextSeason = new GetBrowseSection_NextSeason_Page(
+            pageInfo: pageInfoNextSeason,
+            media: nextSeasonMedia.Cast<IGetBrowseSection_NextSeason_Media>().ToList()
+        );
+        var topLastSeason = new GetBrowseSection_TopLastSeason_Page(
+            pageInfo: pageInfoTopLastSeason,
+            media: topLastSeasonMedia.Cast<IGetBrowseSection_TopLastSeason_Media>().ToList()
+        );
+        var top = new GetBrowseSection_Top_Page(
+            pageInfo: pageInfoTop,
+            media: topMedia.Cast<IGetBrowseSection_Top_Media>().ToList()
+        );
+
+        return new GetBrowseSectionResult(
+            season: season,
+            nextSeason: nextSeason,
+            topLastSeason: topLastSeason,
+            top: top
+        );
+    }
+
+    private static IGetBrowseSectionResult CreateMockGetBrowseSectionResult(IGetBrowseSection_Season season, IGetBrowseSection_NextSeason nextSeason, IGetBrowseSection_TopLastSeason topLastSeason, IGetBrowseSection_Top top)
+    {
+        var mockResult = new Mock<IGetBrowseSectionResult>();
+        mockResult.Setup(x => x.Season).Returns(season);
+        mockResult.Setup(x => x.NextSeason).Returns(nextSeason);
+        mockResult.Setup(x => x.TopLastSeason).Returns(topLastSeason);
+        mockResult.Setup(x => x.Top).Returns(top);
         return mockResult.Object;
     }
 
