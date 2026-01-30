@@ -1,7 +1,11 @@
 
 export const siteConfig = {
-    navItems: [
-        { label: "Browse", href: "/" },
-        { label: "Library", href: "/library" },
-    ]
+  navItems: [
+    { label: "Home", href: "#", coming: true },
+    { label: "Browse", href: "/browse", coming: false },
+    { label: "Library", href: "#", coming: true },
+  ],
+  urls: {
+    github: "https://github.com/imGazza/animetakusan"
+  }
 }

@@ -3,7 +3,7 @@
   "git": {
     "deploymentEnabled": false
   },
-"rewrites": [
+  "rewrites": [
     {
       "source": "/(.*)",
       "destination": "/index.html"
