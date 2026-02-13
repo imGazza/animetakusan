@@ -16,13 +16,7 @@ const AnimePreview = ({ title, data }: AnimePreviewProps) => {
       <div className="text-md font-medium text-muted-foreground tracking-wider">
         {title}
       </div>
-      <div className="grid grid-cols-3 lg:grid-cols-6 gap-2.5 lg:gap-12 py-4">
-        <AnimeCard anime={displayData[0]} />
-        <AnimeCard anime={displayData[1]} />
-        <AnimeCard anime={displayData[2]} />
-        <AnimeCard anime={displayData[0]} />
-        <AnimeCard anime={displayData[1]} />
-        <AnimeCard anime={displayData[2]} />
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(120px,1fr))] md:grid-cols-[repeat(auto-fit,minmax(150px,1fr))] lg:grid-cols-[repeat(auto-fit,minmax(180px,1fr))] grid-rows-2 gap-2.5 lg:gap-12 py-4 lg:[&>*:nth-child(n+5)]:hidden xl:[&>*:nth-child(n+5)]:block xl:[&>*:nth-child(n+6)]:hidden 2xl:[&>*:nth-child(n+6)]:block">
         <AnimeCard anime={displayData[0]} />
         <AnimeCard anime={displayData[1]} />
         <AnimeCard anime={displayData[2]} />

@@ -11,11 +11,7 @@ interface AnimeCardInfoProps {
   className?: string;
 }
 
-
-
 const AnimeCardInfo = ({ anime, className }: AnimeCardInfoProps) => {
-
-
   return (
     <div className={cn("flex flex-col overflow-hidden h-full gap-4", className)}>
       <div className="flex justify-between gap-2 text-sm text-muted-foreground">
