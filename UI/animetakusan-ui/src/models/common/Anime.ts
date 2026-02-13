@@ -1,3 +1,5 @@
+import type { AnimeFormatKey } from "./AnimeFormat";
+
 export interface Anime {
   id: number;
   title: Title;
@@ -9,14 +11,14 @@ export interface Anime {
   seasonYear: number | null;
   description: string;
   type: string;
-  format: string;
+  format: AnimeFormatKey;
   status: string;
   episodes: number | null;
   duration: number | null;
   genres: string[];
   isAdult: boolean | null;
   averageScore: number | null;
-  nextAiringEpisode: AiringSchedule;
+  nextAiringEpisode: AiringSchedule | null;
   studios: StudioConnection;
 }
 
@@ -52,33 +54,3 @@ export interface Studio {
   id: number;
   name: string;
 }
-
-// export enum AnimeSeason {
-//   WINTER = "WINTER",
-//   SPRING = "SPRING",
-//   SUMMER = "SUMMER",
-//   FALL = "FALL"
-// }
-
-// export enum AnimeType {
-//   ANIME = "ANIME",
-//   MANGA = "MANGA"
-// }
-
-// export enum AnimeFormat {
-//   TV = "TV",
-//   TV_SHORT = "TV_SHORT",
-//   MOVIE = "MOVIE",
-//   SPECIAL = "SPECIAL",
-//   OVA = "OVA",
-//   ONA = "ONA",
-//   MUSIC = "MUSIC"
-// }
-
-// export enum AnimeStatus {
-//   FINISHED = "FINISHED",
-//   RELEASING = "RELEASING",
-//   NOT_YET_RELEASED = "NOT_YET_RELEASED",
-//   CANCELLED = "CANCELLED",
-//   HIATUS = "HIATUS"
-// }

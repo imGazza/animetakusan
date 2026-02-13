@@ -1,4 +1,3 @@
-
 import { Button } from "./button";
 import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -20,16 +19,10 @@ const MobileNav = ({ className, items }: MobileNavProps) => {
       <PopoverTrigger asChild>
         <div className={cn("flex items-center", className)}>
           <Button variant="ghost" size="icon" className="extend-touch-target h-8 touch-manipulation items-center justify-start gap-2.5 !p-0">
-            {/* { open ?
-                <X className="size-5 transition-all duration-100" /> :
-                <Menu className="size-5 transition-all duration-100" />
-            } */}
-
             <div className="relative size-5">
               <Menu className={cn("absolute size-5 transition-all duration-100", open && "rotate-180 opacity-0")} />
               <X className={cn("absolute size-5 transition-all duration-100", !open && "-rotate-180 opacity-0")} />
             </div>
-
           </Button>
           Menu
         </div>
