@@ -6,8 +6,6 @@ import type { RegisterRequest } from "@/models/auth/RegisterRequest";
 import { useNavigate } from "react-router";
 
 const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-    
-  // Aggiungi validazione dati Signup sul backend, restituisci errori parlanti in caso di validazione fallita
 
   const navigate = useNavigate();
 

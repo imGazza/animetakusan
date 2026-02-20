@@ -1,6 +1,6 @@
 namespace AnimeTakusan.Application.DTOs.AnimeProvider.Requests;
 
-public class AnimeBroseSectionRequest
+public class AnimeBrowseSectionRequest
 {
     public required string Season { get; init; }
     public required int SeasonYear { get; init; }

@@ -26,7 +26,7 @@ public class FakeAnimeProvider : IAnimeProvider
         throw new NotImplementedException();
     }    
 
-    public Task<AnimeBrowseResponse> GetAnimeBrowseSection(AnimeBroseSectionRequest animeBroseSectionRequest)
+    public Task<AnimeBrowseResponse> GetAnimeBrowseSection(AnimeBrowseSectionRequest animeBroseSectionRequest)
     {
         throw new NotImplementedException();
     }

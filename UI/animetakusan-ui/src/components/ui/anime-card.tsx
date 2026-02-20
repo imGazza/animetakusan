@@ -1,12 +1,13 @@
 import type { Anime } from "@/models/common/Anime"
 import { AspectRatio } from "./aspect-ratio"
-import { BookmarkPlus, BookPlus, Info, Library } from "lucide-react"
+import { BookmarkPlus, Info } from "lucide-react"
 import AnimeCardInfo from "./anime-card-info"
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "./hover-card"
 import { useEffect, useRef, useState } from "react"
 import { Button } from "./button"
 import AnimeMobileInfo from "./anime-mobile-info"
 import AnimeAdd from "./anime-add"
+import { Skeleton } from "./skeleton"
 
 interface AnimeCardProps {
   anime: Anime
@@ -31,23 +32,27 @@ const AnimeCard = ({ anime }: AnimeCardProps) => {
     return () => resizeObserver.disconnect()
   }, [])
 
+  if(anime === null){
+    return <AnimeCardSkeleton />
+  }
+
   return (
     <HoverCard openDelay={0} closeDelay={0}>
       <HoverCardTrigger asChild>
-        <div className="flex relative animate-in zoom-in-85 duration-200 ease-in-out cursor-pointer">
+        <div className="flex relative animate-in cursor-pointer">
           <div ref={triggerRef} className="group flex flex-col w-full max-w-(--sm-image-width) md:max-w-(--md-image-width)">
             <AspectRatio ratio={37 / 53} className="bg-muted rounded-sm overflow-hidden relative">
               <img
                 src={anime.coverImage.extraLarge}
                 alt={anime.title.english || anime.title.romaji || ""}
-                className="h-full w-full object-cover lg:group-hover:scale-[1.1] transition-transform duration-300 ease-in-out will-change-transform animate-in fade-in-0"
+                className="h-full w-full object-cover lg:group-hover:scale-[1.1] transition-transform duration-500 ease-in-out will-change-transform animate-in fade-in-0"
               />
               <AnimeAdd>
                 <Button variant="ghost" size="icon" className="bg-background text-muted-foreground size-8 absolute right-1 top-1 rounded-full z-10 opacity-0 scale-[.40] pointer-events-none lg:group-hover:opacity-80 lg:group-hover:scale-[1] lg:group-hover:pointer-events-auto transition-all duration-200 ease-in-out">
                   <BookmarkPlus className="size-4" />
                 </Button>
               </AnimeAdd>
-              <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/10 md:via-transparent to-black/60 md:to-black/20" />
+              <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/10 md:via-black/10 to-black/60 md:to-black/60 animate-in fade-in-0 duration-300"/>
               <div
                 className="absolute bottom-0 w-full h-full"
               />
@@ -75,3 +80,14 @@ const AnimeCard = ({ anime }: AnimeCardProps) => {
   )
 }
 export default AnimeCard;
+
+const AnimeCardSkeleton = () => {
+  return (
+    <div className="flex flex-col w-full max-w-(--sm-image-width) md:max-w-(--md-image-width) animate-in zoom-in-85 duration-300 ease-in-out">
+      <AspectRatio ratio={37 / 53} className="rounded-sm overflow-hidden">
+        <Skeleton className="h-full w-full" />
+      </AspectRatio>
+    </div>
+  )
+}
+export { AnimeCardSkeleton }

@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using AnimeTakusan.API.Extensions;
 using AnimeTakusan.Application.Interfaces;
 using AnimeTakusan.Application.Validators;
@@ -16,7 +17,12 @@ Log.Logger = new LoggerConfiguration()
 
 Log.Information("Application starting up...");
 builder.Services.AddSerilog();
-builder.Services.AddControllers();
+
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+});
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 

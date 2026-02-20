@@ -1,6 +1,6 @@
-
 import { z } from "zod";
 
+// Enum definition
 export const AnimeFormatKeySchema = z.enum([
   "TV",
   "TV_SHORT",
@@ -14,8 +14,10 @@ export const AnimeFormatKeySchema = z.enum([
   "ONE_SHOT"
 ]);
 
+// Infered type from the enum schema
 export type AnimeFormatKey = z.infer<typeof AnimeFormatKeySchema>;
 
+// Display names for each anime format
 export const ANIME_FORMAT_DISPLAY: Record<AnimeFormatKey, string> = {
   TV: "TV Show",
   TV_SHORT: "TV Short",
@@ -29,6 +31,7 @@ export const ANIME_FORMAT_DISPLAY: Record<AnimeFormatKey, string> = {
   ONE_SHOT: "One Shot"
 } as const;
 
+// Search for the key and returns the display name, if any
 export function displayFormat(value: unknown): string | null {
   const formatKey = parseFormat(value);
   return formatKey ? getFormatDisplay(formatKey) : null;

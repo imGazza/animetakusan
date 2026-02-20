@@ -23,6 +23,6 @@ public class RegisterRequestValidator : CustomValidator<RegisterRequest>
 
         RuleFor(x => x.ConfirmPassword)
             .NotEmpty().WithMessage("Confirm Password is required.")
-            .Equal(x => x.Password).WithMessage("Passwords do not match.");            
+            .Equal(x => x.Password).WithMessage("Passwords do not match.");
     }
 }

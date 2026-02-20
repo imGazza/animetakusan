@@ -40,7 +40,7 @@ public class AniListProvider : IAnimeProvider
         return response.Data.Page.Adapt<AnimePageResponse>();
     }
 
-    public async Task<AnimeBrowseResponse> GetAnimeBrowseSection(AnimeBroseSectionRequest animeBroseSectionRequest)
+    public async Task<AnimeBrowseResponse> GetAnimeBrowseSection(AnimeBrowseSectionRequest animeBroseSectionRequest)
     {
         var response = await _client.GetBrowseSection.ExecuteAsync(
             ParseEnumOrDefault(animeBroseSectionRequest.Season, MediaSeason.Winter),

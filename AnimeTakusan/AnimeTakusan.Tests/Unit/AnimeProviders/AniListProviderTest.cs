@@ -505,7 +505,7 @@ public class AniListProviderTest
     public async Task GetAnimeBrowseSection_ValidRequest_ExecutesQueryWithCorrectParameters()
     {
         // Arrange
-        var request = new AnimeBroseSectionRequest
+        var request = new AnimeBrowseSectionRequest
         {
             Season = "SPRING",
             SeasonYear = 2023,
@@ -554,7 +554,7 @@ public class AniListProviderTest
     public async Task GetAnimeBrowseSection_ValidResponse_ReturnsMappedAnimeBrowseResponse()
     {
         // Arrange
-        var request = new AnimeBroseSectionRequest
+        var request = new AnimeBrowseSectionRequest
         {
             Season = "SPRING",
             SeasonYear = 2023,
@@ -602,7 +602,7 @@ public class AniListProviderTest
     public async Task GetAnimeBrowseSection_GraphQLErrors_ThrowsGraphQLQueryFailedException()
     {
         // Arrange
-        var request = new AnimeBroseSectionRequest
+        var request = new AnimeBrowseSectionRequest
         {
             Season = "SPRING",
             SeasonYear = 2023,
@@ -646,7 +646,7 @@ public class AniListProviderTest
         MediaSeason expectedSeason, MediaSeason expectedNextSeason, MediaSeason expectedLastSeason)
     {
         // Arrange
-        var request = new AnimeBroseSectionRequest
+        var request = new AnimeBrowseSectionRequest
         {
             Season = season,
             SeasonYear = 2023,
@@ -694,7 +694,7 @@ public class AniListProviderTest
     public async Task GetAnimeBrowseSection_InvalidSeasons_UsesDefaultSeasons()
     {
         // Arrange
-        var request = new AnimeBroseSectionRequest
+        var request = new AnimeBrowseSectionRequest
         {
             Season = "INVALID_SEASON",
             SeasonYear = 2023,
@@ -742,7 +742,7 @@ public class AniListProviderTest
     public async Task GetAnimeBrowseSection_NullSeasons_UsesDefaultSeasons()
     {
         // Arrange
-        var request = new AnimeBroseSectionRequest
+        var request = new AnimeBrowseSectionRequest
         {
             Season = null,
             SeasonYear = 2023,
@@ -793,7 +793,7 @@ public class AniListProviderTest
     public async Task GetAnimeBrowseSection_CaseInsensitiveSeasons_ParsesCorrectly(string seasonValue)
     {
         // Arrange
-        var request = new AnimeBroseSectionRequest
+        var request = new AnimeBrowseSectionRequest
         {
             Season = seasonValue,
             SeasonYear = 2023,
@@ -841,7 +841,7 @@ public class AniListProviderTest
     public async Task GetAnimeBrowseSection_WithSeasonYears_PassesAllYearsCorrectly()
     {
         // Arrange
-        var request = new AnimeBroseSectionRequest
+        var request = new AnimeBrowseSectionRequest
         {
             Season = "SPRING",
             SeasonYear = 2023,

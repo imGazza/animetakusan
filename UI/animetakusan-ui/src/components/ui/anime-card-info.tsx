@@ -24,7 +24,7 @@ const AnimeCardInfo = ({ anime, className }: AnimeCardInfoProps) => {
       <AnimeCardFormat format={anime.format} episodes={anime.episodes ?? 0} duration={anime.duration ?? 0} />
       <AnimeCardStudios studios={anime.studios} color={anime.coverImage.color} />      
       <div className="mt-auto">
-        <AnimeCardGenres genres={anime.genres} limit={4} />
+        <AnimeCardGenres genres={anime.genres} limit={2} />
       </div>
     </div>
   );

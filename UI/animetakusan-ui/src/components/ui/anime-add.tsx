@@ -6,7 +6,7 @@ const AnimeAdd = ( { children }: { children?: React.ReactNode } ) => {
       <TooltipTrigger asChild>
         {children}
       </TooltipTrigger>
-      <TooltipContent side="left">
+      <TooltipContent side="left" className="hidden lg:block">
         <p>Add to library</p>
       </TooltipContent>
     </Tooltip>
