@@ -1,6 +1,7 @@
 import { toast } from "sonner";
-import AnimePreview from "./AnimePreview";
+import AnimePreview from "../../components/ui/anime-preview";
 import { useBrowseQuery } from "./queries";
+import AnimeTopPreview from "@/components/ui/anime-top-preview";
 
 const Browse = () => {
 
@@ -15,7 +16,7 @@ const Browse = () => {
       <AnimePreview title="This Season" data={browseSection?.season.data || []} />
       <AnimePreview title="Next Season" data={browseSection?.nextSeason.data || []} />
       <AnimePreview title="Top From Last Season" data={browseSection?.topLastSeason.data || []} />
-      <AnimePreview title="Top From All Time" data={browseSection?.top.data || []} />
+      <AnimeTopPreview title="Top All Time" data={browseSection?.top.data || []} />
     </div>
   )
 }

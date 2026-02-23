@@ -9,11 +9,11 @@ interface AnimePreviewProps {
 const AnimePreview = ({ title, data }: AnimePreviewProps) => {
 
   return (
-    <div className="flex flex-col gap-2 mb-10">
+    <div className="flex flex-col gap-2 mb-4 md:mb-10">
       <div className="text-md font-medium text-muted-foreground tracking-wider">
         {title}
       </div>
-      <div className="grid grid-cols-[repeat(auto-fit,minmax(120px,1fr))] md:grid-cols-[repeat(auto-fit,minmax(150px,1fr))] lg:grid-cols-[repeat(auto-fit,minmax(180px,1fr))] gap-2.5 lg:gap-12 py-4 lg:[&>*:nth-child(n+5)]:hidden xl:[&>*:nth-child(n+5)]:block xl:[&>*:nth-child(n+6)]:hidden 2xl:[&>*:nth-child(n+6)]:block">
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(120px,1fr))] md:grid-cols-[repeat(auto-fit,minmax(150px,1fr))] lg:grid-cols-[repeat(auto-fit,minmax(180px,1fr))] gap-2.5 lg:gap-12 py-2 md:py-4 lg:[&>*:nth-child(n+5)]:hidden xl:[&>*:nth-child(n+5)]:block xl:[&>*:nth-child(n+6)]:hidden 2xl:[&>*:nth-child(n+6)]:block">
         {
           data && data.length > 0 ?
             <AnimePreviewCards data={data} /> :

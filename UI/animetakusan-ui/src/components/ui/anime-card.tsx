@@ -9,11 +9,7 @@ import AnimeMobileInfo from "./anime-mobile-info"
 import AnimeAdd from "./anime-add"
 import { Skeleton } from "./skeleton"
 
-interface AnimeCardProps {
-  anime: Anime
-}
-
-const AnimeCard = ({ anime }: AnimeCardProps) => {
+const AnimeCard = ({ anime }: { anime: Anime }) => {
   const triggerRef = useRef<HTMLDivElement>(null)
   const [triggerHeight, setTriggerHeight] = useState<number>(0)
   const [triggerWidth, setTriggerWidth] = useState<number>(0)

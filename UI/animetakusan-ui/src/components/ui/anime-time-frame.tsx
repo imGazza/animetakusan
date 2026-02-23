@@ -34,6 +34,6 @@ const AnimeTimeFrame = ( { anime }: { anime: Anime } ) => {
     return "TBA";
   }, [anime.nextAiringEpisode, anime.season, anime.seasonYear, anime.startDate, anime.endDate]);
 
-  return <div className="capitalize font-semibold">{timeFrame}</div>;
+  return <div className="capitalize font-semibold text-sm text-muted-foreground">{timeFrame}</div>;
 }
 export default AnimeTimeFrame;
