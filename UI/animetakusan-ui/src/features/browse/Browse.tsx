@@ -5,7 +5,7 @@ import AnimeTopPreview from "@/components/ui/anime-top-preview";
 
 const Browse = () => {
 
-  const { data: browseSection, isLoading, error } = useBrowseQuery();
+  const { data: browseSection, error } = useBrowseQuery();
 
   if(error){
     toast.error(error.message || "Error loading browse section. Please try again.");
