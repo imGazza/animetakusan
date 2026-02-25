@@ -13,7 +13,7 @@ namespace AnimeTakusan.API.Controllers
     [ApiController]
     [EnableCors("Public")]
     [EnableRateLimiting("auth")]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     public class AuthController : ControllerBase
     {
         private readonly IConfiguration _configuration;

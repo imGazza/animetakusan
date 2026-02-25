@@ -9,7 +9,7 @@ namespace AnimeTakusan.API.Controllers
     [ApiController]
     [EnableCors("Public")]
     [EnableRateLimiting("anime")]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     public class AnimeController : ControllerBase
     {
         private readonly IAnimeService _animeService;
