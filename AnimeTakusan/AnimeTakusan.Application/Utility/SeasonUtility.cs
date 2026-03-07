@@ -8,10 +8,10 @@ public static class SeasonUtility
         
         return month switch
         {
-            12 or 1 or 2 => "WINTER",
-            3 or 4 or 5 => "SPRING",
-            6 or 7 or 8 => "SUMMER",
-            9 or 10 or 11 => "FALL",
+            1 or 2 or 3 => "WINTER",
+            4 or 5 or 6 => "SPRING",
+            7 or 8 or 9 => "SUMMER",
+            10 or 11 or 12 => "FALL",
             _ => throw new ArgumentException("Invalid month")
         };
     }
