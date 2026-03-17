@@ -1,10 +1,11 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@import "@fontsource-variable/outfit";
+
 
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  font-family: 'Outfit', system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
@@ -12,7 +13,7 @@
   color: rgba(255, 255, 255, 0.87);
   background-color: #242424;
 
-  
+
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -90,6 +91,7 @@
 }
 
 @theme inline {
+  --font-sans: 'Outfit Variable', monospace;
   --breakpoint-2xl: 86rem;
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -125,7 +127,7 @@
   --color-sidebar-accent: var(--sidebar-accent);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);  
+  --color-sidebar-ring: var(--sidebar-ring);
 }
 
 @media (prefers-color-scheme: light) {
@@ -133,9 +135,11 @@
     color: #213547;
     background-color: #ffffff;
   }
+
   a:hover {
     color: #747bff;
   }
+
   button {
     background-color: #f9f9f9;
   }
@@ -145,7 +149,12 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
-    @apply bg-background text-foreground;
+    @apply font-sans bg-background text-foreground;
+  }
+
+  html {
+    @apply font-sans;
   }
 }
