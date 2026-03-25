@@ -15,19 +15,14 @@ const SimpleSearch = ({ className }: { className?: string }) => {
         <Search className="size-5" />
       </Button>
       <CommandDialog open={open} onOpenChange={setOpen} showCloseButton={false} className="bg-transparent shadow-none border-none">
-        <Command className="bg-transparent">
+        <Command className="bg-muted/90">
           <CommandInput placeholder="Search for an anime..." />
-          Pippo
+          <div className="text-xs p-1 text-muted-foreground text-end">Quickly browse for an anime</div>
         </Command>
 
-        <Command>
+        <Command className="bg-muted/90 text-muted-foreground">
           <CommandList>
-            <CommandEmpty>No results found.</CommandEmpty>
-            <CommandGroup heading="Suggestions">
-              <CommandItem>Calendar</CommandItem>
-              <CommandItem>Search Emoji</CommandItem>
-              <CommandItem>Calculator</CommandItem>
-            </CommandGroup>
+            <CommandEmpty>No results found.</CommandEmpty>            
           </CommandList>
         </Command>
       </CommandDialog>

@@ -21,7 +21,7 @@ export const routes = createBrowserRouter([
                 ]
             },
             {
-                path: "/",
+                path: "/browse",
                 //errorElement: <ErrorPage />,
                 Component: AppLayout,
                 children: [

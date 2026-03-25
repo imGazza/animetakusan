@@ -18,7 +18,7 @@ const AnimeCardSynopsis = ({ description }: { description: string }) => {
     >
       <AccordionItem value="synopsis">
         <AccordionTrigger className="text-muted-foreground text-md font-semibold tracking-wider">Synopsis</AccordionTrigger>
-        <AccordionContent className="text-muted-foreground tracking-wider w-full">
+        <AccordionContent className="text-muted-foreground tracking-wider w-full line-clamp-20">
           <div dangerouslySetInnerHTML={{ __html: description }} />
         </AccordionContent>
       </AccordionItem>

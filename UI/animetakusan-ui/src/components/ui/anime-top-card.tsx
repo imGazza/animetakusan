@@ -5,11 +5,12 @@ import AnimeCardGenres from "./anime-card-genres";
 import AnimeCardScore from "./anime-card-score";
 import AnimeCardFormat from "./anime-card-format";
 import AnimeTimeFrame from "./anime-time-frame";
+import { Skeleton } from "./skeleton";
 
 const AnimeTopCard = ({ anime, index }: { anime: Anime, index: number }) => {
   return (
     <Card className="w-full bg-muted rounded-xs border border-none p-2">
-      <div className="flex gap-4">
+      <div className="flex gap-4 animate-in fade-in duration-500 will-change-transform">
         <div className="w-20 md:w-26 h-full shrink-0">
           <AspectRatio ratio={37 / 53} className="bg-muted rounded-xs overflow-hidden relative">
             <img
@@ -50,3 +51,18 @@ const AnimeTopCard = ({ anime, index }: { anime: Anime, index: number }) => {
   );
 }
 export default AnimeTopCard;
+
+const AnimeTopCardSkeleton = () => {
+  return (
+    <div className="w-full bg-muted rounded-xs border border-none p-2 animate-pulse">
+      <div className="flex gap-4">
+        <div className="w-20 md:w-26 shrink-0">
+          <AspectRatio ratio={37 / 53} className="rounded-xs overflow-hidden">
+            <Skeleton className="h-full w-full" />
+          </AspectRatio>
+        </div>
+      </div>
+    </div>
+  )
+}
+export { AnimeTopCardSkeleton }
