@@ -19,7 +19,7 @@ const Header = () => {
         </div>
         <div className="flex items-center ml-auto space-x-4">
           <SimpleSearch className="hidden md:flex" />
-          <UserAvatar />
+          <UserAvatar items={siteConfig.profileNavItems} />
         </div>
       </div>
     </header>

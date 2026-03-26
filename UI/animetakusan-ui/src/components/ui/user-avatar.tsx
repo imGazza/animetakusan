@@ -2,10 +2,13 @@ import { useAuth } from "@/hooks/useAuth";
 import { Avatar, AvatarFallback, AvatarImage } from "./avatar";
 import { Popover, PopoverContent, PopoverTrigger } from "./popover";
 import { MenuButton } from "./menu-button";
-import { LogOut, Monitor, Settings, User } from "lucide-react";
-import { siteConfig } from "@/lib/site-config";
+import { LogOut } from "lucide-react";
 
-const UserAvatar = () => {
+interface UserAvatarProps {
+  items: { label: string; icon: React.ElementType; }[];
+}
+
+const UserAvatar = ({ items }: UserAvatarProps) => {
   const { logout, user } = useAuth();
 
   return (
@@ -36,7 +39,7 @@ const UserAvatar = () => {
 
         <div className="px-3 pt-2 pb-2">
           <div className="grid grid-cols-3 gap-1.5">
-            {siteConfig.profileNavItems.map(({ label, icon: Icon }) => (
+            {items.map(({ label, icon: Icon }) => (
               <MenuButton key={label} variant="tile">
                 <div className="flex items-center justify-center size-8 rounded-lg">
                   <Icon className="size-[1.1rem]" />

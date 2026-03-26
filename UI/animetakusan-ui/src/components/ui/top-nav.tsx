@@ -15,6 +15,7 @@ const TopNav = ({ items }: TopNavProps) => {
             key={index}
             variant="ghost"
             className={item.coming ? "text-muted-foreground cursor-default" : ""}
+            disabled={item.coming}
           >
             <Link to={item.href} className={item.coming ? "text-muted-foreground cursor-default" : ""}>
               {item.label}

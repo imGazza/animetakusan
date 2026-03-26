@@ -32,12 +32,15 @@ const AnimeCardImage = ({ url, title, onImageLoad, className }: { url: string, t
   }, [url, imageLoaded]);
 
   return (
-    <div ref={containerRef} data-state={src ? 'loaded' : 'loading'} className={`h-full w-full duration-300 ease-in-out data-[state=loaded]:opacity-100 data-[state=loading]:opacity-0`} >
-      {src && <img
-        src={src}
-        alt={title}
-        className={className}
-      />}
+    <div
+      ref={containerRef} 
+      data-state={src ? 'loaded' : 'loading'} 
+      className={`h-full w-full duration-300 ease-in-out data-[state=loaded]:opacity-100 data-[state=loading]:opacity-0`} >
+        {src && <img
+          src={src}
+          alt={title}
+          className={className}
+        />}
     </div>
   )
 }

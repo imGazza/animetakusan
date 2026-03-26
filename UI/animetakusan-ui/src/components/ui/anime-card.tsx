@@ -46,13 +46,13 @@ const AnimeCard = ({ anime }: { anime: Anime }) => {
                   <BookmarkPlus className="size-4" />
                 </Button>
               </AnimeAdd>
-              <div data-state={imageLoaded ? 'loaded' : 'loading'} className={`absolute inset-0 bg-gradient-to-b from-transparent via-black/10 md:via-black/10 to-black/60 md:to-black/60 duration-300 ease-in-out data-[state=loaded]:opacity-100 data-[state=loading]:opacity-0`}/>
+              <div data-state={imageLoaded ? 'loaded' : 'loading'} className="absolute inset-0 bg-gradient-to-b from-transparent via-black/10 md:via-black/10 to-black/60 md:to-black/60 duration-300 ease-in-out data-[state=loaded]:opacity-100 data-[state=loading]:opacity-0"/>
               <AnimeMobileInfo anime={anime} className="lg:hidden">
                 <Button variant="ghost" size="icon" className="size-6 absolute right-1 top-1 rounded-full bg-black/10 backdrop-blur-[2px]">
                   <Info className="size-4" />
                 </Button>
               </AnimeMobileInfo>
-              <div data-state={imageLoaded ? 'loaded' : 'loading'} className={`absolute bottom-2 px-1 md:px-2 text-xs md:text-md tracking-wide font-medium leading-tight text-foreground line-clamp-2 duration-300 ease-in-out data-[state=loaded]:opacity-100 data-[state=loading]:opacity-0`}>
+              <div data-state={imageLoaded ? 'loaded' : 'loading'} className="absolute bottom-2 px-1 md:px-2 text-xs md:text-md tracking-wide font-medium leading-tight text-white line-clamp-2 duration-300 ease-in-out data-[state=loaded]:opacity-100 data-[state=loading]:opacity-0">
                 {anime.title.english || anime.title.romaji || ""}
               </div>
             </AspectRatio>

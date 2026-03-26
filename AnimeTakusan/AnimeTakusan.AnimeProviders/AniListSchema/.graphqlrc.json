@@ -1,6 +1,11 @@
 {
   "schema": "schema.graphql",
-  "documents": "Queries/**/*.graphql",
+  "documents": [
+    "Queries/Fragments/AnimeFragments.graphql",
+    "Queries/GetAnimeById.graphql",
+    "Queries/GetBrowseSection.graphql",
+    "Queries/GetSeasonalAnime.graphql"
+  ],
   "extensions": {
     "strawberryShake": {
       "name": "AniListClient",      
