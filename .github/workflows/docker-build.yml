@@ -26,6 +26,11 @@ jobs:
         working-directory: ./AnimeTakusan
         run: dotnet restore AnimeTakusan.slnx
 
+      # Restore tools
+      - name: Restore tools
+        working-directory: ./AnimeTakusan
+        run: dotnet tool restore
+
       # Run tests
       - name: Run tests
         working-directory: ./AnimeTakusan
