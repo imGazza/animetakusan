@@ -6,7 +6,7 @@ using AnimeTakusan.Domain.Exceptions.GraphQLExceptions;
 using Mapster;
 using StrawberryShake;
 
-namespace AnimeTakusan.AnimeProviders;
+namespace AnimeTakusan.AnimeProviders.AniList.Providers;
 
 public class AniListProvider : IAnimeProvider
 {
@@ -55,6 +55,24 @@ public class AniListProvider : IAnimeProvider
         return response.Data.Adapt<AnimeBrowseResponse>();
     }
 
+    public async Task<AnimePageResponse> GetAnime(AnimeFilterRequest animeFilterRequest)
+    {
+        var response = await _client.GetAnime.ExecuteAsync(
+            animeFilterRequest.Page,
+            animeFilterRequest.PerPage,
+            animeFilterRequest.Search,
+            ParseEnumOrNull<MediaFormat>(animeFilterRequest.Format),
+            animeFilterRequest.GenreIn,
+            animeFilterRequest.AverageScoreGreater,            
+            ParseEnumOrNull<MediaSeason>(animeFilterRequest.Season),
+            animeFilterRequest.SeasonYear,
+            ParseEnumOrNull<MediaStatus>(animeFilterRequest.Status)
+        );
+
+        EnsureNoErrors(response);
+        return response.Data.Page.Adapt<AnimePageResponse>();
+    }
+
     // Currently declared the methods here as I don't plan to have multiple providers.
     // If more providers are added in the future, this will be probably moved in a base class.
     private void EnsureNoErrors(IOperationResult operationResult)
@@ -74,5 +92,11 @@ public class AniListProvider : IAnimeProvider
         return Enum.TryParse<TEnum>(value, ignoreCase: true, out var result) 
             ? result 
             : defaultValue;
+    }
+
+    private static TEnum? ParseEnumOrNull<TEnum>(string value) where TEnum : struct, Enum
+    {
+        if (string.IsNullOrWhiteSpace(value)) return null;
+        return Enum.TryParse<TEnum>(value, ignoreCase: true, out var result) ? result : null;
     }
 }

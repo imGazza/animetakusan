@@ -10,6 +10,7 @@ public static class RateLimitingExtensions
         {
             AuthRateLimiting(options);
             TokenRateLimiting(options);
+            AnimeRateLimiting(options);
         });
         return services;
     }

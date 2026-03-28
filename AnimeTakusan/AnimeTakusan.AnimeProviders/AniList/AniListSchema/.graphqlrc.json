@@ -4,7 +4,8 @@
     "Queries/Fragments/AnimeFragments.graphql",
     "Queries/GetAnimeById.graphql",
     "Queries/GetBrowseSection.graphql",
-    "Queries/GetSeasonalAnime.graphql"
+    "Queries/GetSeasonalAnime.graphql",
+    "Queries/GetAnime.graphql"
   ],
   "extensions": {
     "strawberryShake": {

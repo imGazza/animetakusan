@@ -1,4 +1,4 @@
-using AnimeTakusan.AnimeProviders.Mappers;
+using AnimeTakusan.AnimeProviders.AniList.Mappers;
 using AnimeTakusan.Application.Interfaces;
 using Mapster;
 using MapsterMapper;

@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using AnimeTakusan.Application.Interfaces;
+using AnimeTakusan.Application.Utility;
 using AnimeTakusan.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -56,7 +57,7 @@ public class JwtHandler : IJwtHandler
         return (tokenString, expiresAt);
     }
 
-    public (string Token, DateTime ExpiresAt) GenerateUserAccessToken(string refreshToken, User user, IList<string> userRoles)
+    public (string Token, DateTime ExpiresAt) GenerateUserAccessToken(string refreshToken, User user, IList<string> userRoles, string? aniListToken = null)
     {     
         (string jwtKey, string jwtIssuer, string jwtAudience) = ValidateJwtConfig();
 
@@ -66,7 +67,7 @@ public class JwtHandler : IJwtHandler
         var claims = new List<Claim>
         {
             new(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-            new(JwtRegisteredClaimNames.Email, user.Email),
+            new(JwtRegisteredClaimNames.Email, user.Email ?? string.Empty),
             new(JwtRegisteredClaimNames.Name, $"{user.FirstName} {user.LastName}"),
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
         };
@@ -75,6 +76,9 @@ public class JwtHandler : IJwtHandler
         {
             claims.Add(new Claim(ClaimTypes.Role, role));
         }
+
+        if (!string.IsNullOrEmpty(aniListToken))
+            claims.Add(new Claim(AniListClaimTypes.AccessToken, aniListToken));
 
         var expiresAt = DateTime.UtcNow.AddMinutes(15);
 

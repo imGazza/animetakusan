@@ -1,4 +1,4 @@
-using AnimeTakusan.AnimeProviders;
+using AnimeTakusan.AnimeProviders.AniList.Providers;
 using AnimeTakusan.AnimeProviders.AniListSchema;
 using AnimeTakusan.Application.DTOs.AnimeProvider.Requests;
 using AnimeTakusan.Domain.Exceptions.GraphQLExceptions;

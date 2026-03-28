@@ -63,7 +63,7 @@ namespace AnimeTakusan.API.Extensions
         {
             Builder.Services.Scan(scan => scan
                 .FromAssemblyOf<Program>()
-                .FromAssembliesOf(typeof(IBaseService<,>))
+                .FromAssembliesOf(typeof(IInjectable))
                 .AddClasses(classes => classes.AssignableTo<IInjectable>())
                 .AsImplementedInterfaces()
                 .WithScopedLifetime());

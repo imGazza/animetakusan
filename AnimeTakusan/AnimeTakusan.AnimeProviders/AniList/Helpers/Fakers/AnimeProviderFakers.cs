@@ -1,7 +1,7 @@
 using AnimeTakusan.Application.DTOs.AnimeProvider.Responses;
 using Bogus;
 
-namespace AnimeTakusan.AnimeProviders.Helpers.Fakers;
+namespace AnimeTakusan.AnimeProviders.AniList.Helpers.Fakers;
 
 public static class AnimeProviderFakers
 {

@@ -43,6 +43,11 @@ public class AnimeService : IAnimeService, IInjectable
         return await _animeProvider.GetAnimeBrowseSection(animeBrowseSectionRequest);
     }
 
+    public async Task<AnimePageResponse> GetAnime(AnimeFilterRequest animeFilterRequest)
+    {
+        return await _animeProvider.GetAnime(animeFilterRequest);
+    }
+
     private AnimeBrowseSectionRequest CreateAnimeBrowseSectionRequest()
     {
         string currentSeason = SeasonUtility.GetCurrentSeason(DateTime.Now);

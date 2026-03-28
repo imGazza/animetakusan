@@ -8,4 +8,5 @@ public interface IAnimeService
     Task<AnimeResponse> GetAnimeById(int id);
     Task<AnimePageResponse> GetSeasonalAnime();
     Task<AnimeBrowseResponse> GetAnimeBrowseSection();
+    Task<AnimePageResponse> GetAnime(AnimeFilterRequest animeFilterRequest);
 }

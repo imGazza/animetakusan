@@ -1,4 +1,4 @@
-namespace AnimeTakusan.AnimeProviders.ProviderModels.AniList;
+namespace AnimeTakusan.AnimeProviders.AniList.ProviderModels.AniList;
 
 public record AniListResponse<T>
 {

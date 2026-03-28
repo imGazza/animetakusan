@@ -17,7 +17,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="DTOs\AnimeProvider\Requests\" />
     <Folder Include="Utility\" />
     <Folder Include="Validators\" />
     <Folder Include="Validators\Authentication\" />

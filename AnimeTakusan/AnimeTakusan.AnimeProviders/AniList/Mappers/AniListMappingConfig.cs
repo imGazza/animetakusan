@@ -2,7 +2,7 @@ using AnimeTakusan.AnimeProviders.AniListSchema;
 using AnimeTakusan.Application.DTOs.AnimeProvider.Responses;
 using Mapster;
 
-namespace AnimeTakusan.AnimeProviders.Mappers;
+namespace AnimeTakusan.AnimeProviders.AniList.Mappers;
 
 /// <summary>
 /// Configures Mapster mappings for AniList provider models to application DTOs.
@@ -29,6 +29,10 @@ public class AniListMappingConfig : IRegister, IAnimeProviderMapper
             .Map(dest => dest.Data, src => src.Media);
 
         config.NewConfig<IGetBrowseSection_Top, AnimePageResponse>()
+            .Map(dest => dest.Page, src => src.PageInfo)
+            .Map(dest => dest.Data, src => src.Media);
+
+        config.NewConfig<IGetAnime_Page, AnimePageResponse>()
             .Map(dest => dest.Page, src => src.PageInfo)
             .Map(dest => dest.Data, src => src.Media);
     }

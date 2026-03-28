@@ -1,4 +1,4 @@
-namespace AnimeTakusan.AnimeProviders.ProviderModels.AniList.Common;
+namespace AnimeTakusan.AnimeProviders.AniList.ProviderModels.AniList.Common;
 
 public enum AniListSort
 {

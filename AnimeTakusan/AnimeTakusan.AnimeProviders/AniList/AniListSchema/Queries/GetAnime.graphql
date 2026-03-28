@@ -1,0 +1,12 @@
+query GetAnime($page: Int, $perPage: Int, $search: String, $format: MediaFormat, $genre_in: [String], $averageScore_greater: Int, $season: MediaSeason, $seasonYear: Int, $status: MediaStatus) {
+  Page(page: $page, perPage: $perPage) {
+    pageInfo {
+      currentPage
+      hasNextPage
+      perPage
+    }
+    media(type: ANIME, search: $search, format: $format, genre_in: $genre_in, averageScore_greater: $averageScore_greater, season: $season, seasonYear: $seasonYear, status: $status) {
+      ...Anime
+    }
+  }
+}

@@ -36,6 +36,12 @@ namespace AnimeTakusan.API.Controllers
         {
             return Ok(await _animeService.GetAnimeBrowseSection());
         }
+
+        [HttpPost]
+        public async Task<IActionResult> GetAnime([FromBody] AnimeFilterRequest animeFilterRequest)
+        {
+            return Ok(await _animeService.GetAnime(animeFilterRequest));
+        }
     }
     
 }

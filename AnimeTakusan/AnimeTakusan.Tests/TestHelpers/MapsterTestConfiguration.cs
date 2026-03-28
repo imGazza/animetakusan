@@ -1,4 +1,4 @@
-using AnimeTakusan.AnimeProviders.Mappers;
+using AnimeTakusan.AnimeProviders.AniList.Mappers;
 using Mapster;
 
 namespace AnimeTakusan.Tests.TestHelpers;

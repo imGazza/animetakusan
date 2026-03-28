@@ -1,10 +1,10 @@
-using AnimeTakusan.AnimeProviders.Helpers.Fakers;
+using AnimeTakusan.AnimeProviders.AniList.Helpers.Fakers;
 using AnimeTakusan.Application.DTOs.AnimeProvider.Requests;
 using AnimeTakusan.Application.DTOs.AnimeProvider.Responses;
 using AnimeTakusan.Application.Interfaces;
 using Bogus;
 
-namespace AnimeTakusan.AnimeProviders;
+namespace AnimeTakusan.AnimeProviders.AniList.Providers;
 
 public class FakeAnimeProvider : IAnimeProvider
 {
@@ -27,6 +27,11 @@ public class FakeAnimeProvider : IAnimeProvider
     }    
 
     public Task<AnimeBrowseResponse> GetAnimeBrowseSection(AnimeBrowseSectionRequest animeBroseSectionRequest)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<AnimePageResponse> GetAnime(AnimeFilterRequest animeFilterRequest)
     {
         throw new NotImplementedException();
     }
