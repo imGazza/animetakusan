@@ -1,3 +1,8 @@
+using System.IdentityModel.Tokens.Jwt;
+using AnimeTakusan.Application.DTOs.Authentication.Responses;
+using AnimeTakusan.Application.Interfaces;
+using Bogus.Extensions.UnitedKingdom;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,11 +14,13 @@ namespace AnimeTakusan.API.Controllers
     {
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IConfiguration _configuration;
+        private readonly IAniListAuthService _aniListAuthService;
 
-        public AniListController(IHttpClientFactory httpClientFactory, IConfiguration configuration)
+        public AniListController(IHttpClientFactory httpClientFactory, IConfiguration configuration, IAniListAuthService aniListAuthService)
         {
             _httpClientFactory = httpClientFactory;
             _configuration = configuration;
+            _aniListAuthService = aniListAuthService;
         }
 
         [HttpGet("auth")]
@@ -26,16 +33,13 @@ namespace AnimeTakusan.API.Controllers
             var redirectUri = _configuration["AniListAuth:RedirectUri"];
 
             var authUrl = $"{_configuration["AniListAuth:CodeExchangeUrl"]}?client_id={clientId}&redirect_uri={redirectUri}&response_type=code";
-            return Redirect(authUrl);            
+            return Redirect(authUrl);
         }
 
         [HttpGet("callback")]
         public async Task<IActionResult> AniListCallback([FromQuery] string code)
-        {
-            
-            if (string.IsNullOrEmpty(code))
-                return BadRequest("Authorization code is missing.");
-
+        {            
+            _aniListAuthService.VerifyCallbackState(code);
             var client = _httpClientFactory.CreateClient();
 
             var payload = new
@@ -46,13 +50,13 @@ namespace AnimeTakusan.API.Controllers
                 redirect_uri = _configuration["AniListAuth:RedirectUri"],
                 code
             };
-
             var response = await client.PostAsJsonAsync(_configuration["AniListAuth:TokenExchangeUrl"], payload);
 
             if (!response.IsSuccessStatusCode)
-                return StatusCode((int)response.StatusCode, response.ReasonPhrase);
+                return StatusCode((int)response.StatusCode, "Authentication to AniList failed.");
 
-            var tokenData = await response.Content.ReadFromJsonAsync<object>();
+            var tokenData = await response.Content.ReadFromJsonAsync<AniListTokenResponse>();
+            _aniListAuthService.LinkAniListAccountToUser(tokenData);
             return Ok(tokenData);
         }
 

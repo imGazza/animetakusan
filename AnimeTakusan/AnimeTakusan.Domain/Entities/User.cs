@@ -11,4 +11,5 @@ public class User : IdentityUser<Guid>
     public DateTime? RefreshTokenExpiryTime { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+    public AniListUser AniListUser { get; set; }
 }

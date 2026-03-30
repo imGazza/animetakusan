@@ -16,7 +16,15 @@ public class UserRepository : IUserRepository
 
     public async Task<User?> GetUserByRefreshToken(string refreshToken)
     {
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.RefreshToken == refreshToken);
+        var user = await _context.Users
+            .Include(u => u.AniListUser)
+            .FirstOrDefaultAsync(u => u.RefreshToken == refreshToken);
         return user;
+    }
+
+    public async Task AddAniListUserAsync(AniListUser aniListUser)
+    {
+        await _context.Set<AniListUser>().AddAsync(aniListUser);
+        await _context.SaveChangesAsync();
     }
 }

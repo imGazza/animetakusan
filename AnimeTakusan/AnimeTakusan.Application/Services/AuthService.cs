@@ -69,7 +69,7 @@ public class AuthService : IAuthService, IInjectable
 
         var userRoles = await _userManager.GetRolesAsync(user);
 
-        var (accessToken, expiresAt) = _jwtHandler.GenerateUserAccessToken(refreshToken, user, userRoles);
+        var (accessToken, expiresAt) = _jwtHandler.GenerateUserAccessToken(user, userRoles);
         var response = new TokenResponse {
             AccessToken = accessToken,
             ExpiresAt = expiresAt
@@ -178,6 +178,7 @@ public class AuthService : IAuthService, IInjectable
             Email = registerRequest.Email
         };
         user.PasswordHash = _userManager.PasswordHasher.HashPassword(user, registerRequest.Password);
+
         var result = await _userManager.CreateAsync(user);
 
         if (!result.Succeeded)

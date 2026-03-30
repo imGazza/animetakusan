@@ -3,7 +3,6 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using AnimeTakusan.Application.Interfaces;
-using AnimeTakusan.Application.Utility;
 using AnimeTakusan.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -57,7 +56,7 @@ public class JwtHandler : IJwtHandler
         return (tokenString, expiresAt);
     }
 
-    public (string Token, DateTime ExpiresAt) GenerateUserAccessToken(string refreshToken, User user, IList<string> userRoles, string? aniListToken = null)
+    public (string Token, DateTime ExpiresAt) GenerateUserAccessToken(User user, IList<string> userRoles)
     {     
         (string jwtKey, string jwtIssuer, string jwtAudience) = ValidateJwtConfig();
 
@@ -72,13 +71,15 @@ public class JwtHandler : IJwtHandler
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
         };
 
+        // User Roles
         foreach (var role in userRoles)
         {
             claims.Add(new Claim(ClaimTypes.Role, role));
         }
 
-        if (!string.IsNullOrEmpty(aniListToken))
-            claims.Add(new Claim(AniListClaimTypes.AccessToken, aniListToken));
+        // Include AniList Token if synced
+        if (user.AniListUser != null && IsValidToken(user.AniListUser.AccessToken, user.AniListUser.AccessTokenExpiry ?? DateTime.MinValue))
+            claims.Add(new Claim("anilist_token", user.AniListUser.AccessToken));
 
         var expiresAt = DateTime.UtcNow.AddMinutes(15);
 
@@ -135,6 +136,16 @@ public class JwtHandler : IJwtHandler
             });
     }
 
+    public List<Claim> GetAniListTokenClaims(string token)
+    {
+        var tokenHandler = new JwtSecurityTokenHandler();
+        if (!tokenHandler.CanReadToken(token))
+            throw new ArgumentException("AniList access token is not a valid JWT.");
+
+        var jwt = tokenHandler.ReadJwtToken(token);
+        return jwt.Claims.ToList();
+    }
+
     private (string jwtKey, string jwtIssuer, string jwtAudience) ValidateJwtConfig()
     {
         if (_configuration["Jwt:Key"] == null)
@@ -151,5 +162,10 @@ public class JwtHandler : IJwtHandler
         }
 
         return (_configuration["Jwt:Key"]!, _configuration["Jwt:Issuer"]!, _configuration["Jwt:Audience"]!);
+    }
+
+    private bool IsValidToken(string token, DateTime expiry)
+    {
+        return !string.IsNullOrEmpty(token) && expiry > DateTime.UtcNow;
     }
 }

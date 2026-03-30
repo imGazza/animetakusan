@@ -79,15 +79,6 @@ public static class AuthenticationExtensions
                 ValidAudience = Configuration["Jwt:Audience"],
                 IssuerSigningKey = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]!))
             };
-
-            options.Events = new JwtBearerEvents
-            {
-                OnMessageReceived = context =>
-                {
-                    context.Token = context.Request.Cookies["ACCESS_TOKEN"];
-                    return Task.CompletedTask;
-                }
-            };
         });
     }
 
