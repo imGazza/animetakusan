@@ -21,6 +21,8 @@ public class AniListProviderTest
     private readonly Mock<IGetAnimeByIdQuery> _mockGetAnimeByIdQuery;
     private readonly Mock<IGetSeasonalAnimeQuery> _mockGetSeasonalAnimeQuery;
     private readonly Mock<IGetBrowseSectionQuery> _mockGetAnimeBrowseSectionQuery;
+    private readonly Mock<IGetAnimeQuery> _mockGetAnimeQuery;
+    private readonly Mock<IGetUserAnimeListQuery> _mockGetUserAnimeListQuery;
     private readonly AniListProvider _aniListProvider;
     private readonly Faker<GetAnimeById_Media_Media> _animeFaker;
     private readonly Faker<GetSeasonalAnime_Page_Media_Media> _pageSeasonalAnimeFaker;
@@ -28,7 +30,8 @@ public class AniListProviderTest
     private readonly Faker<GetBrowseSection_Top_Media_Media> _pageBrowseTopAnimeFaker;
     private readonly Faker<GetBrowseSection_NextSeason_Media_Media> _pageBrowseNextSeasonAnimeFaker;
     private readonly Faker<GetBrowseSection_TopLastSeason_Media_Media> _pageTopLastSeasonAnimeFaker;
-
+    private readonly Faker<GetAnime_Page_Media_Media> _pageGetAnimeAnimeFaker;
+    private readonly Faker<GetUserAnimeList_MediaListCollection_Lists_Entries_Media_Media> _userAnimeListMediaFaker;
 
     private const string ProviderName = "AniList";
 
@@ -41,9 +44,13 @@ public class AniListProviderTest
         _mockGetAnimeByIdQuery = new Mock<IGetAnimeByIdQuery>();
         _mockGetSeasonalAnimeQuery = new Mock<IGetSeasonalAnimeQuery>();
         _mockGetAnimeBrowseSectionQuery = new Mock<IGetBrowseSectionQuery>();
+        _mockGetAnimeQuery = new Mock<IGetAnimeQuery>();
+        _mockGetUserAnimeListQuery = new Mock<IGetUserAnimeListQuery>();
         _mockAniListClient.Setup(x => x.GetAnimeById).Returns(_mockGetAnimeByIdQuery.Object);
         _mockAniListClient.Setup(x => x.GetSeasonalAnime).Returns(_mockGetSeasonalAnimeQuery.Object);
         _mockAniListClient.Setup(x => x.GetBrowseSection).Returns(_mockGetAnimeBrowseSectionQuery.Object);
+        _mockAniListClient.Setup(x => x.GetAnime).Returns(_mockGetAnimeQuery.Object);
+        _mockAniListClient.Setup(x => x.GetUserAnimeList).Returns(_mockGetUserAnimeListQuery.Object);
         
         _aniListProvider = new AniListProvider(_mockAniListClient.Object);
         _animeFaker = AniListProviderFakers.AniListAnimeFaker;
@@ -52,6 +59,8 @@ public class AniListProviderTest
         _pageBrowseTopAnimeFaker = AniListProviderFakers.AniListBrowseTopAnimeFaker;
         _pageBrowseNextSeasonAnimeFaker = AniListProviderFakers.AniListBrowseNextSeasonAnimeFaker;
         _pageTopLastSeasonAnimeFaker = AniListProviderFakers.AniListBrowseTopLastSeasonAnimeFaker;
+        _pageGetAnimeAnimeFaker = AniListProviderFakers.AniListGetAnimeAnimeFaker;
+        _userAnimeListMediaFaker = AniListProviderFakers.AniListUserAnimeListMediaFaker;
     }
 
     #region GetAnimeById Tests
@@ -887,6 +896,443 @@ public class AniListProviderTest
 
     #endregion
 
+    #region GetAnime Tests
+
+    [Fact(DisplayName = "GetAnime should execute query with correct parameters")]
+    public async Task GetAnime_ValidRequest_ExecutesQueryWithCorrectParameters()
+    {
+        // Arrange
+        var request = new AnimeFilterRequest
+        {
+            Page = 1,
+            PerPage = 20,
+            Search = "Naruto",
+            Format = "TV",
+            GenreIn = new List<string> { "Action", "Adventure" },
+            AverageScoreGreater = 70,
+            Season = "SPRING",
+            SeasonYear = 2023,
+            Status = "RELEASING"
+        };
+
+        var mockPage = CreateMockGetAnimePage(new List<GetAnime_Page_Media_Media>());
+        var mockResult = CreateMockOperationResult(CreateMockGetAnimeResult(mockPage));
+
+        _mockGetAnimeQuery
+            .Setup(x => x.ExecuteAsync(
+                1,
+                20,
+                "Naruto",
+                MediaFormat.Tv,
+                It.Is<IReadOnlyList<string>>(g => g.Count == 2),
+                70,
+                MediaSeason.Spring,
+                2023,
+                MediaStatus.Releasing,
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(mockResult);
+
+        // Act
+        await _aniListProvider.GetAnime(request);
+
+        // Assert
+        _mockGetAnimeQuery.Verify(
+            x => x.ExecuteAsync(
+                1,
+                20,
+                "Naruto",
+                MediaFormat.Tv,
+                It.Is<IReadOnlyList<string>>(g => g.Count == 2),
+                70,
+                MediaSeason.Spring,
+                2023,
+                MediaStatus.Releasing,
+                It.IsAny<CancellationToken>()),
+            Times.Once);
+    }
+
+    [Fact(DisplayName = "GetAnime should return mapped AnimePageResponse")]
+    public async Task GetAnime_ValidResponse_ReturnsMappedAnimeList()
+    {
+        // Arrange
+        var request = new AnimeFilterRequest { Page = 1, PerPage = 5 };
+        var mockMediaList = _pageGetAnimeAnimeFaker.Generate(3);
+        var mockPage = CreateMockGetAnimePage(mockMediaList, 1, 5, false);
+        var mockResult = CreateMockOperationResult(CreateMockGetAnimeResult(mockPage));
+
+        _mockGetAnimeQuery
+            .Setup(x => x.ExecuteAsync(
+                It.IsAny<int?>(), It.IsAny<int?>(), It.IsAny<string>(),
+                It.IsAny<MediaFormat?>(), It.IsAny<IReadOnlyList<string>>(),
+                It.IsAny<int?>(), It.IsAny<MediaSeason?>(), It.IsAny<int?>(),
+                It.IsAny<MediaStatus?>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(mockResult);
+
+        // Act
+        var result = await _aniListProvider.GetAnime(request);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.Data.Should().HaveCount(3);
+        result.Page.Should().NotBeNull();
+        result.Page.CurrentPage.Should().Be(1);
+        result.Page.PerPage.Should().Be(5);
+        result.Page.HasNextPage.Should().BeFalse();
+        result.Data[0].Id.Should().Be(mockMediaList[0].Id);
+        result.Data[1].Id.Should().Be(mockMediaList[1].Id);
+        result.Data[2].Id.Should().Be(mockMediaList[2].Id);
+    }
+
+    [Fact(DisplayName = "GetAnime should handle empty result list")]
+    public async Task GetAnime_EmptyResult_ReturnsEmptyList()
+    {
+        // Arrange
+        var request = new AnimeFilterRequest { Page = 1, PerPage = 10 };
+        var mockPage = CreateMockGetAnimePage(new List<GetAnime_Page_Media_Media>(), 1, 10, false);
+        var mockResult = CreateMockOperationResult(CreateMockGetAnimeResult(mockPage));
+
+        _mockGetAnimeQuery
+            .Setup(x => x.ExecuteAsync(
+                It.IsAny<int?>(), It.IsAny<int?>(), It.IsAny<string>(),
+                It.IsAny<MediaFormat?>(), It.IsAny<IReadOnlyList<string>>(),
+                It.IsAny<int?>(), It.IsAny<MediaSeason?>(), It.IsAny<int?>(),
+                It.IsAny<MediaStatus?>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(mockResult);
+
+        // Act
+        var result = await _aniListProvider.GetAnime(request);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.Data.Should().BeEmpty();
+        result.Page.HasNextPage.Should().BeFalse();
+    }
+
+    [Fact(DisplayName = "GetAnime should handle pagination correctly")]
+    public async Task GetAnime_PaginatedRequest_ReturnsCorrectPageInfo()
+    {
+        // Arrange
+        var request = new AnimeFilterRequest { Page = 2, PerPage = 15 };
+        var mockMediaList = _pageGetAnimeAnimeFaker.Generate(15);
+        var mockPage = CreateMockGetAnimePage(mockMediaList, 2, 15, true);
+        var mockResult = CreateMockOperationResult(CreateMockGetAnimeResult(mockPage));
+
+        _mockGetAnimeQuery
+            .Setup(x => x.ExecuteAsync(
+                It.IsAny<int?>(), It.IsAny<int?>(), It.IsAny<string>(),
+                It.IsAny<MediaFormat?>(), It.IsAny<IReadOnlyList<string>>(),
+                It.IsAny<int?>(), It.IsAny<MediaSeason?>(), It.IsAny<int?>(),
+                It.IsAny<MediaStatus?>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(mockResult);
+
+        // Act
+        var result = await _aniListProvider.GetAnime(request);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.Data.Should().HaveCount(15);
+        result.Page.CurrentPage.Should().Be(2);
+        result.Page.PerPage.Should().Be(15);
+        result.Page.HasNextPage.Should().BeTrue();
+    }
+
+    [Fact(DisplayName = "GetAnime should pass null for unspecified optional filters")]
+    public async Task GetAnime_NullOptionalFilters_PassesNullsToQuery()
+    {
+        // Arrange
+        var request = new AnimeFilterRequest { Page = 1, PerPage = 20 };
+        var mockPage = CreateMockGetAnimePage(new List<GetAnime_Page_Media_Media>());
+        var mockResult = CreateMockOperationResult(CreateMockGetAnimeResult(mockPage));
+
+        _mockGetAnimeQuery
+            .Setup(x => x.ExecuteAsync(
+                1, 20,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(mockResult);
+
+        // Act
+        await _aniListProvider.GetAnime(request);
+
+        // Assert
+        _mockGetAnimeQuery.Verify(
+            x => x.ExecuteAsync(1, 20, null, null, null, null, null, null, null, It.IsAny<CancellationToken>()),
+            Times.Once);
+    }
+
+    [Fact(DisplayName = "GetAnime should pass null for invalid format")]
+    public async Task GetAnime_InvalidFormat_PassesNullFormatToQuery()
+    {
+        // Arrange
+        var request = new AnimeFilterRequest { Page = 1, PerPage = 20, Format = "INVALID_FORMAT" };
+        var mockPage = CreateMockGetAnimePage(new List<GetAnime_Page_Media_Media>());
+        var mockResult = CreateMockOperationResult(CreateMockGetAnimeResult(mockPage));
+
+        _mockGetAnimeQuery
+            .Setup(x => x.ExecuteAsync(
+                It.IsAny<int?>(), It.IsAny<int?>(), It.IsAny<string>(),
+                null,
+                It.IsAny<IReadOnlyList<string>>(),
+                It.IsAny<int?>(), It.IsAny<MediaSeason?>(), It.IsAny<int?>(),
+                It.IsAny<MediaStatus?>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(mockResult);
+
+        // Act
+        await _aniListProvider.GetAnime(request);
+
+        // Assert
+        _mockGetAnimeQuery.Verify(
+            x => x.ExecuteAsync(
+                It.IsAny<int?>(), It.IsAny<int?>(), It.IsAny<string>(),
+                null,
+                It.IsAny<IReadOnlyList<string>>(),
+                It.IsAny<int?>(), It.IsAny<MediaSeason?>(), It.IsAny<int?>(),
+                It.IsAny<MediaStatus?>(), It.IsAny<CancellationToken>()),
+            Times.Once);
+    }
+
+    [Fact(DisplayName = "GetAnime should pass null for invalid season")]
+    public async Task GetAnime_InvalidSeason_PassesNullSeasonToQuery()
+    {
+        // Arrange
+        var request = new AnimeFilterRequest { Page = 1, PerPage = 20, Season = "INVALID_SEASON" };
+        var mockPage = CreateMockGetAnimePage(new List<GetAnime_Page_Media_Media>());
+        var mockResult = CreateMockOperationResult(CreateMockGetAnimeResult(mockPage));
+
+        _mockGetAnimeQuery
+            .Setup(x => x.ExecuteAsync(
+                It.IsAny<int?>(), It.IsAny<int?>(), It.IsAny<string>(),
+                It.IsAny<MediaFormat?>(), It.IsAny<IReadOnlyList<string>>(),
+                It.IsAny<int?>(),
+                null,
+                It.IsAny<int?>(), It.IsAny<MediaStatus?>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(mockResult);
+
+        // Act
+        await _aniListProvider.GetAnime(request);
+
+        // Assert
+        _mockGetAnimeQuery.Verify(
+            x => x.ExecuteAsync(
+                It.IsAny<int?>(), It.IsAny<int?>(), It.IsAny<string>(),
+                It.IsAny<MediaFormat?>(), It.IsAny<IReadOnlyList<string>>(),
+                It.IsAny<int?>(),
+                null,
+                It.IsAny<int?>(), It.IsAny<MediaStatus?>(), It.IsAny<CancellationToken>()),
+            Times.Once);
+    }
+
+    [Theory(DisplayName = "GetAnime should parse format case-insensitively")]
+    [InlineData("tv", MediaFormat.Tv)]
+    [InlineData("TV", MediaFormat.Tv)]
+    [InlineData("Tv", MediaFormat.Tv)]
+    [InlineData("MOVIE", MediaFormat.Movie)]
+    [InlineData("OVA", MediaFormat.Ova)]
+    public async Task GetAnime_CaseInsensitiveFormat_ParsesCorrectly(string formatValue, MediaFormat expectedFormat)
+    {
+        // Arrange
+        var request = new AnimeFilterRequest { Page = 1, PerPage = 20, Format = formatValue };
+        var mockPage = CreateMockGetAnimePage(new List<GetAnime_Page_Media_Media>());
+        var mockResult = CreateMockOperationResult(CreateMockGetAnimeResult(mockPage));
+
+        _mockGetAnimeQuery
+            .Setup(x => x.ExecuteAsync(
+                It.IsAny<int?>(), It.IsAny<int?>(), It.IsAny<string>(),
+                expectedFormat,
+                It.IsAny<IReadOnlyList<string>>(),
+                It.IsAny<int?>(), It.IsAny<MediaSeason?>(), It.IsAny<int?>(),
+                It.IsAny<MediaStatus?>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(mockResult);
+
+        // Act
+        await _aniListProvider.GetAnime(request);
+
+        // Assert
+        _mockGetAnimeQuery.Verify(
+            x => x.ExecuteAsync(
+                It.IsAny<int?>(), It.IsAny<int?>(), It.IsAny<string>(),
+                expectedFormat,
+                It.IsAny<IReadOnlyList<string>>(),
+                It.IsAny<int?>(), It.IsAny<MediaSeason?>(), It.IsAny<int?>(),
+                It.IsAny<MediaStatus?>(), It.IsAny<CancellationToken>()),
+            Times.Once);
+    }
+
+    [Fact(DisplayName = "GetAnime should throw GraphQLQueryFailedException on errors")]
+    public async Task GetAnime_GraphQLErrors_ThrowsGraphQLQueryFailedException()
+    {
+        // Arrange
+        var request = new AnimeFilterRequest { Page = 1, PerPage = 20 };
+        var errors = new List<IClientError>
+        {
+            CreateMockClientError("Service unavailable"),
+            CreateMockClientError("Rate limit exceeded")
+        };
+        var mockResult = CreateMockOperationResultWithErrors<IGetAnimeResult>(errors);
+
+        _mockGetAnimeQuery
+            .Setup(x => x.ExecuteAsync(
+                It.IsAny<int?>(), It.IsAny<int?>(), It.IsAny<string>(),
+                It.IsAny<MediaFormat?>(), It.IsAny<IReadOnlyList<string>>(),
+                It.IsAny<int?>(), It.IsAny<MediaSeason?>(), It.IsAny<int?>(),
+                It.IsAny<MediaStatus?>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(mockResult);
+
+        // Act & Assert
+        var act = async () => await _aniListProvider.GetAnime(request);
+        await act.Should().ThrowAsync<GraphQLQueryFailedException>()
+            .WithMessage($"{ProviderName} query failed: Service unavailable, Rate limit exceeded");
+    }
+
+    #endregion
+
+    #region GetUserAnimeList Tests
+
+    [Fact(DisplayName = "GetUserAnimeList should execute query with correct user ID")]
+    public async Task GetUserAnimeList_ValidUserId_ExecutesQueryWithCorrectId()
+    {
+        // Arrange
+        var userId = 12345;
+        var mockCollection = CreateMockUserAnimeListCollection(new List<GetUserAnimeList_MediaListCollection_Lists_MediaListGroup>());
+        var mockResult = CreateMockOperationResult(CreateMockGetUserAnimeListResult(mockCollection));
+
+        _mockGetUserAnimeListQuery
+            .Setup(x => x.ExecuteAsync(userId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(mockResult);
+
+        // Act
+        await _aniListProvider.GetUserAnimeList(userId);
+
+        // Assert
+        _mockGetUserAnimeListQuery.Verify(
+            x => x.ExecuteAsync(userId, It.IsAny<CancellationToken>()),
+            Times.Once);
+    }
+
+    [Fact(DisplayName = "GetUserAnimeList should return mapped AnimeUserListResponse")]
+    public async Task GetUserAnimeList_ValidResponse_ReturnsMappedLists()
+    {
+        // Arrange
+        var userId = 42;
+        var mediaList1 = _userAnimeListMediaFaker.Generate(2);
+        var mediaList2 = _userAnimeListMediaFaker.Generate(3);
+
+        var entries1 = mediaList1.Select(m => new GetUserAnimeList_MediaListCollection_Lists_Entries_MediaList(m)).ToList();
+        var entries2 = mediaList2.Select(m => new GetUserAnimeList_MediaListCollection_Lists_Entries_MediaList(m)).ToList();
+
+        var listGroups = new List<GetUserAnimeList_MediaListCollection_Lists_MediaListGroup>
+        {
+            new GetUserAnimeList_MediaListCollection_Lists_MediaListGroup(
+                name: "Watching",
+                entries: entries1.Cast<IGetUserAnimeList_MediaListCollection_Lists_Entries>().ToList()),
+            new GetUserAnimeList_MediaListCollection_Lists_MediaListGroup(
+                name: "Completed",
+                entries: entries2.Cast<IGetUserAnimeList_MediaListCollection_Lists_Entries>().ToList())
+        };
+
+        var mockCollection = CreateMockUserAnimeListCollection(listGroups);
+        var mockResult = CreateMockOperationResult(CreateMockGetUserAnimeListResult(mockCollection));
+
+        _mockGetUserAnimeListQuery
+            .Setup(x => x.ExecuteAsync(userId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(mockResult);
+
+        // Act
+        var result = await _aniListProvider.GetUserAnimeList(userId);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.Lists.Should().HaveCount(2);
+        result.Lists[0].Name.Should().Be("Watching");
+        result.Lists[0].Entries.Should().HaveCount(2);
+        result.Lists[0].Entries[0].Anime.Id.Should().Be(mediaList1[0].Id);
+        result.Lists[1].Name.Should().Be("Completed");
+        result.Lists[1].Entries.Should().HaveCount(3);
+    }
+
+    [Fact(DisplayName = "GetUserAnimeList should handle empty lists")]
+    public async Task GetUserAnimeList_EmptyLists_ReturnsEmptyResponse()
+    {
+        // Arrange
+        var userId = 99;
+        var mockCollection = CreateMockUserAnimeListCollection(new List<GetUserAnimeList_MediaListCollection_Lists_MediaListGroup>());
+        var mockResult = CreateMockOperationResult(CreateMockGetUserAnimeListResult(mockCollection));
+
+        _mockGetUserAnimeListQuery
+            .Setup(x => x.ExecuteAsync(userId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(mockResult);
+
+        // Act
+        var result = await _aniListProvider.GetUserAnimeList(userId);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.Lists.Should().BeEmpty();
+    }
+
+    [Fact(DisplayName = "GetUserAnimeList should handle multiple list groups with entries")]
+    public async Task GetUserAnimeList_MultipleListGroups_ReturnsMappedGroups()
+    {
+        // Arrange
+        var userId = 7;
+        var groupNames = new[] { "Watching", "Completed", "Plan to Watch", "Dropped" };
+        var listGroups = groupNames.Select(name =>
+        {
+            var media = _userAnimeListMediaFaker.Generate(2);
+            var entries = media
+                .Select(m => new GetUserAnimeList_MediaListCollection_Lists_Entries_MediaList(m))
+                .Cast<IGetUserAnimeList_MediaListCollection_Lists_Entries>()
+                .ToList();
+            return new GetUserAnimeList_MediaListCollection_Lists_MediaListGroup(name, entries);
+        }).ToList();
+
+        var mockCollection = CreateMockUserAnimeListCollection(listGroups);
+        var mockResult = CreateMockOperationResult(CreateMockGetUserAnimeListResult(mockCollection));
+
+        _mockGetUserAnimeListQuery
+            .Setup(x => x.ExecuteAsync(userId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(mockResult);
+
+        // Act
+        var result = await _aniListProvider.GetUserAnimeList(userId);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.Lists.Should().HaveCount(4);
+        result.Lists.Select(l => l.Name).Should().BeEquivalentTo(groupNames);
+        result.Lists.Should().AllSatisfy(l => l.Entries.Should().HaveCount(2));
+    }
+
+    [Fact(DisplayName = "GetUserAnimeList should throw GraphQLQueryFailedException on errors")]
+    public async Task GetUserAnimeList_GraphQLErrors_ThrowsGraphQLQueryFailedException()
+    {
+        // Arrange
+        var userId = 1;
+        var errors = new List<IClientError>
+        {
+            CreateMockClientError("Unauthorized"),
+            CreateMockClientError("User not found")
+        };
+        var mockResult = CreateMockOperationResultWithErrors<IGetUserAnimeListResult>(errors);
+
+        _mockGetUserAnimeListQuery
+            .Setup(x => x.ExecuteAsync(userId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(mockResult);
+
+        // Act & Assert
+        var act = async () => await _aniListProvider.GetUserAnimeList(userId);
+        await act.Should().ThrowAsync<GraphQLQueryFailedException>()
+            .WithMessage($"{ProviderName} query failed: Unauthorized, User not found");
+    }
+
+    #endregion
+
     #region Helper Methods
 
     private static IOperationResult<T> CreateMockOperationResult<T>(T data) where T : class
@@ -1003,6 +1449,42 @@ public class AniListProviderTest
         mockResult.Setup(x => x.NextSeason).Returns(nextSeason);
         mockResult.Setup(x => x.TopLastSeason).Returns(topLastSeason);
         mockResult.Setup(x => x.Top).Returns(top);
+        return mockResult.Object;
+    }
+
+    private static GetAnime_Page_Page CreateMockGetAnimePage(List<GetAnime_Page_Media_Media> mediaList, int currentPage = 1, int perPage = 20, bool hasNextPage = false)
+    {
+        var pageInfo = new GetAnime_Page_PageInfo_PageInfo(
+            currentPage: currentPage,
+            hasNextPage: hasNextPage,
+            perPage: perPage
+        );
+
+        return new GetAnime_Page_Page(
+            pageInfo: pageInfo,
+            media: mediaList.Cast<IGetAnime_Page_Media>().ToList()
+        );
+    }
+
+    private static IGetAnimeResult CreateMockGetAnimeResult(IGetAnime_Page page)
+    {
+        var mockResult = new Mock<IGetAnimeResult>();
+        mockResult.Setup(x => x.Page).Returns(page);
+        return mockResult.Object;
+    }
+
+    private static GetUserAnimeList_MediaListCollection_MediaListCollection CreateMockUserAnimeListCollection(
+        List<GetUserAnimeList_MediaListCollection_Lists_MediaListGroup> listGroups)
+    {
+        return new GetUserAnimeList_MediaListCollection_MediaListCollection(
+            lists: listGroups.Cast<IGetUserAnimeList_MediaListCollection_Lists>().ToList()
+        );
+    }
+
+    private static IGetUserAnimeListResult CreateMockGetUserAnimeListResult(IGetUserAnimeList_MediaListCollection mediaListCollection)
+    {
+        var mockResult = new Mock<IGetUserAnimeListResult>();
+        mockResult.Setup(x => x.MediaListCollection).Returns(mediaListCollection);
         return mockResult.Object;
     }
 

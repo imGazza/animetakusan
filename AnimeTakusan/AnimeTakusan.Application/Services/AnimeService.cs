@@ -14,7 +14,7 @@ public class AnimeService : IAnimeService, IInjectable
         _animeProvider = animeProvider;
     }
 
-    public async Task<AnimeResponse> GetAnimeById(int id)
+    public async Task<Anime> GetAnimeById(int id)
     {        
         return await _animeProvider.GetAnimeById(id);
     }
@@ -46,6 +46,11 @@ public class AnimeService : IAnimeService, IInjectable
     public async Task<AnimePageResponse> GetAnime(AnimeFilterRequest animeFilterRequest)
     {
         return await _animeProvider.GetAnime(animeFilterRequest);
+    }
+
+    public async Task<AnimeUserListResponse> GetUserAnimeList(int userId)
+    {
+       return await _animeProvider.GetUserAnimeList(userId);
     }
 
     private AnimeBrowseSectionRequest CreateAnimeBrowseSectionRequest()

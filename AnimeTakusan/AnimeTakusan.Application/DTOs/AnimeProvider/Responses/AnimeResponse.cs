@@ -1,6 +1,6 @@
 namespace AnimeTakusan.Application.DTOs.AnimeProvider.Responses;
 
-public record AnimeResponse
+public record Anime
 {
     public int Id { get; init; }
     public Title Title { get; init; }
@@ -14,6 +14,8 @@ public record AnimeResponse
     public AnimeType Type { get; init; }
     public AnimeFormat Format { get; init; }
     public AnimeStatus Status { get; init; }
+    public bool IsFavourite { get; init; }
+    public MediaListEntry MediaListEntry { get; init; }
     public int? Episodes { get; init; }
     public int? Duration { get; init; }
     public List<string> Genres { get; init; }
@@ -60,6 +62,11 @@ public record Studio
 {
     public int Id { get; init; }
     public string Name { get; init; }
+}
+
+public record MediaListEntry
+{
+    public int Id { get; init; }
 }
 
 public enum AnimeSeason

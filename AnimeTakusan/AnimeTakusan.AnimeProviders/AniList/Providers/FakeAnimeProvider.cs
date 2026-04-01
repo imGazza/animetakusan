@@ -8,14 +8,14 @@ namespace AnimeTakusan.AnimeProviders.AniList.Providers;
 
 public class FakeAnimeProvider : IAnimeProvider
 {
-    private readonly Faker<AnimeResponse> _faker;
+    private readonly Faker<Anime> _faker;
 
     public FakeAnimeProvider()
     {
         _faker = AnimeProviderFakers.AnimeResponseFaker;
     }
 
-    public Task<AnimeResponse> GetAnimeById(int id)
+    public Task<Anime> GetAnimeById(int id)
     {
         var animeResponse = _faker.RuleFor(a => a.Id, _ => id).Generate();
         return Task.FromResult(animeResponse);
@@ -32,6 +32,11 @@ public class FakeAnimeProvider : IAnimeProvider
     }
 
     public Task<AnimePageResponse> GetAnime(AnimeFilterRequest animeFilterRequest)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<AnimeUserListResponse> GetUserAnimeList(int aniListUserId)
     {
         throw new NotImplementedException();
     }

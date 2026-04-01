@@ -31,7 +31,11 @@ fragment Anime on Media {
   duration
   genres
   isAdult
+  isFavourite
   averageScore
+  mediaListEntry {
+    id
+  }
   nextAiringEpisode {
     airingAt
     timeUntilAiring

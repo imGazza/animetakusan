@@ -3,7 +3,7 @@ namespace AnimeTakusan.Application.DTOs.AnimeProvider.Responses;
 public record AnimePageResponse
 {
     public AnimePageInfo Page { get; init; }
-    public List<AnimeResponse> Data { get; init; }
+    public List<Anime> Data { get; init; }
 }
 
 public record AnimePageInfo

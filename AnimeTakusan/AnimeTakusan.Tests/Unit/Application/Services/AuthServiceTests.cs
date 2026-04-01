@@ -155,7 +155,7 @@ public class AuthServiceTests
         _mockUserRepository.Setup(x => x.GetUserByRefreshToken(validRefreshToken))
             .ReturnsAsync(user);
         _mockJwtHandler.Setup(x => x.GenerateRefreshToken()).Returns(newRefreshToken);
-        _mockJwtHandler.Setup(x => x.GenerateUserAccessToken(validRefreshToken, user, roles))
+        _mockJwtHandler.Setup(x => x.GenerateUserAccessToken(user, roles))
             .Returns((accessToken, expiresAt));
         _mockUserManager.Setup(x => x.GetRolesAsync(user)).ReturnsAsync(roles);
         _mockUserManager.Setup(x => x.UpdateAsync(user)).ReturnsAsync(IdentityResult.Success);

@@ -13,7 +13,7 @@ public class AniListUserConfiguration : IEntityTypeConfiguration<AniListUser>
         builder.Property(u => u.Id).UseIdentityAlwaysColumn();
         builder.Property(u => u.AniListUserId).IsRequired();
         builder.Property(u => u.UserId).IsRequired();
-        builder.Property(u => u.AccessToken).HasMaxLength(255);
+        builder.Property(u => u.AccessToken);
         builder.Property(u => u.CreatedAt).IsRequired();
         builder.Property(u => u.UpdatedAt).IsRequired();
     }

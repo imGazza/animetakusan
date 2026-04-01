@@ -5,7 +5,7 @@ namespace AnimeTakusan.AnimeProviders.AniList.Helpers.Fakers;
 
 public static class AnimeProviderFakers
 {
-    public static Faker<AnimeResponse> AnimeResponseFaker => new Faker<AnimeResponse>()
+    public static Faker<Anime> AnimeResponseFaker => new Faker<Anime>()
         .RuleFor(a => a.Id, f => f.Random.Number(1, 10000))
         .RuleFor(a => a.Title, f => TitleFaker.Generate())
         .RuleFor(a => a.CoverImage, f => CoverImageFaker.Generate())

@@ -1,6 +1,8 @@
 using AnimeTakusan.Application.DTOs.Authentication.Responses;
 using AnimeTakusan.Application.Interfaces;
 using AnimeTakusan.Domain.Entities;
+using AnimeTakusan.Domain.Exceptions.AuthenticationExceptions;
+using Microsoft.Extensions.Logging;
 
 namespace AnimeTakusan.Application.Services;
 
@@ -8,12 +10,14 @@ public class AniListAuthService : IAniListAuthService, IInjectable
 {
     private readonly IJwtHandler _jwtHandler;
     private readonly IUserRepository _userRepository;
+    private readonly ILogger<AniListAuthService> _logger;
 
 
-    public AniListAuthService(IJwtHandler jwtHandler, IUserRepository userRepository)
+    public AniListAuthService(IJwtHandler jwtHandler, IUserRepository userRepository, ILogger<AniListAuthService> logger)
     {
         _jwtHandler = jwtHandler;
         _userRepository = userRepository;
+        _logger = logger;
     }
 
     public void VerifyCallbackState(string code)
@@ -29,17 +33,17 @@ public class AniListAuthService : IAniListAuthService, IInjectable
     public async Task LinkAniListAccountToUser(AniListTokenResponse aniListTokenData)
     {
         if (string.IsNullOrEmpty(aniListTokenData?.AccessToken))
-            throw new ArgumentException("AniList access token is missing.");
+            throw new AniListAuthenticationException("Access token is missing.");
 
         var aniListClaims = _jwtHandler.GetAniListTokenClaims(aniListTokenData.AccessToken);
         var aniListUserIdClaim = aniListClaims.FirstOrDefault(c => c.Type == "sub")?.Value;
 
         if(string.IsNullOrEmpty(aniListUserIdClaim) || !int.TryParse(aniListUserIdClaim, out var aniListUserId))
-            throw new ArgumentException("AniList access token does not contain a valid AniList user ID.");
+            throw new AniListAuthenticationException("Access token does not contain a valid AniList user ID.");
         
         var user = await _userRepository.GetUserByRefreshToken(_jwtHandler.GetRefreshToken());
         if (user == null)
-            throw new InvalidOperationException("Logged user not found.");
+            throw new AniListAuthenticationException("Internal logged user not found.");
 
         var aniListUser = new AniListUser
         {
@@ -49,6 +53,15 @@ public class AniListAuthService : IAniListAuthService, IInjectable
             AccessTokenExpiry = DateTime.UtcNow.AddSeconds(aniListTokenData.ExpiresIn)
         };
 
-        await _userRepository.AddAniListUserAsync(aniListUser);
+        try
+        {
+            await _userRepository.AddAniListUserAsync(aniListUser);            
+        }
+        catch (Exception ex)
+        {
+            throw new AniListAuthenticationException("Failed to link AniList account to user.", ex);
+        }
+
+        _logger.LogInformation($"Successfully linked AniList account (ID: {aniListUserId}) to user (ID: {user.Id}).");
     }
 }

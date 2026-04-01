@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using AnimeTakusan.Application.Interfaces;
+using AnimeTakusan.Application.Utility;
 using AnimeTakusan.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -79,7 +80,7 @@ public class JwtHandler : IJwtHandler
 
         // Include AniList Token if synced
         if (user.AniListUser != null && IsValidToken(user.AniListUser.AccessToken, user.AniListUser.AccessTokenExpiry ?? DateTime.MinValue))
-            claims.Add(new Claim("anilist_token", user.AniListUser.AccessToken));
+            claims.Add(new Claim(AniListClaimTypes.AccessToken, user.AniListUser.AccessToken));
 
         var expiresAt = DateTime.UtcNow.AddMinutes(15);
 

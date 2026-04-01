@@ -18,14 +18,16 @@ public class AniListProvider : IAnimeProvider
         _client = client;
     }
 
-    public async Task<AnimeResponse> GetAnimeById(int id)
+    // Kept for now, maybe to remove in the future if not needed.
+    public async Task<Anime> GetAnimeById(int id)
     {
         var response = await _client.GetAnimeById.ExecuteAsync(id);
 
         EnsureNoErrors(response);
-        return response.Data.Media.Adapt<AnimeResponse>();
+        return response.Data.Media.Adapt<Anime>();
     }
 
+    // Kept for now, maybe to remove in the future if not needed.
     public async Task<AnimePageResponse> GetSeasonalAnime(AnimeSeasonalRequest animeSeasonalRequest)
     {
         var response = await _client.GetSeasonalAnime.ExecuteAsync(
@@ -63,7 +65,7 @@ public class AniListProvider : IAnimeProvider
             animeFilterRequest.Search,
             ParseEnumOrNull<MediaFormat>(animeFilterRequest.Format),
             animeFilterRequest.GenreIn,
-            animeFilterRequest.AverageScoreGreater,            
+            animeFilterRequest.AverageScoreGreater,
             ParseEnumOrNull<MediaSeason>(animeFilterRequest.Season),
             animeFilterRequest.SeasonYear,
             ParseEnumOrNull<MediaStatus>(animeFilterRequest.Status)
@@ -73,8 +75,16 @@ public class AniListProvider : IAnimeProvider
         return response.Data.Page.Adapt<AnimePageResponse>();
     }
 
-    // Currently declared the methods here as I don't plan to have multiple providers.
-    // If more providers are added in the future, this will be probably moved in a base class.
+    public async Task<AnimeUserListResponse> GetUserAnimeList(int aniListUserId)
+    {
+        var response = await _client.GetUserAnimeList.ExecuteAsync(
+            aniListUserId
+        );
+
+        EnsureNoErrors(response);
+        return response.Data.MediaListCollection.Adapt<AnimeUserListResponse>();
+    }
+
     private void EnsureNoErrors(IOperationResult operationResult)
     {
         try

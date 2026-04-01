@@ -20,6 +20,8 @@ public static class AniListProviderFakers
             type: f.PickRandom<MediaType>(),
             format: f.PickRandom<MediaFormat>(),
             status: f.PickRandom<MediaStatus>(),
+            isFavourite: f.Random.Bool(),
+            mediaListEntry: null,
             episodes: f.Random.Number(1, 50),
             duration: f.Random.Number(0, 100),
             genres: f.Random.WordsArray(3, 7),
@@ -43,6 +45,8 @@ public static class AniListProviderFakers
             type: f.PickRandom<MediaType>(),
             format: f.PickRandom<MediaFormat>(),
             status: f.PickRandom<MediaStatus>(),
+            isFavourite: f.Random.Bool(),
+            mediaListEntry: null,
             episodes: f.Random.Number(1, 50),
             duration: f.Random.Number(0, 100),
             genres: f.Random.WordsArray(3, 7),
@@ -66,6 +70,8 @@ public static class AniListProviderFakers
             type: f.PickRandom<MediaType>(),
             format: f.PickRandom<MediaFormat>(),
             status: f.PickRandom<MediaStatus>(),
+            isFavourite: f.Random.Bool(),
+            mediaListEntry: null,
             episodes: f.Random.Number(1, 50),
             duration: f.Random.Number(0, 100),
             genres: f.Random.WordsArray(3, 7),
@@ -89,6 +95,8 @@ public static class AniListProviderFakers
             type: f.PickRandom<MediaType>(),
             format: f.PickRandom<MediaFormat>(),
             status: f.PickRandom<MediaStatus>(),
+            isFavourite: f.Random.Bool(),
+            mediaListEntry: null,
             episodes: f.Random.Number(1, 50),
             duration: f.Random.Number(0, 100),
             genres: f.Random.WordsArray(3, 7),
@@ -112,6 +120,8 @@ public static class AniListProviderFakers
             type: f.PickRandom<MediaType>(),
             format: f.PickRandom<MediaFormat>(),
             status: f.PickRandom<MediaStatus>(),
+            isFavourite: f.Random.Bool(),
+            mediaListEntry: null,
             episodes: f.Random.Number(1, 50),
             duration: f.Random.Number(0, 100),
             genres: f.Random.WordsArray(3, 7),
@@ -135,6 +145,8 @@ public static class AniListProviderFakers
             type: f.PickRandom<MediaType>(),
             format: f.PickRandom<MediaFormat>(),
             status: f.PickRandom<MediaStatus>(),
+            isFavourite: f.Random.Bool(),
+            mediaListEntry: null,
             episodes: f.Random.Number(1, 50),
             duration: f.Random.Number(0, 100),
             genres: f.Random.WordsArray(3, 7),
@@ -167,6 +179,56 @@ public static class AniListProviderFakers
         .CustomInstantiator(f => new GetAnimeById_Media_Studios_Nodes_Studio(
             id: f.Random.Number(1, 10000),
             name: f.Company.CompanyName()
+        ));
+
+    public static Faker<GetAnime_Page_Media_Media> AniListGetAnimeAnimeFaker => new Faker<GetAnime_Page_Media_Media>()
+        .CustomInstantiator(f => new GetAnime_Page_Media_Media(
+            id: f.Random.Number(1, 10000),
+            title: AniListTitleFaker.Generate(),
+            coverImage: AniListCoverImageFaker.Generate(),
+            startDate: null,
+            endDate: null,
+            bannerImage: f.Image.PlaceholderUrl(1900, 400),
+            season: f.PickRandom<MediaSeason>(),
+            seasonYear: f.Random.Number(2000, 2026),
+            description: f.Lorem.Paragraphs(1, 3),
+            type: f.PickRandom<MediaType>(),
+            format: f.PickRandom<MediaFormat>(),
+            status: f.PickRandom<MediaStatus>(),
+            episodes: f.Random.Number(1, 50),
+            duration: f.Random.Number(0, 100),
+            genres: f.Random.WordsArray(3, 7),
+            isAdult: f.Random.Bool(),
+            isFavourite: f.Random.Bool(),
+            averageScore: f.Random.Number(0, 100),
+            mediaListEntry: null,
+            nextAiringEpisode: null,
+            studios: AniListStudiosFaker.Generate()
+        ));
+
+    public static Faker<GetUserAnimeList_MediaListCollection_Lists_Entries_Media_Media> AniListUserAnimeListMediaFaker => new Faker<GetUserAnimeList_MediaListCollection_Lists_Entries_Media_Media>()
+        .CustomInstantiator(f => new GetUserAnimeList_MediaListCollection_Lists_Entries_Media_Media(
+            id: f.Random.Number(1, 10000),
+            title: AniListTitleFaker.Generate(),
+            coverImage: AniListCoverImageFaker.Generate(),
+            startDate: null,
+            endDate: null,
+            bannerImage: f.Image.PlaceholderUrl(1900, 400),
+            season: f.PickRandom<MediaSeason>(),
+            seasonYear: f.Random.Number(2000, 2026),
+            description: f.Lorem.Paragraphs(1, 3),
+            type: f.PickRandom<MediaType>(),
+            format: f.PickRandom<MediaFormat>(),
+            status: f.PickRandom<MediaStatus>(),
+            episodes: f.Random.Number(1, 50),
+            duration: f.Random.Number(0, 100),
+            genres: f.Random.WordsArray(3, 7),
+            isAdult: f.Random.Bool(),
+            isFavourite: f.Random.Bool(),
+            averageScore: f.Random.Number(0, 100),
+            mediaListEntry: null,
+            nextAiringEpisode: null,
+            studios: AniListStudiosFaker.Generate()
         ));
 
 }

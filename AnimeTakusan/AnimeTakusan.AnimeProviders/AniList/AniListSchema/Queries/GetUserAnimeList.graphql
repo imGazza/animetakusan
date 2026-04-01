@@ -1,0 +1,12 @@
+query GetUserAnimeList($userId: Int) {
+  MediaListCollection(userId: $userId, type: ANIME) {
+    lists {
+      name
+      entries {
+        media{
+          ...Anime
+        }
+      }
+    }
+  }
+}

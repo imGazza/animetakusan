@@ -1,8 +1,5 @@
-using System.IdentityModel.Tokens.Jwt;
 using AnimeTakusan.Application.DTOs.Authentication.Responses;
 using AnimeTakusan.Application.Interfaces;
-using Bogus.Extensions.UnitedKingdom;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -55,9 +52,9 @@ namespace AnimeTakusan.API.Controllers
             if (!response.IsSuccessStatusCode)
                 return StatusCode((int)response.StatusCode, "Authentication to AniList failed.");
 
-            var tokenData = await response.Content.ReadFromJsonAsync<AniListTokenResponse>();
-            _aniListAuthService.LinkAniListAccountToUser(tokenData);
-            return Ok(tokenData);
+            var aniListTokenResponse = await response.Content.ReadFromJsonAsync<AniListTokenResponse>();
+            await _aniListAuthService.LinkAniListAccountToUser(aniListTokenResponse);
+            return Redirect(_configuration["Authentication:Logged:RedirectUri"]);
         }
 
         private bool AreAniListAuthSettingsValid()
