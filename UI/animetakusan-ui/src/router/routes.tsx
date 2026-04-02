@@ -30,6 +30,17 @@ export const routes = createBrowserRouter([
                         Component: Browse
                     }
                 ]
+            },
+            {
+                path: "/browse/:preset",
+                //errorElement: <ErrorPage />,
+                Component: AppLayout,
+                children: [
+                    {
+                        index: true,
+                        Component: Browse
+                    }
+                ]
             }
         ]
     }

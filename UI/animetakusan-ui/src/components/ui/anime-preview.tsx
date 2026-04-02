@@ -1,25 +1,25 @@
 import AnimeCard, { AnimeCardSkeleton } from "@/components/ui/anime-card";
 import type { Anime } from "@/models/common/Anime";
+import AnimeSectionHeader from "./anime-section-header";
+import AnimeDisplay from "./anime-display";
 
 interface AnimePreviewProps {
   title: string;
+  filterName: string;
   data: Anime[];
 }
 
-const AnimePreview = ({ title, data }: AnimePreviewProps) => {
-
+const AnimePreview = ({ title, filterName, data }: AnimePreviewProps) => {
   return (
     <div className="flex flex-col gap-2 mb-4 md:mb-10">
-      <div className="text-md font-semibold text-muted-foreground tracking-wider">
-        {title}
-      </div>
-      <div className="grid grid-cols-[repeat(auto-fit,minmax(120px,1fr))] md:grid-cols-[repeat(auto-fit,minmax(150px,1fr))] lg:grid-cols-[repeat(auto-fit,minmax(180px,1fr))] gap-2.5 lg:gap-12 py-2 md:py-4 lg:[&>*:nth-child(n+5)]:hidden xl:[&>*:nth-child(n+5)]:block xl:[&>*:nth-child(n+6)]:hidden 2xl:[&>*:nth-child(n+6)]:block">
+      <AnimeSectionHeader title={title} filterName={filterName} />
+      <AnimeDisplay className="lg:[&>*:nth-child(n+5)]:hidden xl:[&>*:nth-child(n+5)]:block xl:[&>*:nth-child(n+6)]:hidden 2xl:[&>*:nth-child(n+6)]:block">
         {
           data && data.length > 0 ?
             <AnimePreviewCards data={data} /> :
             <AnimePreviewSkeleton />
         }
-      </div>
+      </AnimeDisplay>
     </div>
   )
 }

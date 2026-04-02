@@ -1,17 +1,17 @@
 import type { Anime } from "@/models/common/Anime";
 import AnimeTopCard, { AnimeTopCardSkeleton } from "./anime-top-card";
+import AnimeSectionHeader from "./anime-section-header";
 
 interface AnimeTopPreviewProps {
   title: string;
+  filterName: string;
   data: Anime[];
 }
 
-const AnimeTopPreview = ({ title, data }: AnimeTopPreviewProps) => {
+const AnimeTopPreview = ({ title, filterName, data }: AnimeTopPreviewProps) => {
   return (
     <div className="flex flex-col gap-2">
-      <div className="text-md font-medium text-muted-foreground tracking-wider">
-        {title}
-      </div>
+      <AnimeSectionHeader title={title} filterName={filterName} />
       <div className="flex flex-col gap-2 py-2 md:py-4">        
         {
           data && data.length > 0 ?

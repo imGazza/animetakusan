@@ -17,7 +17,3 @@ export function calculateDurationFromMinutes(totalMinutes: number): { hours: num
   const minutes = Math.floor(totalMinutes % 60);
   return { hours, minutes };
 }
-
-export function skeletonUniqueId(): string{
-  return `skeleton-row-${crypto.randomUUID()}`
-}

@@ -13,6 +13,8 @@ export interface Anime {
   type: string;
   format: AnimeFormatKey;
   status: string;
+  isFavourite: boolean;
+  mediaListEntry: MediaListEntry | null;
   episodes: number | null;
   duration: number | null;
   genres: string[];
@@ -53,4 +55,8 @@ export interface StudioConnection {
 export interface Studio {
   id: number;
   name: string;
+}
+
+export interface MediaListEntry{
+  id: number;
 }
