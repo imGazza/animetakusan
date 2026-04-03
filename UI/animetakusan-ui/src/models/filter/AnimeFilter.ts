@@ -1,3 +1,8 @@
+export interface AnimeFilterRequest {
+  filter: AnimeFilter;
+  page: AnimePage;
+}
+
 export interface AnimeFilter {
   search?: string;
   format?: string;
@@ -6,4 +11,9 @@ export interface AnimeFilter {
   status?: string;
   season?: string;
   seasonYear?: number | null;
+}
+
+interface AnimePage{
+  page: number,
+  perPage: number,
 }

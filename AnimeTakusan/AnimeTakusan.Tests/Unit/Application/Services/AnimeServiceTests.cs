@@ -113,7 +113,7 @@ public class AnimeServiceTests
     public async Task GetAnime_ValidFilterRequest_CallsProviderWithSameRequest()
     {
         // Arrange
-        var request = new AnimeFilterRequest { Search = "Naruto", Page = 2, PerPage = 10 };
+        var request = new AnimeFilterRequest { Page = new AnimePage { Page = 2, PerPage = 10 }, Filter = new AnimeFilter { Search = "Naruto" } };
         var expected = new AnimePageResponse();
         _mockAnimeProvider.Setup(x => x.GetAnime(request)).ReturnsAsync(expected);
 

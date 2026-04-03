@@ -42,15 +42,15 @@ public class AniListProvider : IAnimeProvider
         return response.Data.Page.Adapt<AnimePageResponse>();
     }
 
-    public async Task<AnimeBrowseResponse> GetAnimeBrowseSection(AnimeBrowseSectionRequest animeBroseSectionRequest)
+    public async Task<AnimeBrowseResponse> GetAnimeBrowseSection(AnimeBrowseSectionRequest animeBrowseSectionRequest)
     {
         var response = await _client.GetBrowseSection.ExecuteAsync(
-            ParseEnumOrDefault(animeBroseSectionRequest.Season, MediaSeason.Winter),
-            animeBroseSectionRequest.SeasonYear,
-            ParseEnumOrDefault(animeBroseSectionRequest.NextSeason, MediaSeason.Winter),
-            animeBroseSectionRequest.NextSeasonYear,
-            ParseEnumOrDefault(animeBroseSectionRequest.LastSeason, MediaSeason.Winter),
-            animeBroseSectionRequest.LastSeasonYear
+            ParseEnumOrDefault(animeBrowseSectionRequest.Season, MediaSeason.Winter),
+            animeBrowseSectionRequest.SeasonYear,
+            ParseEnumOrDefault(animeBrowseSectionRequest.NextSeason, MediaSeason.Winter),
+            animeBrowseSectionRequest.NextSeasonYear,
+            ParseEnumOrDefault(animeBrowseSectionRequest.LastSeason, MediaSeason.Winter),
+            animeBrowseSectionRequest.LastSeasonYear
         );
 
         EnsureNoErrors(response);
@@ -60,15 +60,15 @@ public class AniListProvider : IAnimeProvider
     public async Task<AnimePageResponse> GetAnime(AnimeFilterRequest animeFilterRequest)
     {
         var response = await _client.GetAnime.ExecuteAsync(
-            animeFilterRequest.Page,
-            animeFilterRequest.PerPage,
-            animeFilterRequest.Search,
-            ParseEnumOrNull<MediaFormat>(animeFilterRequest.Format),
-            animeFilterRequest.GenreIn,
-            animeFilterRequest.AverageScoreGreater,
-            ParseEnumOrNull<MediaSeason>(animeFilterRequest.Season),
-            animeFilterRequest.SeasonYear,
-            ParseEnumOrNull<MediaStatus>(animeFilterRequest.Status)
+            animeFilterRequest.Page.Page,
+            animeFilterRequest.Page.PerPage,
+            animeFilterRequest.Filter.Search,
+            ParseEnumOrNull<MediaFormat>(animeFilterRequest.Filter.Format),
+            animeFilterRequest.Filter.GenreIn,
+            animeFilterRequest.Filter.AverageScoreGreater,
+            ParseEnumOrNull<MediaSeason>(animeFilterRequest.Filter.Season),
+            animeFilterRequest.Filter.SeasonYear,
+            ParseEnumOrNull<MediaStatus>(animeFilterRequest.Filter.Status)
         );
 
         EnsureNoErrors(response);

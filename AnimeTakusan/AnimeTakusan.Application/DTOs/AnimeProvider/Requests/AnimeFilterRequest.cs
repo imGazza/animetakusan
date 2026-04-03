@@ -1,9 +1,19 @@
 namespace AnimeTakusan.Application.DTOs.AnimeProvider.Requests;
 
-public class AnimeFilterRequest
+public record AnimeFilterRequest
 {
-    public int Page { get; set; } = 1;
-    public int PerPage { get; set; } = 20;
+    public AnimePage Page { get; set; }
+    public AnimeFilter Filter { get; set; }    
+}
+
+public record AnimePage
+{
+    public int Page { get; init; } = 1;
+    public int PerPage { get; init; } = 20;
+}
+
+public record AnimeFilter
+{
     public string Search { get; set; }
     public string Format { get; set; }
     public List<string> GenreIn { get; set; } = null;
