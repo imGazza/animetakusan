@@ -1,12 +1,34 @@
+import { useEffect, useRef } from "react";
+import { useInView } from "react-intersection-observer";
 import { useBrowseQuery } from "./queries";
 import { toast } from "sonner";
 import type { AnimeFilter } from "@/models/filter/AnimeFilter";
 import AnimeDisplay from "@/components/ui/anime-display";
 import AnimeCard, { AnimeCardSkeleton } from "@/components/ui/anime-card";
 
-const BrowseFilter = ({ filter }: { filter: AnimeFilter }) => {
+const BrowseFilter = ({ filter, sort }: { filter: AnimeFilter, sort?: string }) => {
 
-  const { data: browseResult, isLoading, isFetching, fetchNextPage, hasNextPage, error } = useBrowseQuery(filter);
+  //TODO: Hide adult content from backend
+
+  const { data: browseResult, isLoading, isFetching, fetchNextPage, hasNextPage, error } = useBrowseQuery(filter, sort);
+  const { ref, inView } = useInView();
+  const isMounted = useRef(false);
+
+  // Scroll to top 
+  useEffect(() => {
+    window.scrollTo({ top: 0 });
+  }, []);
+
+  // First time the fetch is skipped to avoid fetching the next page immediately on load if the scroll bar is not at the top
+  useEffect(() => {
+    if (!isMounted.current) {
+      isMounted.current = true;
+      return;
+    }
+    if (inView && hasNextPage && !isFetching) {
+      fetchNextPage();
+    }
+  }, [inView, hasNextPage, isFetching, fetchNextPage]);
 
   if (error) {
     toast.error(error.message || "Error loading. Please try again.");
@@ -36,16 +58,7 @@ const BrowseFilter = ({ filter }: { filter: AnimeFilter }) => {
           )
         }     
       </AnimeDisplay>
-      <div className="flex justify-center mt-6">
-        <button
-          onClick={() => { if (hasNextPage) fetchNextPage(); }}
-          disabled={!hasNextPage}
-          className="px-6 py-2 rounded bg-primary text-primary-foreground disabled:opacity-50"
-        >
-          Load More
-        </button>
-      </div>
-
+      <div ref={ref} className="h-1" />
     </div>
   )
 }

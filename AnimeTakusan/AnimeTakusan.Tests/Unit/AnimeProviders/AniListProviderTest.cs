@@ -935,6 +935,7 @@ public class AniListProviderTest
                 MediaSeason.Spring,
                 2023,
                 MediaStatus.Releasing,
+                new List<MediaSort?> { MediaSort.PopularityDesc },
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(mockResult);
 
@@ -953,6 +954,7 @@ public class AniListProviderTest
                 MediaSeason.Spring,
                 2023,
                 MediaStatus.Releasing,
+                new List<MediaSort?> { MediaSort.PopularityDesc },
                 It.IsAny<CancellationToken>()),
             Times.Once);
     }
@@ -971,7 +973,7 @@ public class AniListProviderTest
                 It.IsAny<int?>(), It.IsAny<int?>(), It.IsAny<string>(),
                 It.IsAny<MediaFormat?>(), It.IsAny<IReadOnlyList<string>>(),
                 It.IsAny<int?>(), It.IsAny<MediaSeason?>(), It.IsAny<int?>(),
-                It.IsAny<MediaStatus?>(), It.IsAny<CancellationToken>()))
+                It.IsAny<MediaStatus?>(), It.IsAny<IReadOnlyList<MediaSort?>>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(mockResult);
 
         // Act
@@ -1002,7 +1004,7 @@ public class AniListProviderTest
                 It.IsAny<int?>(), It.IsAny<int?>(), It.IsAny<string>(),
                 It.IsAny<MediaFormat?>(), It.IsAny<IReadOnlyList<string>>(),
                 It.IsAny<int?>(), It.IsAny<MediaSeason?>(), It.IsAny<int?>(),
-                It.IsAny<MediaStatus?>(), It.IsAny<CancellationToken>()))
+                It.IsAny<MediaStatus?>(), It.IsAny<IReadOnlyList<MediaSort?>>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(mockResult);
 
         // Act
@@ -1028,7 +1030,7 @@ public class AniListProviderTest
                 It.IsAny<int?>(), It.IsAny<int?>(), It.IsAny<string>(),
                 It.IsAny<MediaFormat?>(), It.IsAny<IReadOnlyList<string>>(),
                 It.IsAny<int?>(), It.IsAny<MediaSeason?>(), It.IsAny<int?>(),
-                It.IsAny<MediaStatus?>(), It.IsAny<CancellationToken>()))
+                It.IsAny<MediaStatus?>(), It.IsAny<IReadOnlyList<MediaSort?>>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(mockResult);
 
         // Act
@@ -1060,6 +1062,7 @@ public class AniListProviderTest
                 null,
                 null,
                 null,
+                new List<MediaSort?> { MediaSort.PopularityDesc },
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(mockResult);
 
@@ -1068,7 +1071,7 @@ public class AniListProviderTest
 
         // Assert
         _mockGetAnimeQuery.Verify(
-            x => x.ExecuteAsync(1, 20, null, null, null, null, null, null, null, It.IsAny<CancellationToken>()),
+            x => x.ExecuteAsync(1, 20, null, null, null, null, null, null, null, new List<MediaSort?> { MediaSort.PopularityDesc }, It.IsAny<CancellationToken>()),
             Times.Once);
     }
 
@@ -1086,7 +1089,7 @@ public class AniListProviderTest
                 null,
                 It.IsAny<IReadOnlyList<string>>(),
                 It.IsAny<int?>(), It.IsAny<MediaSeason?>(), It.IsAny<int?>(),
-                It.IsAny<MediaStatus?>(), It.IsAny<CancellationToken>()))
+                It.IsAny<MediaStatus?>(), It.IsAny<IReadOnlyList<MediaSort?>>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(mockResult);
 
         // Act
@@ -1099,7 +1102,7 @@ public class AniListProviderTest
                 null,
                 It.IsAny<IReadOnlyList<string>>(),
                 It.IsAny<int?>(), It.IsAny<MediaSeason?>(), It.IsAny<int?>(),
-                It.IsAny<MediaStatus?>(), It.IsAny<CancellationToken>()),
+                It.IsAny<MediaStatus?>(), It.IsAny<IReadOnlyList<MediaSort?>>(), It.IsAny<CancellationToken>()),
             Times.Once);
     }
 
@@ -1117,7 +1120,7 @@ public class AniListProviderTest
                 It.IsAny<MediaFormat?>(), It.IsAny<IReadOnlyList<string>>(),
                 It.IsAny<int?>(),
                 null,
-                It.IsAny<int?>(), It.IsAny<MediaStatus?>(), It.IsAny<CancellationToken>()))
+                It.IsAny<int?>(), It.IsAny<MediaStatus?>(), It.IsAny<IReadOnlyList<MediaSort?>>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(mockResult);
 
         // Act
@@ -1130,7 +1133,7 @@ public class AniListProviderTest
                 It.IsAny<MediaFormat?>(), It.IsAny<IReadOnlyList<string>>(),
                 It.IsAny<int?>(),
                 null,
-                It.IsAny<int?>(), It.IsAny<MediaStatus?>(), It.IsAny<CancellationToken>()),
+                It.IsAny<int?>(), It.IsAny<MediaStatus?>(), It.IsAny<IReadOnlyList<MediaSort?>>(), It.IsAny<CancellationToken>()),
             Times.Once);
     }
 
@@ -1153,7 +1156,7 @@ public class AniListProviderTest
                 expectedFormat,
                 It.IsAny<IReadOnlyList<string>>(),
                 It.IsAny<int?>(), It.IsAny<MediaSeason?>(), It.IsAny<int?>(),
-                It.IsAny<MediaStatus?>(), It.IsAny<CancellationToken>()))
+                It.IsAny<MediaStatus?>(), It.IsAny<IReadOnlyList<MediaSort?>>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(mockResult);
 
         // Act
@@ -1166,7 +1169,7 @@ public class AniListProviderTest
                 expectedFormat,
                 It.IsAny<IReadOnlyList<string>>(),
                 It.IsAny<int?>(), It.IsAny<MediaSeason?>(), It.IsAny<int?>(),
-                It.IsAny<MediaStatus?>(), It.IsAny<CancellationToken>()),
+                It.IsAny<MediaStatus?>(), It.IsAny<IReadOnlyList<MediaSort?>>(), It.IsAny<CancellationToken>()),
             Times.Once);
     }
 
@@ -1187,7 +1190,7 @@ public class AniListProviderTest
                 It.IsAny<int?>(), It.IsAny<int?>(), It.IsAny<string>(),
                 It.IsAny<MediaFormat?>(), It.IsAny<IReadOnlyList<string>>(),
                 It.IsAny<int?>(), It.IsAny<MediaSeason?>(), It.IsAny<int?>(),
-                It.IsAny<MediaStatus?>(), It.IsAny<CancellationToken>()))
+                It.IsAny<MediaStatus?>(), It.IsAny<IReadOnlyList<MediaSort?>>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(mockResult);
 
         // Act & Assert

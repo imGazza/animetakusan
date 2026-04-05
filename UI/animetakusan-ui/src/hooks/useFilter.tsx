@@ -13,7 +13,7 @@ const useFilter = (): { filter: AnimeFilter | null; isFilterActive: boolean } =>
     search: parseAsString,
     status: parseAsString,
     score:  parseAsInteger,
-    genre:  parseAsArrayOf(parseAsString),
+    genre:  parseAsArrayOf(parseAsString)
   });
 
   if (preset) {

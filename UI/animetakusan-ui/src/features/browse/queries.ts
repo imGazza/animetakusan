@@ -10,10 +10,10 @@ export const useBrowseSectionQuery = () =>
     retry: 2
   });
   
-export const useBrowseQuery = (filter: AnimeFilter) =>
+export const useBrowseQuery = (filter: AnimeFilter, sort: string = "PopularityDesc") =>
   useInfiniteQuery({
-    queryKey: ['browse', filter],
-    queryFn: ({ pageParam }) => browseApis.browse({ filter: filter, page: { page: pageParam, perPage: 20 } }),
+    queryKey: ['browse', filter, sort],
+    queryFn: ({ pageParam }) => browseApis.browse({ filter: filter, page: { page: pageParam, perPage: 20 }, sort }),
     initialPageParam: 1,
     getNextPageParam: (lastPage) => lastPage.page.hasNextPage ? lastPage.page.currentPage + 1 : null,
     staleTime: Infinity,

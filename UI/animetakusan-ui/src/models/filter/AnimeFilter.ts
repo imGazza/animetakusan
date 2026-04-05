@@ -1,6 +1,7 @@
 export interface AnimeFilterRequest {
   filter: AnimeFilter;
   page: AnimePage;
+  sort: string;
 }
 
 export interface AnimeFilter {

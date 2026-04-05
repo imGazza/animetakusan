@@ -62,13 +62,14 @@ public class AniListProvider : IAnimeProvider
         var response = await _client.GetAnime.ExecuteAsync(
             animeFilterRequest.Page.Page,
             animeFilterRequest.Page.PerPage,
-            animeFilterRequest.Filter.Search,
-            ParseEnumOrNull<MediaFormat>(animeFilterRequest.Filter.Format),
-            animeFilterRequest.Filter.GenreIn,
-            animeFilterRequest.Filter.AverageScoreGreater,
-            ParseEnumOrNull<MediaSeason>(animeFilterRequest.Filter.Season),
-            animeFilterRequest.Filter.SeasonYear,
-            ParseEnumOrNull<MediaStatus>(animeFilterRequest.Filter.Status)
+            animeFilterRequest.Filter?.Search,
+            ParseEnumOrNull<MediaFormat>(animeFilterRequest.Filter?.Format),
+            animeFilterRequest.Filter?.GenreIn,
+            animeFilterRequest.Filter?.AverageScoreGreater,
+            ParseEnumOrNull<MediaSeason>(animeFilterRequest.Filter?.Season),
+            animeFilterRequest.Filter?.SeasonYear,
+            ParseEnumOrNull<MediaStatus>(animeFilterRequest.Filter?.Status),
+            new List<MediaSort?> { ParseEnumOrDefault(animeFilterRequest.Sort, MediaSort.PopularityDesc) }
         );
 
         EnsureNoErrors(response);

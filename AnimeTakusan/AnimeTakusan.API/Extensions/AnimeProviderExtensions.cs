@@ -16,6 +16,7 @@ public static class AnimeProviderExtensions
         services.AddScoped<IAnimeProvider, AniListProvider>();
         services.AddTransient<NullGraphQLVariablesHandler>();
         services.AddTransient<AniListAuthenticationHandler>();
+        services.AddTransient<GraphQLLoggingHandler>();
 
         services.AddAniListClient(ExecutionStrategy.CacheFirst)
             .ConfigureHttpClient(
@@ -26,6 +27,7 @@ public static class AnimeProviderExtensions
                 },
                 builder =>
                 {
+                    builder.AddHttpMessageHandler<GraphQLLoggingHandler>();
                     builder.AddHttpMessageHandler<AniListAuthenticationHandler>();
                     builder.AddHttpMessageHandler<NullGraphQLVariablesHandler>();
                     builder.AddStandardHedgingHandler();

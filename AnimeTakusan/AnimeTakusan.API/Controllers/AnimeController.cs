@@ -1,5 +1,4 @@
 using AnimeTakusan.Application.DTOs.AnimeProvider.Requests;
-using AnimeTakusan.Application.DTOs.AnimeProvider.Responses;
 using AnimeTakusan.Application.Interfaces;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;

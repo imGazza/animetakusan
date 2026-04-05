@@ -23,17 +23,14 @@ export const presetFilters: PresetFilter[] = [
             seasonYear: getLastSeasonYear()
         }
     },
-    // To add when sorting is handled
-    // {
-    //     name: "top",
-    //     filter: {
-    //         season: getLastSeason(),
-    //         seasonYear: getLastSeasonYear()
-    //     }
-    // }
+    {
+        name: "top",
+        sort: "ScoreDesc"
+    }
 ]
 
 interface PresetFilter {
     name: string;
-    filter: AnimeFilter;
+    filter?: AnimeFilter;
+    sort?: string;
 }

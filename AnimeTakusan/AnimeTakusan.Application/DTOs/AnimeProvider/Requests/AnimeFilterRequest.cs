@@ -3,7 +3,8 @@ namespace AnimeTakusan.Application.DTOs.AnimeProvider.Requests;
 public record AnimeFilterRequest
 {
     public AnimePage Page { get; set; }
-    public AnimeFilter Filter { get; set; }    
+    public AnimeFilter Filter { get; set; }
+    public string Sort { get; set; } = "POPULARITY_DESC";
 }
 
 public record AnimePage
