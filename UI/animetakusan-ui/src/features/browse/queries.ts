@@ -16,5 +16,5 @@ export const useBrowseQuery = (filter: AnimeFilter, sort: string = "PopularityDe
     queryFn: ({ pageParam }) => browseApis.browse({ filter: filter, page: { page: pageParam, perPage: 20 }, sort }),
     initialPageParam: 1,
     getNextPageParam: (lastPage) => lastPage.page.hasNextPage ? lastPage.page.currentPage + 1 : null,
-    staleTime: Infinity,
+    staleTime: Infinity
   });

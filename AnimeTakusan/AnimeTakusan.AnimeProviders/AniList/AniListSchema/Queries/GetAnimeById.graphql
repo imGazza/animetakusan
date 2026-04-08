@@ -1,5 +1,5 @@
 query GetAnimeById($id: Int) { 
-  Media (id: $id) { 
+  Media (id: $id, isAdult: false, type: ANIME) { 
     ...Anime
   }
 }

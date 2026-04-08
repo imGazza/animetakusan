@@ -7,11 +7,12 @@ import AnimeDisplay from "@/components/ui/anime-display";
 import AnimeCard, { AnimeCardSkeleton } from "@/components/ui/anime-card";
 
 const BrowseFilter = ({ filter, sort }: { filter: AnimeFilter, sort?: string }) => {
-
-  //TODO: Hide adult content from backend
-
+  
   const { data: browseResult, isLoading, isFetching, fetchNextPage, hasNextPage, error } = useBrowseQuery(filter, sort);
+
+  // ref attached to placeholder div at the end
   const { ref, inView } = useInView();
+
   const isMounted = useRef(false);
 
   // Scroll to top 
@@ -58,7 +59,7 @@ const BrowseFilter = ({ filter, sort }: { filter: AnimeFilter, sort?: string }) 
           )
         }     
       </AnimeDisplay>
-      <div ref={ref} className="h-1" />
+      <div ref={ref} className="h-1" /> 
     </div>
   )
 }

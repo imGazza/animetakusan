@@ -5,7 +5,7 @@ query GetAnime($page: Int, $perPage: Int, $search: String, $format: MediaFormat,
       hasNextPage
       perPage
     }
-    media(type: ANIME, search: $search, format: $format, genre_in: $genre_in, averageScore_greater: $averageScore_greater, season: $season, seasonYear: $seasonYear, status: $status, sort: $sort) {
+    media(type: ANIME, isAdult: false, search: $search, format: $format, genre_in: $genre_in, averageScore_greater: $averageScore_greater, season: $season, seasonYear: $seasonYear, status: $status, sort: $sort) {
       ...Anime
     }
   }

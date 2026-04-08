@@ -5,7 +5,7 @@ query GetBrowseSection($season: MediaSeason, $seasonYear: Int, $nextSeason: Medi
       currentPage
       perPage
     } 
-    media(season: $season, seasonYear: $seasonYear, sort: POPULARITY_DESC, type: ANIME) {
+    media(season: $season, seasonYear: $seasonYear, sort: POPULARITY_DESC, type: ANIME, isAdult: false) {
       ...Anime
     }
   }
@@ -15,7 +15,7 @@ query GetBrowseSection($season: MediaSeason, $seasonYear: Int, $nextSeason: Medi
       currentPage
       perPage
     }
-    media(season: $nextSeason, seasonYear: $nextSeasonYear, sort: POPULARITY_DESC, type: ANIME) {
+    media(season: $nextSeason, seasonYear: $nextSeasonYear, sort: POPULARITY_DESC, type: ANIME, isAdult: false) {
       ...Anime
     }
   }
@@ -25,7 +25,7 @@ query GetBrowseSection($season: MediaSeason, $seasonYear: Int, $nextSeason: Medi
       currentPage
       perPage
     }
-    media(season: $lastSeason, seasonYear: $lastSeasonYear, status: FINISHED, sort: SCORE_DESC, type: ANIME) {
+    media(season: $lastSeason, seasonYear: $lastSeasonYear, status: FINISHED, sort: SCORE_DESC, type: ANIME, isAdult: false) {
       ...Anime
     }
   }
@@ -35,7 +35,7 @@ query GetBrowseSection($season: MediaSeason, $seasonYear: Int, $nextSeason: Medi
       currentPage
       perPage
     }
-    media(sort: SCORE_DESC, type: ANIME) {
+    media(sort: SCORE_DESC, type: ANIME, isAdult: false) {
       ...Anime
     }
   }
