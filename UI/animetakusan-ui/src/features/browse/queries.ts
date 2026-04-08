@@ -10,9 +10,12 @@ export const useBrowseSectionQuery = () =>
     retry: 2
   });
   
+export const browseQueryKey = (filter: AnimeFilter, sort: string = "PopularityDesc") =>
+  ['browse', filter, sort] as const;
+
 export const useBrowseQuery = (filter: AnimeFilter, sort: string = "PopularityDesc") =>
   useInfiniteQuery({
-    queryKey: ['browse', filter, sort],
+    queryKey: browseQueryKey(filter, sort),
     queryFn: ({ pageParam }) => browseApis.browse({ filter: filter, page: { page: pageParam, perPage: 20 }, sort }),
     initialPageParam: 1,
     getNextPageParam: (lastPage) => lastPage.page.hasNextPage ? lastPage.page.currentPage + 1 : null,
