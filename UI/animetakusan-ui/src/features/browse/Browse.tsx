@@ -2,6 +2,7 @@ import BrowseSection from "./BrowseSection";
 import BrowseFilter from "./BrowseFilter";
 import useFilter from "@/hooks/useFilter";
 import useSort from "@/hooks/useSort";
+import Filters from "../filter/Filters";
 
 const Browse = () => {
     
@@ -10,14 +11,17 @@ const Browse = () => {
 
   return (
     <>
-      {
-        isFilterActive || isSortActive ? (
-          <BrowseFilter filter={filter!} sort={sort} />
-        ) : 
-        (
-          <BrowseSection />
-        )
-      }
+      <Filters />
+      <div className="mt-4 md:mt-10">
+        {
+          isFilterActive || isSortActive ? (
+            <BrowseFilter filter={filter!} sort={sort} />
+          ) :
+          (
+            <BrowseSection />
+          )
+        }
+      </div>
     </>
   )
 }

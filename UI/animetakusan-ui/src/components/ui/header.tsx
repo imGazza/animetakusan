@@ -5,11 +5,12 @@ import TopNav from "./top-nav";
 import { siteConfig } from "@/lib/site-config";
 import MobileNav from "./mobile-nav";
 import { Link } from "react-router";
+import Container from "./container";
 
 const Header = () => {
   return (
     <header>
-      <div className="container px-6 flex items-center m-inline mx-auto h-(--header-height)">
+      <Container className="flex items-center h-(--header-height)">
         <MobileNav className="flex lg:hidden" items={siteConfig.navItems}/>
         <div className="hidden items-center lg:flex">
           <Link to="/">
@@ -21,7 +22,7 @@ const Header = () => {
           <SimpleSearch className="hidden md:flex" />
           <UserAvatar items={siteConfig.profileNavItems} />
         </div>
-      </div>
+      </Container>
     </header>
   )
 }

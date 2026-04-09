@@ -1,10 +1,11 @@
 import { siteConfig } from "@/lib/site-config";
 import ThemeSwitcher from "./theme-switcher";
+import Container from "./container";
 
 const Footer = () => {
   return (
     <footer>
-      <div className="container px-6 flex items-center justify-between m-inline mx-auto h-(--footer-height)">
+      <Container className="flex items-center justify-between h-(--footer-height)">
         <div className="flex items-center">
           <ThemeSwitcher />
         </div>
@@ -12,7 +13,7 @@ const Footer = () => {
           Made with ❤️ by imGazza. Source code available on{" "}
           <a href={siteConfig.urls.github} target="_blank" rel="noreferrer" className="underline underline-offset-3">Github</a>
         </div>
-      </div>
+      </Container>
     </footer>
   )
 }

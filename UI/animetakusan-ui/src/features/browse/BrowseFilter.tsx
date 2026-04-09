@@ -7,6 +7,7 @@ import type { AnimeFilter } from "@/models/filter/AnimeFilter";
 import type { AnimePage } from "@/models/common/AnimePage";
 import AnimeDisplay from "@/components/ui/anime-display";
 import AnimeCard, { AnimeCardSkeleton } from "@/components/ui/anime-card";
+import Container from "@/components/ui/container";
 
 const BrowseFilter = ({ filter, sort }: { filter: AnimeFilter, sort?: string }) => {
   
@@ -57,7 +58,7 @@ const BrowseFilter = ({ filter, sort }: { filter: AnimeFilter, sort?: string }) 
   }
 
   return (
-    <div className="container mx-auto px-2.5 md:px-6 m-inline py-6">
+    <Container>
       <AnimeDisplay>
         {
           // Initial 20 items skeleton while loading, then show results or "No results"
@@ -81,7 +82,7 @@ const BrowseFilter = ({ filter, sort }: { filter: AnimeFilter, sort?: string }) 
         }     
       </AnimeDisplay>
       <div ref={ref} className="h-1" /> 
-    </div>
+    </Container>
   )
 }
 export default BrowseFilter;
