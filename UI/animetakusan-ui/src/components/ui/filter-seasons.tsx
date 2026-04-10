@@ -34,14 +34,15 @@ const FilterSeasons = ({ title, data, className }: FilterSeasonsProps) => {
         type="single"
         value={value}
         onValueChange={(value) => changeValue(value)}
-        className="border rounded-md p-0.5"
-        size="default"
+        size="sm"
         spacing={1}
+        variant="outline"
       >
         {
           data.map((element) => (
-            <ToggleGroupItem key={element.value} value={element.value} aria-label={element.value} className="data-[state=on]:bg-muted" style={value === element.value ? { color: element.selectedColor } : undefined}>
+            <ToggleGroupItem key={element.value} value={element.value} aria-label={element.value} className="text-xs data-[state=on]:bg-muted" style={value === element.value ? { color: element.selectedColor } : undefined}>
               <element.icon />
+              {element.value}
             </ToggleGroupItem>
           ))
         }

@@ -1,12 +1,14 @@
 import { Leaf, Sun, Flower, Snowflake } from "lucide-react";
-import FilterRadio from "./filter-radio";
-import FilterToggle from "./filter-toggle";
-import FilterSeasons from "./filter-seasons";
+import MobileFilterPanel from "./mobile-filter-panel";
+import DesktopFilterPanel from "./desktop-filter-panel";
 
 const FilterPanel = () => {
 
-  const genres = ["Action", "Adventure", "Comedy", "Drama", "Fantasy", "Horror", "Mystery", "Romance", "Sci-Fi", "Thriller", "Action", "Adventure", "Comedy", "Drama", "Fantasy", "Horror", "Mystery", "Romance", "Sci-Fi", "Thriller"];
-  const years = ["2020", "2021", "2022", "2023", "2024", "2025", "2026", "2027", "2020", "2021", "2022", "2023", "2024", "2025", "2026", "2027","2020", "2021", "2022", "2023", "2024", "2025", "2026", "2027"];
+  // Change color of the input on the comboboxes
+  // Create a custom hook to return the filters
+
+  const genres = ["Action", "Adventure", "Comedy", "Drama", "Fantasy", "Horror", "Mystery", "Romance", "Sci-Fi", "Thriller"]
+  const years = Array.from({ length: new Date().getFullYear() + 1 - 1990 + 1 }, (_, i) => String(new Date().getFullYear() + 1 - i))
   const seasons = [
     { value: "Winter", icon: Snowflake, selectedColor: "#0DB3D9" }, 
     { value: "Spring", icon: Flower, selectedColor: "#df91d4" }, 
@@ -15,18 +17,13 @@ const FilterPanel = () => {
   const formats = ["TV", "Movie", "OVA", "ONA", "TV Short", "Special", "Music"];
   const airingStatuses = ["Airing", "Finished", "Not Yet Aired", "Cancelled"];
 
+  const filters = { genres, years, seasons, formats, airingStatuses };
+
   return (
-    <div className="flex flex-col gap-4 md:flex-row">
-      <div className="flex flex-col gap-4 md:w-1/2">
-        <FilterToggle data={genres} title="Genres" />
-        <FilterToggle data={formats} title="Format"  />
-        <FilterRadio data={airingStatuses} title="Airing Status"  />
-      </div>
-      <div className="flex flex-col gap-4 md:w-1/2">
-        <FilterSeasons data={seasons} title="Season" />        
-        <FilterRadio data={[...years].reverse()} title="Year" />
-      </div>
-    </div>
+    <>
+      <DesktopFilterPanel {...filters} years={years.reverse()} />
+      <MobileFilterPanel {...filters} />
+    </>
   )
 }
 export default FilterPanel;

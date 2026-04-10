@@ -22,26 +22,24 @@ const FilterRadio = ({ title, data, className }: FilterRadioProps) => {
   return (
     <div className={cn(className, "flex flex-col gap-3")}>
       <Label htmlFor="filter">{title}</Label>
-      <div className="max-md:overflow-x-auto max-md:touch-pan-x scrollbar-none [&::-webkit-scrollbar]:hidden">
-        <ToggleGroup
-          id="filter"
-          type="single"
-          value={value}
-          onValueChange={(value) => changeValue(value)}
-          size="sm"
-          spacing={2}
-          variant="outline"
-          className="md:flex-wrap"
-        >
-          {
-            data.map((element) => (
-              <ToggleGroupItem key={element} value={element} aria-label={element} className="text-xs">
-                {element}
-              </ToggleGroupItem>
-            ))
-          }
-        </ToggleGroup>
-      </div>
+      <ToggleGroup
+        id="filter"
+        type="single"
+        value={value}
+        onValueChange={(value) => changeValue(value)}
+        size="sm"
+        spacing={2}
+        variant="outline"
+        className="md:flex-wrap"
+      >
+        {
+          data.map((element) => (
+            <ToggleGroupItem key={element} value={element} aria-label={element} className="text-xs">
+              {element}
+            </ToggleGroupItem>
+          ))
+        }
+      </ToggleGroup>
     </div>
   )
 }

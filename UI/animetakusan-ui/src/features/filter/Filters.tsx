@@ -26,7 +26,7 @@ const Filters = () => {
         </div>
       </Container>
       <CollapsibleContent>
-        <Container>
+        <Container className="pb-0">
           <FilterPanel />
         </Container>
       </CollapsibleContent>
