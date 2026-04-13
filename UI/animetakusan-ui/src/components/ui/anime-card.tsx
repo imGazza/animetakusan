@@ -3,35 +3,29 @@ import { AspectRatio } from "./aspect-ratio"
 import { BookmarkPlus, Info } from "lucide-react"
 import AnimeCardInfo from "./anime-card-info"
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "./hover-card"
-import { useEffect, useRef, useState } from "react"
+import { memo, useCallback, useRef, useState } from "react"
 import { Button } from "./button"
 import AnimeMobileInfo from "./anime-mobile-info"
 import AnimeAdd from "./anime-add"
 import { Skeleton } from "./skeleton"
 import AnimeCardImage from "./anime-card-image"
 
-const AnimeCard = ({ anime }: { anime: Anime }) => {
+const AnimeCard = memo(({ anime }: { anime: Anime }) => {
   const triggerRef = useRef<HTMLDivElement>(null)
-  const [triggerHeight, setTriggerHeight] = useState<number>(0)
-  const [triggerWidth, setTriggerWidth] = useState<number>(0)
+  const [cardSize, setCardSize] = useState<{ height: number; width: number }>({ height: 0, width: 0 })
   const [imageLoaded, setImageLoaded] = useState(false)
 
-  useEffect(() => {
-    if (!triggerRef.current) return
+  const handleImageLoad = useCallback(() => setImageLoaded(true), [])
 
-    const resizeObserver = new ResizeObserver((entries) => {
-      for (const entry of entries) {
-        setTriggerHeight(entry.target.clientHeight)
-        setTriggerWidth(entry.target.clientWidth)
-      }
-    })
-
-    resizeObserver.observe(triggerRef.current)
-    return () => resizeObserver.disconnect()
+  // This is done to resize the HoverCardContent to match the Card size (subject to change when the page gets resized)
+  const handleOpenChange = useCallback((open: boolean) => {
+    if (open && triggerRef.current) {
+      setCardSize({ height: triggerRef.current.clientHeight, width: triggerRef.current.clientWidth })
+    }
   }, [])
 
   return (
-    <HoverCard openDelay={0} closeDelay={0}>
+    <HoverCard openDelay={0} closeDelay={0} onOpenChange={handleOpenChange}>
       <HoverCardTrigger asChild>
         <div className="flex relative cursor-pointer">
           <div ref={triggerRef} className="group flex flex-col w-full max-w-(--sm-image-width) md:max-w-(--md-image-width)">
@@ -39,8 +33,8 @@ const AnimeCard = ({ anime }: { anime: Anime }) => {
               <AnimeCardImage 
                 url={anime.coverImage.extraLarge} 
                 title={anime.title.english || anime.title.romaji || ""} 
-                onImageLoad={() => setImageLoaded(true)} 
-                className="h-full w-full object-cover lg:group-hover:scale-[1.1] transition-all duration-300 ease-in-out will-change-transform"/>
+                onImageLoad={handleImageLoad}
+              />
               <AnimeAdd>
                 <Button variant="ghost" size="icon" className="bg-background text-muted-foreground size-8 absolute right-1 top-1 rounded-full z-10 opacity-0 scale-[.40] pointer-events-none lg:group-hover:opacity-80 lg:group-hover:scale-[1] lg:group-hover:pointer-events-auto transition-all duration-200 ease-in-out">
                   <BookmarkPlus className="size-4" />
@@ -63,13 +57,14 @@ const AnimeCard = ({ anime }: { anime: Anime }) => {
         side="right"
         sideOffset={8}
         className="hidden lg:block max-w-(--md-image-width) pointer-events-none border-none"
-        style={{ height: triggerHeight ? `${triggerHeight}px` : 'auto', width: triggerWidth ? `${triggerWidth}px` : 'auto' }}
+        style={{ height: cardSize.height ? `${cardSize.height}px` : 'auto', width: cardSize.width ? `${cardSize.width}px` : 'auto' }}
       >
         <AnimeCardInfo anime={anime} />
       </HoverCardContent>
     </HoverCard>
   )
-}
+})
+AnimeCard.displayName = 'AnimeCard'
 export default AnimeCard;
 
 const AnimeCardSkeleton = () => {

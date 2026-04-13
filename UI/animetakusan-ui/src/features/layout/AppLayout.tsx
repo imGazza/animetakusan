@@ -7,7 +7,7 @@ const AppLayout = () => {
   return (
     <div>
       <Header />
-      <main>
+      <main className="min-h-screen">
         <Outlet />
         <CustomToaster />
       </main>

@@ -5,20 +5,25 @@ import { Label } from "./label";
 interface FilterComboboxProps {
   items: readonly string[];
   title: string;
+  value?: string[];
+  onChange?: (value: string[]) => void;
 }
 
-const FilterCombobox = ({ items, title }: FilterComboboxProps) => {
+const FilterCombobox = ({ items, title, value, onChange }: FilterComboboxProps) => {
   const anchor = useComboboxAnchor()
-  const [selectedValues, setSelectedValues] = React.useState<string[]>([])
+  
+
 
   return (
     <div className="flex flex-col gap-2 w-full">
-      <Label htmlFor="genres">{title}</Label>   
+      <Label htmlFor={title}>{title}</Label>   
       <Combobox
+      id={title}
       multiple
       autoHighlight
       items={items}
-      onValueChange={setSelectedValues}
+      onValueChange={onChange}
+      value={value}
     >
       <ComboboxChips ref={anchor} className="w-full rounded-xs">
         <ComboboxValue>
@@ -27,7 +32,7 @@ const FilterCombobox = ({ items, title }: FilterComboboxProps) => {
               {values.map((value: string) => (
                 <ComboboxChip key={value}>{value}</ComboboxChip>
               ))}
-              <ComboboxChipsInput placeholder={selectedValues.length === 0 ? "Any" : ""} />
+              <ComboboxChipsInput placeholder={value && value.length === 0 ? "Any" : ""} />
             </React.Fragment>
           )}
         </ComboboxValue>

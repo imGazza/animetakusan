@@ -1,21 +1,25 @@
-import { useState } from "react";
 import { Combobox, ComboboxContent, ComboboxEmpty, ComboboxInput, ComboboxItem, ComboboxList } from "./combobox";
 import { Label } from "./label"
+
 interface FilterSelectProps {
   items: readonly string[];
-  title: string;
+  title: string;  
+  value?: string;
+  onChange?: (value: string) => void;
 }
 
-const FilterSelect = ({ items, title }: FilterSelectProps) => {
-  const [selectedValue, setSelectedValue] = useState<string | null>(null)
+const FilterSelect = ({ items, title, value, onChange }: FilterSelectProps) => {
+  
 
   return (
     <div className="flex flex-col gap-2 w-full">
-      <Label htmlFor="genres">{title}</Label>
+      <Label htmlFor={title}>{title}</Label>
       <Combobox
+        id={title}
         autoHighlight
         items={items}
-        onValueChange={(value: string | null) => setSelectedValue(value)}
+        onValueChange={(value) => onChange?.(value ?? '')}
+        value={value}
       >
         <ComboboxInput placeholder="Any" className="rounded-xs" showClear />
         <ComboboxContent>

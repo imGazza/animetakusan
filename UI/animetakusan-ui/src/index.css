@@ -47,7 +47,7 @@
   --chart-3: oklch(0.398 0.07 227.392);
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.984 0.003 247.858);
+  --sidebar: oklch(0.984 0.003 247.858);  
   --sidebar-foreground: oklch(0.129 0.042 264.695);
   --sidebar-primary: oklch(0.208 0.042 265.755);
   --sidebar-primary-foreground: oklch(0.984 0.003 247.858);
@@ -55,6 +55,13 @@
   --sidebar-accent-foreground: oklch(0.208 0.042 265.755);
   --sidebar-border: oklch(0.929 0.013 255.508);
   --sidebar-ring: oklch(0.704 0.04 256.788);
+  --filter-search: oklch(0.6187 0.1707 27.53);
+  --filter-year: oklch(0.7344 0.1512 80.47);
+  --filter-genre: oklch(0.6424 0.1512 232.95);
+  --filter-season: oklch(0.5178 0.1389 293.23);
+  --filter-status: oklch(0.5059 0.1027 161.84);
+  --filter-format: oklch(0.5059 0.1027 356.26);
+  --filter-score: oklch(0.6187 0.084 192.71);
 }
 
 .dark {
@@ -90,6 +97,13 @@
   --sidebar-accent-foreground: oklch(0.984 0.003 247.858);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.551 0.027 264.364);
+  --filter-search: oklch(0.6187 0.1707 27.53);
+  --filter-year: oklch(0.7344 0.1512 80.47);
+  --filter-genre: oklch(0.6424 0.1512 232.95);
+  --filter-season: oklch(0.5178 0.1389 293.23);
+  --filter-status: oklch(0.5059 0.1027 161.84);
+  --filter-format: oklch(0.5059 0.1027 356.26);
+  --filter-score: oklch(0.6187 0.084 192.71);
 }
 
 @theme inline {
@@ -131,6 +145,13 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  --color-filter-search: var(--filter-search);
+  --color-filter-year: var(--filter-year);
+  --color-filter-genre: var(--filter-genre);
+  --color-filter-season: var(--filter-season);
+  --color-filter-status: var(--filter-status);
+  --color-filter-format: var(--filter-format);
+  --color-filter-score: var(--filter-score);
 }
 
 @media (prefers-color-scheme: light) {

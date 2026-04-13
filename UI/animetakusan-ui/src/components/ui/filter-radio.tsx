@@ -1,32 +1,27 @@
-import { useState } from "react";
 import { Label } from "./label"
 import { ToggleGroup, ToggleGroupItem } from "./toggle-group"
 import { cn } from "@/lib/utils";
 
 interface FilterRadioProps {
   title: string;
-  data: string[];
+  options: string[];
+  value?: string;
   className?: string;
+  onChange?: (selected: string) => void;
 }
 
-const FilterRadio = ({ title, data, className }: FilterRadioProps) => {
+const FilterRadio = ({ title, options: data, className, value, onChange }: FilterRadioProps) => {
 
-  const [value, setValue] = useState("");
-
-  const changeValue = (value: string) => {
-    console.log(value);
-    // Logic to set filter
-    setValue(value);
-  }
+  
 
   return (
     <div className={cn(className, "flex flex-col gap-3")}>
-      <Label htmlFor="filter">{title}</Label>
+      <Label htmlFor={title}>{title}</Label>
       <ToggleGroup
-        id="filter"
+        id={title}
         type="single"
         value={value}
-        onValueChange={(value) => changeValue(value)}
+        onValueChange={onChange}
         size="sm"
         spacing={2}
         variant="outline"

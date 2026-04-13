@@ -37,8 +37,8 @@ const AnimePreviewSkeleton = () => {
   return (
     <>
       {
-        [...Array(6)].map(() => (
-          <AnimeCardSkeleton key={crypto.randomUUID()} />
+        [...Array(6)].map((_, i) => (
+          <AnimeCardSkeleton key={i} />
         ))
       }
     </>

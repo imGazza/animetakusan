@@ -1,27 +1,37 @@
-import { Toggle } from "./toggle";
 import { Label } from "./label";
 import { cn } from "@/lib/utils";
+import { ToggleGroup, ToggleGroupItem } from "./toggle-group";
 
 interface FilterToggleProps {
-  data: string[];
+  options: string[];
+  value?: string[];
   title: string;
   className?: string;
+  onChange?: (selected: string[]) => void;
 }
 
-const FilterToggle = ({ data, title, className }: FilterToggleProps) => {
+const FilterToggle = ({ options: data, value, title, className, onChange }: FilterToggleProps) => {
 
   return (
     <div className={cn(className, "flex flex-col gap-3")}>
-      <Label htmlFor="filter">{title}</Label>
-      <div id="filter" className="flex flex-wrap gap-2 pb-1">
+      <Label htmlFor={title}>{title}</Label>
+      <ToggleGroup
+        type="multiple"
+        id={title}
+        className="flex-wrap"
+        value={value}
+        onValueChange={onChange}
+        variant="outline"
+        spacing={2}
+      >
         {
           data.map((element) => (
-            <Toggle key={element} variant="outline" size="sm" className="shrink-0 text-xs data-[state=on]:border-accent">
+            <ToggleGroupItem key={element} value={element} variant="outline" size="sm" className="shrink-0 text-xs data-[state=on]:border-accent">
               {element}
-            </Toggle>
+            </ToggleGroupItem>
           ))
         }
-      </div>
+      </ToggleGroup>
     </div>
   )
 }

@@ -12,19 +12,13 @@ interface FilterSeasonsItem {
 
 interface FilterSeasonsProps {
   title: string;
-  data: FilterSeasonsItem[];
+  options: FilterSeasonsItem[];
+  value?: string;
+  onChange?: (selected: string) => void;
   className?: string;
 }
 
-const FilterSeasons = ({ title, data, className }: FilterSeasonsProps) => {
-
-  const [value, setValue] = useState("");
-
-  const changeValue = (value: string) => {
-    console.log(value);
-    // Logic to set filter
-    setValue(value);
-  }
+const FilterSeasons = ({ title, options: data, value, onChange, className }: FilterSeasonsProps) => {
 
   return (
     <div className={cn(className, "flex flex-col gap-3")}>
@@ -33,9 +27,9 @@ const FilterSeasons = ({ title, data, className }: FilterSeasonsProps) => {
         id="filter"
         type="single"
         value={value}
-        onValueChange={(value) => changeValue(value)}
+        onValueChange={onChange}
         size="sm"
-        spacing={1}
+        spacing={2}
         variant="outline"
       >
         {

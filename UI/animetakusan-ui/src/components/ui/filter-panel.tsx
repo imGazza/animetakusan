@@ -3,12 +3,10 @@ import MobileFilterPanel from "./mobile-filter-panel";
 import DesktopFilterPanel from "./desktop-filter-panel";
 
 const FilterPanel = () => {
-
-  // Change color of the input on the comboboxes
-  // Create a custom hook to return the filters
-
+  
   const genres = ["Action", "Adventure", "Comedy", "Drama", "Fantasy", "Horror", "Mystery", "Romance", "Sci-Fi", "Thriller"]
-  const years = Array.from({ length: new Date().getFullYear() + 1 - 1990 + 1 }, (_, i) => String(new Date().getFullYear() + 1 - i))
+  const years = Array.from({ length: new Date().getFullYear() + 1 - 1990 + 1 }, (_, i) => String(new Date().getFullYear() + 1 - i));
+  const yearsDesktop = [...years].reverse();
   const seasons = [
     { value: "Winter", icon: Snowflake, selectedColor: "#0DB3D9" }, 
     { value: "Spring", icon: Flower, selectedColor: "#df91d4" }, 
@@ -21,7 +19,7 @@ const FilterPanel = () => {
 
   return (
     <>
-      <DesktopFilterPanel {...filters} years={years.reverse()} />
+      <DesktopFilterPanel {...filters} years={yearsDesktop} />
       <MobileFilterPanel {...filters} />
     </>
   )
