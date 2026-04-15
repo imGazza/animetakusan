@@ -34,6 +34,7 @@ const BrowseFilter = ({ filter, sort }: { filter: AnimeFilter, sort?: string }) 
     }
   }, [browseResult, isReady, inView, hasNextPage, isFetching, fetchNextPage]);  
 
+  // Memoed anime cards to avoid unnecessary re-renders when fetching next page
   const animeCards = useMemo(() =>
     browseResult?.pages.flatMap((page) =>
       page.data.map((anime) => (
@@ -57,7 +58,7 @@ const BrowseFilter = ({ filter, sort }: { filter: AnimeFilter, sort?: string }) 
             animeCards && animeCards.length > 0 ? (
               animeCards
             ) : (
-              <div>No results found.</div>
+              <div className="col-span-full text-center">No results found.</div>
             )
         }
         {

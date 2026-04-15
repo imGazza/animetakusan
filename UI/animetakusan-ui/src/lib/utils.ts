@@ -17,3 +17,8 @@ export function calculateDurationFromMinutes(totalMinutes: number): { hours: num
   const minutes = Math.floor(totalMinutes % 60);
   return { hours, minutes };
 }
+
+export function capitalize(value: string ): string {
+  if (!value) return value;
+  return value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
+}

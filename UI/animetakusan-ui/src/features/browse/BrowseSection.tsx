@@ -13,6 +13,7 @@ const BrowseSection = () => {
   // startTransition defers the card tree render so skeletons paint first, even on cache hits.
   const [isReady, setIsReady] = useState(false);
   useEffect(() => {
+    console.log(isReady);
     if (!isReady && browseSection) {
       startTransition(() => setIsReady(true));
       return;

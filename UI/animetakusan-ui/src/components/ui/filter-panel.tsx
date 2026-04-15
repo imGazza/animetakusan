@@ -1,8 +1,9 @@
 import { Leaf, Sun, Flower, Snowflake } from "lucide-react";
 import MobileFilterPanel from "./mobile-filter-panel";
 import DesktopFilterPanel from "./desktop-filter-panel";
+import type { AnimeFilter } from "@/models/filter/AnimeFilter";
 
-const FilterPanel = () => {
+const FilterPanel = ({ filter }: { filter: AnimeFilter | null }) => {
   
   const genres = ["Action", "Adventure", "Comedy", "Drama", "Fantasy", "Horror", "Mystery", "Romance", "Sci-Fi", "Thriller"]
   const years = Array.from({ length: new Date().getFullYear() + 1 - 1990 + 1 }, (_, i) => String(new Date().getFullYear() + 1 - i));
@@ -15,12 +16,12 @@ const FilterPanel = () => {
   const formats = ["TV", "Movie", "OVA", "ONA", "TV Short", "Special", "Music"];
   const airingStatuses = ["Airing", "Finished", "Not Yet Aired", "Cancelled"];
 
-  const filters = { genres, years, seasons, formats, airingStatuses };
+  const filtersOptions = { genres, years, seasons, formats, airingStatuses };
 
   return (
     <>
-      <DesktopFilterPanel {...filters} years={yearsDesktop} />
-      <MobileFilterPanel {...filters} />
+      <DesktopFilterPanel {...filtersOptions} years={yearsDesktop} filter={filter} />
+      <MobileFilterPanel {...filtersOptions} filter={filter} />
     </>
   )
 }

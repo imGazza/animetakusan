@@ -2,13 +2,10 @@ import Container from "@/components/ui/container";
 import Chip from "@/components/ui/chip";
 import type { AnimeFilter } from "@/models/filter/AnimeFilter";
 
-// TODO: Filters by group (same color one after the other)
-// TODO: Improve the numeric score filter
-// TODO: Fix No results found display
-// TODO: Fix the possible incompatibilities with preset filters (for example clear all chip)
+// TODO: Evaluate the possibility of unifing the different filters (FilterToggle FilterSelect)
 
 interface FiltersActiveProps {
-  currentFilters: AnimeFilter | null;
+  filter: AnimeFilter | null;
   onRemoveFilter?: (key: keyof AnimeFilter, value: string) => void;
   onResetFilter?: () => void;
 }
@@ -23,9 +20,9 @@ const categoryLabels: Record<keyof AnimeFilter, "default" | "search" | "year" | 
   search: "search"
 }
 
-const FiltersActive = ({ currentFilters, onRemoveFilter, onResetFilter }: FiltersActiveProps) => {
+const FiltersActive = ({ filter, onRemoveFilter, onResetFilter }: FiltersActiveProps) => {
 
-  if (!currentFilters) return null;
+  if (!filter) return null;
 
   // Removes the undefined values of filters
   // FlatMap is used to normalize array values like Genre
@@ -37,7 +34,7 @@ const FiltersActive = ({ currentFilters, onRemoveFilter, onResetFilter }: Filter
   //   { key: "genreIn", label: "Comedy" },   // flattened from the inner array
   //   { key: "status", label: "RELEASING" },
   // ]
-  const filterEntries = Object.entries(currentFilters)
+  const filterEntries = Object.entries(filter)
     .filter(([, value]) => value !== null && value !== undefined && value !== '')
     .flatMap(([key, value]) =>
       Array.isArray(value)
@@ -59,12 +56,12 @@ const FiltersActive = ({ currentFilters, onRemoveFilter, onResetFilter }: Filter
                     key={`${key}-${label}`}
                     variant={categoryLabels[key as keyof AnimeFilter]}
                     className="capitalize">
-                    {label}
+                    { key === 'averageScoreGreater' ? `≥ ${label}%` : label}
                   </Chip>
                 ))
             }
           </div>
-          <Chip variant="default" className="hidden group-hover/hover:flex" onRemoveFilter={onResetFilter}>
+          <Chip variant="default" className="flex md:hidden md:group-hover/hover:flex" onRemoveFilter={onResetFilter}>
             Clear All
           </Chip>
         </div>

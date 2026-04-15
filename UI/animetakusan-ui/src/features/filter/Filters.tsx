@@ -34,12 +34,12 @@ const Filters = ({ filter, onRemoveFilter, onResetFilter }: {
         </Container>
         <CollapsibleContent>
           <Container className="pb-0">
-            <FilterPanel />
+            <FilterPanel filter={filter}/>
           </Container>
         </CollapsibleContent>
       </Collapsible>
 
-      <FiltersActive currentFilters={filter} onRemoveFilter={onRemoveFilter} onResetFilter={onResetFilter} />
+      <FiltersActive filter={filter} onRemoveFilter={onRemoveFilter} onResetFilter={onResetFilter} />
     </>
   )
 }

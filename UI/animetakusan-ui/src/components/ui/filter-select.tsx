@@ -1,11 +1,10 @@
 import { Combobox, ComboboxContent, ComboboxEmpty, ComboboxInput, ComboboxItem, ComboboxList } from "./combobox";
-import { Label } from "./label"
 
 interface FilterSelectProps {
   items: readonly string[];
   title: string;  
-  value?: string;
-  onChange?: (value: string) => void;
+  value?: string | null;
+  onChange?: (value: string | null) => void;
 }
 
 const FilterSelect = ({ items, title, value, onChange }: FilterSelectProps) => {
@@ -13,13 +12,12 @@ const FilterSelect = ({ items, title, value, onChange }: FilterSelectProps) => {
 
   return (
     <div className="flex flex-col gap-2 w-full">
-      <Label htmlFor={title}>{title}</Label>
+      <div>{title}</div>
       <Combobox
-        id={title}
         autoHighlight
         items={items}
-        onValueChange={(value) => onChange?.(value ?? '')}
-        value={value}
+        onValueChange={(value) => onChange?.(value ?? null)}
+        value={value ?? null}
       >
         <ComboboxInput placeholder="Any" className="rounded-xs" showClear />
         <ComboboxContent>

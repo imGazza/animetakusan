@@ -1,37 +1,40 @@
 import { parseAsArrayOf, parseAsString, useQueryState } from "nuqs";
 import FilterCombobox from "./filter-combobox";
 import FilterSelect from "./filter-select";
+import type { AnimeFilter } from "@/models/filter/AnimeFilter";
+import { capitalize } from "@/lib/utils";
 
-const MobileFilterPanel = ({ genres, formats, airingStatuses, seasons, years }:
+const MobileFilterPanel = ({ genres, formats, airingStatuses, seasons, years, filter }:
 	{
 		genres: string[], 
 		formats: string[], 
 		airingStatuses: string[], 
 		seasons: { value: string, icon: any, selectedColor: string }[], 
-		years: string[]
+		years: string[],
+    filter: AnimeFilter | null
 	}
 ) => {
 
-  const [ genre, setGenre ] = useQueryState('genre', parseAsArrayOf(parseAsString).withDefault([]));
-  const [ format, setFormat ] = useQueryState('format', parseAsString.withDefault(''));
-  const [ status, setStatus ] = useQueryState('status', parseAsString.withDefault(''));
-  const [ season, setSeason ] = useQueryState('season', parseAsString.withDefault(''));
-  const [ year, setYear ] = useQueryState('year', parseAsString.withDefault(''));
+  const [, setGenre ] = useQueryState('genre', parseAsArrayOf(parseAsString));
+  const [, setFormat ] = useQueryState('format', parseAsString);
+  const [, setStatus ] = useQueryState('status', parseAsString);
+  const [, setSeason ] = useQueryState('season', parseAsString);
+  const [, setYear ] = useQueryState('year', parseAsString);
 
-  const setSeasonYear = (season: string) => {
+  const setSeasonYear = (season: string | null) => {
     setSeason(season);
-    if(!year){
+    if(season && !filter?.seasonYear){
       setYear(String(new Date().getFullYear()));
     }
   }
 
   return (
     <div className="gap-4 flex flex-nowrap overflow-x-auto scrollbar-none [&::-webkit-scrollbar]:hidden md:hidden">
-      <div className="w-46 shrink-0"><FilterCombobox items={genres} title="Genre" value={genre} onChange={setGenre} /></div>
-      <div className="w-46 shrink-0"><FilterSelect items={seasons.map(season => season.value)} title="Season" value={season} onChange={setSeasonYear} /></div>
-      <div className="w-46 shrink-0"><FilterSelect items={years} title="Year" value={year} onChange={setYear} /></div>
-      <div className="w-46 shrink-0"><FilterSelect items={formats} title="Formats" value={format} onChange={setFormat} /></div>
-      <div className="w-46 shrink-0"><FilterSelect items={airingStatuses} title="Airing Status" value={status} onChange={setStatus} /></div>      
+      <div className="w-46 shrink-0"><FilterCombobox items={genres} title="Genre" value={filter?.genreIn ?? null} onChange={setGenre} /></div>
+      <div className="w-46 shrink-0"><FilterSelect items={seasons.map(season => season.value)} title="Season" value={filter?.season ? capitalize(filter.season) : null} onChange={setSeasonYear} /></div>
+      <div className="w-46 shrink-0"><FilterSelect items={years} title="Year" value={filter?.seasonYear != null ? String(filter.seasonYear) : null} onChange={setYear} /></div>
+      <div className="w-46 shrink-0"><FilterSelect items={formats} title="Formats" value={filter?.format ?? null} onChange={setFormat} /></div>
+      <div className="w-46 shrink-0"><FilterSelect items={airingStatuses} title="Airing Status" value={filter?.status ?? null} onChange={setStatus} /></div>      
     </div>
   )
 }

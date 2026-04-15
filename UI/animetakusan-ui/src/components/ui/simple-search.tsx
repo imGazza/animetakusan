@@ -1,6 +1,6 @@
 import { Search } from "lucide-react";
 import { Button } from "./button";
-import { Command, CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "./command";
+import { Command, CommandDialog, CommandEmpty, CommandInput, CommandList } from "./command";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 
