@@ -13,7 +13,7 @@ const FilterRadio = ({ title, options, className, value, onChange }: FilterRadio
 
   return (
     <div className={cn(className, "flex flex-col gap-3")}>
-      <div>{title}</div>
+      <div className="text-sm">{title}</div>
       <ToggleGroup
         type="single"
         value={value ?? ""}

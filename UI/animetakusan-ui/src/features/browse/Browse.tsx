@@ -1,28 +1,25 @@
 import BrowseSection from "./BrowseSection";
 import BrowseFilter from "./BrowseFilter";
-import useFilter from "@/hooks/useFilter";
-import useSort from "@/hooks/useSort";
 import Filters from "../filter/Filters";
-import { useLocation } from "react-router";
+import Container from "@/components/ui/container";
+import useFilter from "@/hooks/useFilter";
 
 const Browse = () => {
-
-  const { filter, isFilterActive, removeFilter, resetFilter } = useFilter();
-  const { sort, isSortActive } = useSort();
-  const location = useLocation();
+  const { filter, isFilterActive, sort, isSortActive, removeFilter, resetAllFilters: resetFilter } = useFilter();
+  const isBrowseFilterMode = isFilterActive || isSortActive;
 
   return (
-    <>
-      <Filters filter={isFilterActive ? filter : null} onRemoveFilter={removeFilter} onResetFilter={resetFilter} />
+    <Container>
+      <Filters filter={isFilterActive ? filter : null} sort={sort ?? null} onRemoveFilter={removeFilter} onResetFilter={resetFilter} />
       {
-        isFilterActive || isSortActive ? (
+        isBrowseFilterMode ? (
           <BrowseFilter key={JSON.stringify({ filter, sort })} filter={filter!} sort={sort} />
         ) :
           (
-            <BrowseSection key={location.pathname + location.search} />
+            <BrowseSection />
           )
       }
-    </>
+    </Container>
   )
 }
 export default Browse;

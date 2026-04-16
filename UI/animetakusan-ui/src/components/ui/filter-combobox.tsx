@@ -15,7 +15,7 @@ const FilterCombobox = ({ items, title, value, onChange }: FilterComboboxProps) 
 
   return (
     <div className="flex flex-col gap-2 w-full">
-      <div>{title}</div>
+      <div className="text-sm">{title}</div>
       <Combobox
       multiple
       autoHighlight

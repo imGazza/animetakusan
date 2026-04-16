@@ -9,7 +9,7 @@ export const useBrowseSectionQuery = () =>
     staleTime: Infinity,
     retry: 2
   });
-  
+
 export const browseQueryKey = (filter: AnimeFilter, sort: string = "PopularityDesc") =>
   ['browse', filter, sort] as const;
 

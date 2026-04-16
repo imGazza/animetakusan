@@ -3,13 +3,14 @@ import FilterCombobox from "./filter-combobox";
 import FilterSelect from "./filter-select";
 import type { AnimeFilter } from "@/models/filter/AnimeFilter";
 import { capitalize } from "@/lib/utils";
+import type { FilterSeasonOption } from "@/lib/filter-options";
 
-const MobileFilterPanel = ({ genres, formats, airingStatuses, seasons, years, filter }:
+const MobileFilterPanel = ({ genres, years, seasons, formats, statuses, filter }:
 	{
 		genres: string[], 
 		formats: string[], 
-		airingStatuses: string[], 
-		seasons: { value: string, icon: any, selectedColor: string }[], 
+		statuses: string[], 
+    seasons: FilterSeasonOption[], 
 		years: string[],
     filter: AnimeFilter | null
 	}
@@ -34,7 +35,7 @@ const MobileFilterPanel = ({ genres, formats, airingStatuses, seasons, years, fi
       <div className="w-46 shrink-0"><FilterSelect items={seasons.map(season => season.value)} title="Season" value={filter?.season ? capitalize(filter.season) : null} onChange={setSeasonYear} /></div>
       <div className="w-46 shrink-0"><FilterSelect items={years} title="Year" value={filter?.seasonYear != null ? String(filter.seasonYear) : null} onChange={setYear} /></div>
       <div className="w-46 shrink-0"><FilterSelect items={formats} title="Formats" value={filter?.format ?? null} onChange={setFormat} /></div>
-      <div className="w-46 shrink-0"><FilterSelect items={airingStatuses} title="Airing Status" value={filter?.status ?? null} onChange={setStatus} /></div>      
+      <div className="w-46 shrink-0"><FilterSelect items={statuses} title="Airing Status" value={filter?.status ?? null} onChange={setStatus} /></div>      
     </div>
   )
 }

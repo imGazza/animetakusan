@@ -63,12 +63,12 @@ public class AniListProvider : IAnimeProvider
             animeFilterRequest.Page.Page,
             animeFilterRequest.Page.PerPage,
             animeFilterRequest.Filter?.Search,
-            ParseEnumOrNull<MediaFormat>(animeFilterRequest.Filter?.Format),
+            ParseEnumOrNull<MediaFormat>(animeFilterRequest.Filter?.Format?.Replace(" ", "")),
             animeFilterRequest.Filter?.GenreIn,
             animeFilterRequest.Filter?.AverageScoreGreater,
             ParseEnumOrNull<MediaSeason>(animeFilterRequest.Filter?.Season),
             animeFilterRequest.Filter?.SeasonYear,
-            ParseEnumOrNull<MediaStatus>(animeFilterRequest.Filter?.Status),
+            ParseEnumOrNull<MediaStatus>(animeFilterRequest.Filter?.Status?.Replace(" ", "")),
             new List<MediaSort?> { ParseEnumOrDefault(animeFilterRequest.Sort, MediaSort.PopularityDesc) }
         );
 

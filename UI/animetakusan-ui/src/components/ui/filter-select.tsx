@@ -12,7 +12,7 @@ const FilterSelect = ({ items, title, value, onChange }: FilterSelectProps) => {
 
   return (
     <div className="flex flex-col gap-2 w-full">
-      <div>{title}</div>
+      <div className="text-sm">{title}</div>
       <Combobox
         autoHighlight
         items={items}

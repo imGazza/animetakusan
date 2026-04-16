@@ -13,7 +13,7 @@ const FilterToggle = ({ options, value, title, className, onChange }: FilterTogg
 
   return (
     <div className={cn(className, "flex flex-col gap-3")}>
-      <div>{title}</div>
+      <div className="text-sm">{title}</div>
       <ToggleGroup
         type="multiple"
         className="flex-wrap"

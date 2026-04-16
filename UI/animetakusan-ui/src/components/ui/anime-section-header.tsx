@@ -1,8 +1,7 @@
-import { useNavigate } from "react-router";
+import useFilterV2 from "@/hooks/useFilter";
 
 const AnimeSectionHeader = ({ title, filterName }: { title: string, filterName: string }) => {
-
-  const navigate = useNavigate();
+  const { applyPresetFilter } = useFilterV2();  
 
   return (
     <div className="flex justify-between items-center">
@@ -11,7 +10,7 @@ const AnimeSectionHeader = ({ title, filterName }: { title: string, filterName: 
       </div>
       <div 
           className="text-xs font-semibold text-muted-foreground tracking-wider hover:text-muted-foreground/80 cursor-pointer"
-          onClick={() => navigate(`/browse/${filterName}`)}
+          onClick={() => applyPresetFilter(filterName)}
         >
           View All
       </div>

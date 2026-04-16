@@ -1,28 +1,49 @@
-import { Leaf, Sun, Flower, Snowflake } from "lucide-react";
 import MobileFilterPanel from "./mobile-filter-panel";
 import DesktopFilterPanel from "./desktop-filter-panel";
 import type { AnimeFilter } from "@/models/filter/AnimeFilter";
+import { FILTER_FORMATS, FILTER_GENRES, FILTER_SEASONS, FILTER_STATUSES, FILTER_YEARS } from "@/lib/filter-options";
+import { useEffect, useState } from "react";
+
+const DESKTOP_MEDIA_QUERY = "(min-width: 768px)";
+
+const getIsDesktop = () =>
+  typeof window !== "undefined" && window.matchMedia(DESKTOP_MEDIA_QUERY).matches;
 
 const FilterPanel = ({ filter }: { filter: AnimeFilter | null }) => {
-  
-  const genres = ["Action", "Adventure", "Comedy", "Drama", "Fantasy", "Horror", "Mystery", "Romance", "Sci-Fi", "Thriller"]
-  const years = Array.from({ length: new Date().getFullYear() + 1 - 1990 + 1 }, (_, i) => String(new Date().getFullYear() + 1 - i));
-  const yearsDesktop = [...years].reverse();
-  const seasons = [
-    { value: "Winter", icon: Snowflake, selectedColor: "#0DB3D9" }, 
-    { value: "Spring", icon: Flower, selectedColor: "#df91d4" }, 
-    { value: "Summer", icon: Sun, selectedColor: "#ffd900" }, 
-    { value: "Fall", icon: Leaf, selectedColor: "#FF6347" }];
-  const formats = ["TV", "Movie", "OVA", "ONA", "TV Short", "Special", "Music"];
-  const airingStatuses = ["Airing", "Finished", "Not Yet Aired", "Cancelled"];
+  const [isDesktop, setIsDesktop] = useState(getIsDesktop);
 
-  const filtersOptions = { genres, years, seasons, formats, airingStatuses };
+  useEffect(() => {
+    const mediaQuery = window.matchMedia(DESKTOP_MEDIA_QUERY);
+    const handleChange = (event: MediaQueryListEvent) => setIsDesktop(event.matches);
+
+    setIsDesktop(mediaQuery.matches);
+    mediaQuery.addEventListener("change", handleChange);
+
+    return () => mediaQuery.removeEventListener("change", handleChange);
+  }, []);
 
   return (
-    <>
-      <DesktopFilterPanel {...filtersOptions} years={yearsDesktop} filter={filter} />
-      <MobileFilterPanel {...filtersOptions} filter={filter} />
-    </>
+    <div className="mt-4 md:mt-6">
+      {isDesktop ? (
+        <DesktopFilterPanel
+          genres={FILTER_GENRES}
+          years={FILTER_YEARS}
+          seasons={FILTER_SEASONS}
+          formats={FILTER_FORMATS}
+          statuses={FILTER_STATUSES}
+          filter={filter}
+        />
+      ) : (
+        <MobileFilterPanel
+          genres={FILTER_GENRES}
+          years={FILTER_YEARS}
+          seasons={FILTER_SEASONS}
+          formats={FILTER_FORMATS}
+          statuses={FILTER_STATUSES}
+          filter={filter}
+        />
+      )}
+    </div>
   )
 }
 export default FilterPanel;

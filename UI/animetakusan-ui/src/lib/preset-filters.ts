@@ -1,36 +1,33 @@
-import type { AnimeFilter } from "@/models/filter/AnimeFilter";
 import { getCurrentSeason, getCurrentSeasonYear, getNextSeason, getNextSeasonYear, getPreviousSeason as getLastSeason, getPreviousSeasonYear as getLastSeasonYear } from "./season-manager";
 
-export const presetFilters: PresetFilter[] = [
-    {
-        name: "season",
-        filter: {
-            season: getCurrentSeason(),
-            seasonYear: getCurrentSeasonYear()
-        }
+export const presetFilters = [
+  {
+    name: "season",
+    params: {
+      season: getCurrentSeason(),
+      year: getCurrentSeasonYear()
     },
-    {
-        name: "next-season",
-        filter: {
-            season: getNextSeason(),
-            seasonYear: getNextSeasonYear()
-        }
+    sort: null
+  },
+  {
+    name: "next-season",
+    params: {
+      season: getNextSeason(),
+      year: getNextSeasonYear()
     },
-    {
-        name: "last-season",
-        filter: {
-            season: getLastSeason(),
-            seasonYear: getLastSeasonYear()
-        }
+    sort: null
+  },
+  {
+    name: "last-season",
+    params: {
+      season: getLastSeason(),
+      year: getLastSeasonYear()
     },
-    {
-        name: "top",
-        sort: "ScoreDesc"
-    }
+    sort: null
+  },
+  {
+    name: "top",
+    params: {},
+    sort: "ScoreDesc"
+  }
 ]
-
-interface PresetFilter {
-    name: string;
-    filter?: AnimeFilter;
-    sort?: string;
-}

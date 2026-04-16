@@ -5,10 +5,8 @@ import { toast } from "sonner";
 import type { AnimeFilter } from "@/models/filter/AnimeFilter";
 import AnimeDisplay from "@/components/ui/anime-display";
 import AnimeCard, { AnimeCardSkeleton } from "@/components/ui/anime-card";
-import Container from "@/components/ui/container";
 
 const BrowseFilter = ({ filter, sort }: { filter: AnimeFilter, sort?: string }) => {
-  
   const { data: browseResult, isLoading, isFetching, fetchNextPage, hasNextPage, error } = useBrowseQuery(filter, sort);
 
   // ref attached to placeholder div at the end
@@ -49,7 +47,7 @@ const BrowseFilter = ({ filter, sort }: { filter: AnimeFilter, sort?: string }) 
   }
 
   return (
-    <Container>
+    <div className="mt-6">
       <AnimeDisplay>
         {
           // Initial 20 items skeleton while loading, then show results or "No results"
@@ -69,7 +67,7 @@ const BrowseFilter = ({ filter, sort }: { filter: AnimeFilter, sort?: string }) 
         }     
       </AnimeDisplay>
       <div ref={ref} className="h-1" /> 
-    </Container>
+    </div>
   )
 }
 export default BrowseFilter;

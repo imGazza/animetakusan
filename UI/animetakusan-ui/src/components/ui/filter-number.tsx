@@ -7,7 +7,7 @@ const FilterNumber = ({ value, onChange, title }: { value: number | null, onChan
 
   return (
     <>
-      <div>{title}</div>
+      <div className="text-sm">{title}</div>
       <div
         className="flex items-center gap-1 rounded-xs bg-transparent p-0.5 border border-border/50 w-fit"
       >
