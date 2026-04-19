@@ -11,7 +11,7 @@ const TopNav = ({ items }: TopNavProps) => {
     <nav className="px-4">
       {
         items.map((item, index) => (
-          <Button 
+          <Button
             key={index}
             variant="ghost"
             className={item.coming ? "text-muted-foreground cursor-default" : ""}

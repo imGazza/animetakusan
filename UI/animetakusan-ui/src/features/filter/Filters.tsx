@@ -16,6 +16,8 @@ const Filters = ({ filter, sort, onRemoveFilter, onResetFilter }: {
 
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
+  // TODO: Check the color glithc of filter button
+
   return (
     <>
       <Collapsible open={isFilterOpen} onOpenChange={setIsFilterOpen}>
