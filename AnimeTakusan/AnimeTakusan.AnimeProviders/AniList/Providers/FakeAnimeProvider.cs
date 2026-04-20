@@ -15,9 +15,9 @@ public class FakeAnimeProvider : IAnimeProvider
         _faker = AnimeProviderFakers.AnimeResponseFaker;
     }
 
-    public Task<Anime> GetAnimeById(int id)
+    public Task<AnimeDetailResponse> GetAnimeById(int id)
     {
-        var animeResponse = _faker.RuleFor(a => a.Id, _ => id).Generate();
+        var animeResponse = (AnimeDetailResponse)_faker.RuleFor(a => a.Id, _ => id).Generate();
         return Task.FromResult(animeResponse);
     }
 

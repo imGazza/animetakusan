@@ -12,7 +12,7 @@ export const useUserQuery = () =>
     queryFn: authApis.userInfo,
     staleTime: Infinity,
     retry: 2,
-    select: (data) => localStorage.setItem('isAuthenticated', JSON.stringify(!!data.id)),
+    select: (data) => {localStorage.setItem('isAuthenticated', JSON.stringify(!!data.id)); return data?.id ? data : null; },
   });
 
 export const useLoginMutation = (refetchUser: () => void, navigate: NavigateFunction) =>
@@ -21,7 +21,7 @@ export const useLoginMutation = (refetchUser: () => void, navigate: NavigateFunc
     onSuccess: () => {
       refetchUser();
       TokenManager.clearToken();
-      navigate('/');
+      navigate('/browse');
     },
     onError: (error: AxiosError) => {
       toast.error(error.response?.data as string || "Error during login. Please try again.");
@@ -34,7 +34,8 @@ export const useLogoutMutation = (refetchUser: () => void, navigate: NavigateFun
     onSuccess: () => {
       TokenManager.clearToken();
       refetchUser();
-      navigate('/login');
+      navigate('/browse');
+      toast.success("Logged out successfully.");
     },
     onError: () => {
       toast.error("Error during the logout process. Please try again.");

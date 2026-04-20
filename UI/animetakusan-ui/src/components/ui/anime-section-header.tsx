@@ -1,7 +1,7 @@
-import useFilterV2 from "@/hooks/useFilter";
+import useFilter from "@/hooks/useFilter";
 
 const AnimeSectionHeader = ({ title, filterName }: { title: string, filterName: string }) => {
-  const { applyPresetFilter } = useFilterV2();  
+  const { applyPresetFilter } = useFilter();  
 
   return (
     <div className="flex justify-between items-center">

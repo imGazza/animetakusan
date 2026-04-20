@@ -3,19 +3,27 @@ import { Button } from "./button";
 import { Command, CommandDialog, CommandInput, CommandList } from "./command";
 import { useEffect, useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
-import { useBrowseQuery } from "@/features/browse/queries";
+import { useSimpleBrowseQuery } from "@/features/browse/queries";
 import { useDebounce } from "use-debounce";
 import CommandAnime from "./command-anime";
 import type { AnimeFilter } from "@/models/filter/AnimeFilter";
 import { toast } from "sonner";
+import { createSerializer, parseAsString } from "nuqs";
+import { useNavigate } from "react-router";
+
+const urlSerializer = createSerializer({
+  search: parseAsString,
+  sort: parseAsString,
+})
 
 const SimpleSearch = ({ className }: { className?: string }) => {
 
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
   const [filter, setFilter] = useState<AnimeFilter | null>({ search: "" });
-  const { data: browseResult, error } = useBrowseQuery(filter ?? {}, "SearchMatch");
   const [debouncedInput] = useDebounce(input, 300);
+  const { data: browseResult, error } = useSimpleBrowseQuery(filter ?? {}, "SearchMatch", open && filter?.search !== "");  
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (debouncedInput) {
@@ -27,8 +35,14 @@ const SimpleSearch = ({ className }: { className?: string }) => {
     toast.error("An error occurred while searching. Please try again.");
   }
 
+  const viewAllResults = () => {
+    const url = urlSerializer('/browse', { search: debouncedInput, sort: "SearchMatch" });
+    navigate(url, { replace: true });
+    setOpen(false);
+  }
+
   const animes = useMemo(
-    () => browseResult?.pages.flatMap(page => page.data).slice(0, 10) ?? [],
+    () => browseResult?.data?.slice(0, 10) ?? [],
     [browseResult]
   );
 
@@ -51,7 +65,7 @@ const SimpleSearch = ({ className }: { className?: string }) => {
                   {animes.map(anime => (
                     <CommandAnime key={anime.id} anime={anime} />
                   ))}
-                  <div className="w-full flex justify-center"><Button variant="ghost" size="xs">View All</Button></div>
+                  <div className="w-full flex justify-center"><Button variant="ghost" size="xs" onClick={viewAllResults}>View All</Button></div>
                 </div>
               </CommandList>
             </Command>

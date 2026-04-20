@@ -89,7 +89,7 @@ const useFilter = () => {
     filter: filter,
     sort: sort ?? undefined,
     removeFilter: removeSingleFilter,
-    resetAllFilters: () => setParams(emptyFilterQueryValues),
+    resetAllFilters: () => { setParams(emptyFilterQueryValues); setSort("PopularityDesc"); },
     applyPresetFilter
   }
 }

@@ -1,16 +1,17 @@
-import { useAuth } from "@/hooks/useAuth";
 import { Avatar, AvatarFallback, AvatarImage } from "./avatar";
 import { Popover, PopoverContent, PopoverTrigger } from "./popover";
 import { MenuButton } from "./menu-button";
 import { LogOut } from "lucide-react";
+import type { User } from "@/models/auth/User";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "./alert-dialog";
 
 interface UserAvatarProps {
   items: { label: string; icon: React.ElementType; }[];
+  logout?: () => void;
+  user?: User | null;
 }
 
-const UserAvatar = ({ items }: UserAvatarProps) => {
-  const { logout, user } = useAuth();
-
+const UserAvatar = ({ items, logout, user }: UserAvatarProps) => {
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -50,10 +51,26 @@ const UserAvatar = ({ items }: UserAvatarProps) => {
           </div>
 
           <div className="mt-2 mb-1 border-t border-border pt-2">
-            <MenuButton variant="action" onClick={logout}>
-              <LogOut className="size-4 shrink-0" />
-              <span className="text-sm font-medium">Log out</span>
-            </MenuButton>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <MenuButton variant="action">
+                  <LogOut className="size-4 shrink-0" />
+                  <span className="text-sm font-medium">Log out</span>
+                </MenuButton>
+              </AlertDialogTrigger>
+              <AlertDialogContent className="rounded-xs">
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Confirm Logout</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Are you sure to logout?
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel size="sm" className="rounded-xs">Cancel</AlertDialogCancel>
+                  <AlertDialogAction size="sm" className="rounded-xs" onClick={logout}>Continue</AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </div>
         </div>
 

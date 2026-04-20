@@ -38,5 +38,14 @@ public class AniListMappingConfig : IRegister, IAnimeProviderMapper
 
         config.NewConfig<IGetUserAnimeList_MediaListCollection_Lists_Entries, AnimeListEntry>()
             .Map(dest => dest.Anime, src => src.Media);
+
+        config.NewConfig<IGetAnimeById_Media_Relations_Edges, Relation>()
+            .Map(dest => dest.RelationType, src => src.RelationType.ToString())
+            .Map(dest => dest.Id, src => src.Node.Id)
+            .Map(dest => dest.CoverImage, src => src.Node.CoverImage)
+            .Map(dest => dest.Title, src => src.Node.Title);
+
+        config.NewConfig<IGetAnimeById_Media, AnimeDetailResponse>()
+            .Map(dest => dest.Relations, src => src.Relations.Edges);
     }
 }

@@ -1,4 +1,3 @@
-import UserAvatar from "./user-avatar";
 import Logo from "./logo";
 import SimpleSearch from "./simple-search";
 import TopNav from "./top-nav";
@@ -6,6 +5,7 @@ import { siteConfig } from "@/lib/site-config";
 import MobileNav from "./mobile-nav";
 import { Link } from "react-router";
 import Container from "./container";
+import LoggedUser from "./logged-user";
 
 const Header = () => {
   return (
@@ -20,7 +20,7 @@ const Header = () => {
         </div>
         <div className="flex items-center ml-auto space-x-4">
           <SimpleSearch className="hidden md:flex" />
-          <UserAvatar items={siteConfig.profileNavItems} />
+          <LoggedUser menuItems={siteConfig.profileNavItems} />
         </div>
       </Container>
     </header>

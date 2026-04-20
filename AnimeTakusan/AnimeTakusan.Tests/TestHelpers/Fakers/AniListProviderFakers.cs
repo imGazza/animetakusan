@@ -1,5 +1,6 @@
 using AnimeTakusan.AnimeProviders.AniListSchema;
 using Bogus;
+using FluentAssertions.Equivalency;
 
 namespace AnimeTakusan.Tests.TestHelpers.Fakers;
 
@@ -28,7 +29,8 @@ public static class AniListProviderFakers
             isAdult: f.Random.Bool(),
             averageScore: f.Random.Number(0, 100),
             nextAiringEpisode: null,
-            studios: AniListStudiosFaker.Generate()
+            studios: AniListStudiosFaker.Generate(),
+            relations: AniListRelationsFaker.Generate()
         ));
 
     public static Faker<GetSeasonalAnime_Page_Media_Media> AniListSeasonalAnimeFaker => new Faker<GetSeasonalAnime_Page_Media_Media>()
@@ -166,7 +168,6 @@ public static class AniListProviderFakers
     public static Faker<GetAnimeById_Media_CoverImage_MediaCoverImage> AniListCoverImageFaker => new Faker<GetAnimeById_Media_CoverImage_MediaCoverImage>()
         .CustomInstantiator(f => new GetAnimeById_Media_CoverImage_MediaCoverImage(
             extraLarge: f.Image.PlaceholderUrl(460, 650),
-            large: f.Image.PlaceholderUrl(230, 325),
             color: f.Random.String2(7, "0123456789ABCDEF")
         ));
 
@@ -179,6 +180,37 @@ public static class AniListProviderFakers
         .CustomInstantiator(f => new GetAnimeById_Media_Studios_Nodes_Studio(
             id: f.Random.Number(1, 10000),
             name: f.Company.CompanyName()
+        ));
+
+    public static Faker<GetAnimeById_Media_Relations_MediaConnection> AniListRelationsFaker => new Faker<GetAnimeById_Media_Relations_MediaConnection>()
+        .CustomInstantiator(f => new GetAnimeById_Media_Relations_MediaConnection(
+            edges: AniListRelationEdgeFaker.GenerateBetween(0, 3).ToArray()
+        ));
+
+    public static Faker<GetAnimeById_Media_Relations_Edges_MediaEdge> AniListRelationEdgeFaker => new Faker<GetAnimeById_Media_Relations_Edges_MediaEdge>()
+        .CustomInstantiator(f => new GetAnimeById_Media_Relations_Edges_MediaEdge(
+            relationType: f.PickRandom<MediaRelation>(),
+            node: AniListRelationNodeFaker.Generate()
+        ));
+
+    public static Faker<GetAnimeById_Media_Relations_Edges_Node_Media> AniListRelationNodeFaker => new Faker<GetAnimeById_Media_Relations_Edges_Node_Media>()
+        .CustomInstantiator(f => new GetAnimeById_Media_Relations_Edges_Node_Media(
+            id: f.Random.Number(1, 10000),
+            coverImage: AniListRelationNodeCoverImageFaker.Generate(),
+            title: AniListRelationNodeTitleFaker.Generate()
+        ));
+
+    public static Faker<GetAnimeById_Media_Relations_Edges_Node_CoverImage_MediaCoverImage> AniListRelationNodeCoverImageFaker => new Faker<GetAnimeById_Media_Relations_Edges_Node_CoverImage_MediaCoverImage>()
+        .CustomInstantiator(f => new GetAnimeById_Media_Relations_Edges_Node_CoverImage_MediaCoverImage(
+            extraLarge: f.Image.PlaceholderUrl(460, 650),
+            color: f.Random.String2(7, "0123456789ABCDEF")
+        ));
+
+    public static Faker<GetAnimeById_Media_Relations_Edges_Node_Title_MediaTitle> AniListRelationNodeTitleFaker => new Faker<GetAnimeById_Media_Relations_Edges_Node_Title_MediaTitle>()
+        .CustomInstantiator(f => new GetAnimeById_Media_Relations_Edges_Node_Title_MediaTitle(
+            english: f.Lorem.Sentence(3, 3),
+            native: new Faker("ja").Lorem.Sentence(3, 3),
+            romaji: f.Lorem.Sentence(3, 3)
         ));
 
     public static Faker<GetAnime_Page_Media_Media> AniListGetAnimeAnimeFaker => new Faker<GetAnime_Page_Media_Media>()

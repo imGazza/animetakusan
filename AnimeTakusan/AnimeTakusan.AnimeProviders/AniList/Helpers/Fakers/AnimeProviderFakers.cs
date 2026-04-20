@@ -33,7 +33,6 @@ public static class AnimeProviderFakers
 
     public static Faker<CoverImage> CoverImageFaker => new Faker<CoverImage>()
         .RuleFor(c => c.ExtraLarge, f => f.Image.PlaceholderUrl(460, 650))
-        .RuleFor(c => c.Large, f => f.Image.PlaceholderUrl(230, 325))
         .RuleFor(c => c.Color, f => $"#{f.Random.String2(6, "0123456789ABCDEF")}");
 
     public static Faker<DetailedDate> DetailedDateFaker => new Faker<DetailedDate>()

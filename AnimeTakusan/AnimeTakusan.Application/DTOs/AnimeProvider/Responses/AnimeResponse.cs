@@ -35,7 +35,6 @@ public record Title
 public record CoverImage
 {
     public string ExtraLarge { get; init; }
-    public string Large { get; init; }
     public string Color { get; init; }
 }
 

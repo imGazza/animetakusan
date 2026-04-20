@@ -1,8 +1,8 @@
 import BrowseSection from "./BrowseSection";
 import BrowseFilter from "./BrowseFilter";
-import Filters from "../filter/Filters";
 import Container from "@/components/ui/container";
 import useFilter from "@/hooks/useFilter";
+import Filters from "./Filters";
 
 const Browse = () => {
   const { filter, isFilterActive, sort, isSortActive, removeFilter, resetAllFilters: resetFilter } = useFilter();

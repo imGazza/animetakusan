@@ -17,14 +17,13 @@ public class AniListProvider : IAnimeProvider
     {
         _client = client;
     }
-
-    // Kept for now, maybe to remove in the future if not needed.
-    public async Task<Anime> GetAnimeById(int id)
+    
+    public async Task<AnimeDetailResponse> GetAnimeById(int id)
     {
         var response = await _client.GetAnimeById.ExecuteAsync(id);
 
         EnsureNoErrors(response);
-        return response.Data.Media.Adapt<Anime>();
+        return response.Data.Media.Adapt<AnimeDetailResponse>();
     }
 
     // Kept for now, maybe to remove in the future if not needed.

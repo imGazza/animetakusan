@@ -4,8 +4,8 @@ import FilterPanel from "@/components/ui/filter-panel";
 import FilterSearch from "@/components/ui/filter-search";
 import { ListFilter } from "lucide-react";
 import { useState } from "react";
-import FiltersActive from "./FiltersActive";
 import type { AnimeFilter } from "@/models/filter/AnimeFilter";
+import FiltersActive from "./FiltersActive";
 
 const Filters = ({ filter, sort, onRemoveFilter, onResetFilter }: {
   filter: AnimeFilter | null,

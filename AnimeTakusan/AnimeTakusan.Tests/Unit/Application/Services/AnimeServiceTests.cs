@@ -26,7 +26,7 @@ public class AnimeServiceTests
     {
         // Arrange
         var id = 42;
-        var expected = new Anime { Id = id };
+        var expected = new AnimeDetailResponse { Id = id };
         _mockAnimeProvider.Setup(x => x.GetAnimeById(id)).ReturnsAsync(expected);
 
         // Act

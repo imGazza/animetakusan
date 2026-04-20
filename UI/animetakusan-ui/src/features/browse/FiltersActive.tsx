@@ -44,7 +44,7 @@ const FiltersActive = ({ filter, sort, onRemoveFilter, onResetFilter }: FiltersA
     ) : [];
 
   return (
-    <div className="flex items-center justify-between mt-6">
+    <div className="flex items-center justify-between mt-6 min-h-[22px]">
       <div className="group/hover flex gap-4 w-full">
         <div className="flex gap-2 flex-wrap w-fit">
           {

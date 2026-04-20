@@ -10,19 +10,23 @@ const TopNav = ({ items }: TopNavProps) => {
   return (
     <nav className="px-4">
       {
-        items.map((item, index) => (
-          <Button
-            key={index}
-            variant="ghost"
-            className={item.coming ? "text-muted-foreground cursor-default" : ""}
-            disabled={item.coming}
-          >
-            <Link to={item.href} className={item.coming ? "text-muted-foreground cursor-default" : ""}>
+        items.map((item, index) =>
+          item.coming ? (
+            <Button
+              key={index}
+              variant="ghost"
+              className="text-muted-foreground cursor-default"
+              disabled
+            >
               {item.label}
-            </Link>
-            {item.coming && <div><Badge variant="outline">Coming soon</Badge></div>}
-          </Button>
-        ))
+              <Badge variant="outline">Coming soon</Badge>
+            </Button>
+          ) : (
+            <Button key={index} variant="ghost" asChild>
+              <Link to={item.href}>{item.label}</Link>
+            </Button>
+          )
+        )
       }
     </nav>
   );

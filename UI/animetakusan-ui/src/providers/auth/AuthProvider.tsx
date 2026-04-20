@@ -46,7 +46,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     loginProvider,
     logout,
     signUp,
-  }), [userInfo, login, loginProvider, logout, signUp]);
+  }), [userInfo, refetchUser, login, loginProvider, logout, signUp]);
   
   return <AuthContext value={authInfo}>{children}</AuthContext>;
 };

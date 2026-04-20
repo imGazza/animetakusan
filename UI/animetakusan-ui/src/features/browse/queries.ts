@@ -21,3 +21,11 @@ export const useBrowseQuery = (filter: AnimeFilter, sort: string = "PopularityDe
     getNextPageParam: (lastPage) => lastPage.page.hasNextPage ? lastPage.page.currentPage + 1 : null,
     staleTime: Infinity
   });
+
+  export const useSimpleBrowseQuery = (filter: AnimeFilter, sort: string = "PopularityDesc", enabled: boolean = true) =>
+  useQuery({
+    queryKey: browseQueryKey(filter, sort),
+    queryFn: () => browseApis.browse({ filter: filter, page: { page: 1, perPage: 20 }, sort }),
+    staleTime: Infinity,
+    enabled
+  });

@@ -25,6 +25,7 @@ const FilterSearch = ({ className }: { className?: string }) => {
     <div className={cn("w-full", className)}>
       <InputGroup className="rounded-xs h-full">
         <InputGroupInput
+          name="search"
           placeholder="Search..."
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
