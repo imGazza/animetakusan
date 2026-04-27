@@ -7,7 +7,7 @@ const formatDuration = (hours: number, minutes: number): string => {
   return `${minutes} minute${minutes > 1 ? 's' : ''}`;
 };
 
-const AnimeCardFormat = ({ format, episodes, duration }: { format: AnimeFormatKey; episodes?: number, duration?: number }) => {
+const AnimeCardFormat = ({ format, episodes, duration }: { format: string; episodes?: number, duration?: number }) => {
 
   if (!format) {
     return null;

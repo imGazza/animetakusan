@@ -1,5 +1,6 @@
 import { calculateDurationFromSeconds } from "@/lib/utils";
 import type { Anime } from "@/models/common/Anime";
+import { displaySeason } from "@/models/common/AnimeSeason";
 import { useMemo } from "react";
 
 const formatTimeRemaining = (days: number, hours: number, minutes: number): string => {
@@ -20,7 +21,7 @@ const AnimeTimeFrame = ( { anime }: { anime: Anime } ) => {
 
     // Season and year
     if (anime.season && anime.seasonYear) {
-      return `${anime.season.toLowerCase()} ${anime.seasonYear}`;
+      return `${displaySeason(anime.season)} ${anime.seasonYear}`;
     }
 
     // Date range for multi-year anime
@@ -34,6 +35,6 @@ const AnimeTimeFrame = ( { anime }: { anime: Anime } ) => {
     return "TBA";
   }, [anime.nextAiringEpisode, anime.season, anime.seasonYear, anime.startDate, anime.endDate]);
 
-  return <div className="capitalize font-semibold text-sm text-muted-foreground">{timeFrame}</div>;
+  return <div className="font-semibold text-sm text-muted-foreground">{timeFrame}</div>;
 }
 export default AnimeTimeFrame;

@@ -66,6 +66,12 @@ public record Studio
 public record MediaListEntry
 {
     public int Id { get; init; }
+    public int CreatedAt { get; init; }
+    public int Progress { get; init; }
+    public AnimeMediaListStatus Status { get; init; }
+    public DetailedDate CompletedAt { get; init; }
+    public DetailedDate StartedAt { get; init; }
+    public int? Score { get; init; }
 }
 
 public enum AnimeSeason
@@ -100,4 +106,14 @@ public enum AnimeStatus
     NOT_YET_RELEASED,
     CANCELLED,
     HIATUS
+}
+
+public enum AnimeMediaListStatus
+{
+    CURRENT,
+    PLANNING,
+    COMPLETED,
+    DROPPED,
+    PAUSED,
+    REPEATING
 }

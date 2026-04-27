@@ -30,7 +30,7 @@ const MobileFilterPanel = ({ genres, years, seasons, formats, statuses, filter }
   }
 
   return (
-    <div className="gap-4 flex flex-nowrap overflow-x-auto scrollbar-none [&::-webkit-scrollbar]:hidden md:hidden">
+    <div className="gap-4 flex flex-nowrap overflow-x-auto no-scrollbar md:hidden">
       <div className="w-46 shrink-0"><FilterCombobox items={genres} title="Genre" value={filter?.genreIn ?? null} onChange={setGenre} /></div>
       <div className="w-46 shrink-0"><FilterSelect items={seasons.map(season => season.value)} title="Season" value={filter?.season ? capitalize(filter.season) : null} onChange={setSeasonYear} /></div>
       <div className="w-46 shrink-0"><FilterSelect items={years} title="Year" value={filter?.seasonYear != null ? String(filter.seasonYear) : null} onChange={setYear} /></div>

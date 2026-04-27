@@ -1,3 +1,4 @@
+import type { DetailedDate } from "@/models/common/Anime";
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 
@@ -21,4 +22,11 @@ export function calculateDurationFromMinutes(totalMinutes: number): { hours: num
 export function capitalize(value: string ): string {
   if (!value) return value;
   return value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
+}
+
+export function createDateFromDetails(detailedDate: DetailedDate | null): Date {
+  if (!detailedDate) return new Date();
+  const { year, month, day } = detailedDate;
+  if (!year || !month || !day) return new Date();
+  return new Date(year, month - 1, day);
 }

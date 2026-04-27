@@ -1,5 +1,3 @@
-import type { AnimeFormatKey } from "./AnimeFormat";
-
 export interface Anime {
   id: number;
   title: Title;
@@ -11,7 +9,7 @@ export interface Anime {
   seasonYear: number | null;
   description: string;
   type: string;
-  format: AnimeFormatKey;
+  format: string;
   status: string;
   isFavourite: boolean;
   mediaListEntry: MediaListEntry | null;
@@ -32,7 +30,6 @@ export interface Title {
 
 export interface CoverImage {
   extraLarge: string;
-  large: string;
   color: string;
 }
 
@@ -59,4 +56,10 @@ export interface Studio {
 
 export interface MediaListEntry{
   id: number;
+  createdAt: number;
+  progress: number;
+  status: string;
+  startedAt: DetailedDate;
+  completedAt: DetailedDate;
+  score: number | null;
 }

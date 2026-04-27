@@ -8,7 +8,7 @@ const CommandAnime = ({ anime }: { anime: Anime }) => {
       <div className="rounded-xs bg-muted h-10 w-10">
         <AspectRatio ratio={1 / 1} className="overflow-hidden">
           <img
-            src={anime.coverImage.large}
+            src={anime.coverImage.extraLarge}
             alt={anime.title.english || anime.title.romaji || anime.title.native || ''}
             className="object-cover object-center rounded-xs w-full h-full"
           />

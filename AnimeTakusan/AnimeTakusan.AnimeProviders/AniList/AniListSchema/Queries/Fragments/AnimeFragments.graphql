@@ -34,6 +34,20 @@ fragment Anime on Media {
   averageScore
   mediaListEntry {
     id
+    createdAt
+    progress
+    status
+    completedAt {
+      day
+      month
+      year
+    }
+    startedAt {
+      day
+      month
+      year
+    }
+    score(format: POINT_100)
   }
   nextAiringEpisode {
     airingAt
