@@ -30,7 +30,11 @@ public static class AniListProviderFakers
             averageScore: f.Random.Number(0, 100),
             nextAiringEpisode: null,
             studios: AniListStudiosFaker.Generate(),
-            relations: AniListRelationsFaker.Generate()
+            source: f.PickRandom<MediaSource>(),
+            popularity: f.Random.Number(0, 100000),
+            favourites: f.Random.Number(0, 10000),
+            relations: AniListRelationsFaker.Generate(),
+            recommendations: AniListRecommendationsFaker.Generate()
         ));
 
     public static Faker<GetSeasonalAnime_Page_Media_Media> AniListSeasonalAnimeFaker => new Faker<GetSeasonalAnime_Page_Media_Media>()
@@ -197,17 +201,50 @@ public static class AniListProviderFakers
         .CustomInstantiator(f => new GetAnimeById_Media_Relations_Edges_Node_Media(
             id: f.Random.Number(1, 10000),
             coverImage: AniListRelationNodeCoverImageFaker.Generate(),
-            title: AniListRelationNodeTitleFaker.Generate()
+            title: AniListRelationNodeTitleFaker.Generate(),
+            format: f.PickRandom<MediaFormat>(),
+            status: f.PickRandom<MediaStatus>()
         ));
 
     public static Faker<GetAnimeById_Media_Relations_Edges_Node_CoverImage_MediaCoverImage> AniListRelationNodeCoverImageFaker => new Faker<GetAnimeById_Media_Relations_Edges_Node_CoverImage_MediaCoverImage>()
         .CustomInstantiator(f => new GetAnimeById_Media_Relations_Edges_Node_CoverImage_MediaCoverImage(
-            extraLarge: f.Image.PlaceholderUrl(460, 650),
+            large: f.Image.PlaceholderUrl(460, 650),
             color: f.Random.String2(7, "0123456789ABCDEF")
         ));
 
     public static Faker<GetAnimeById_Media_Relations_Edges_Node_Title_MediaTitle> AniListRelationNodeTitleFaker => new Faker<GetAnimeById_Media_Relations_Edges_Node_Title_MediaTitle>()
         .CustomInstantiator(f => new GetAnimeById_Media_Relations_Edges_Node_Title_MediaTitle(
+            english: f.Lorem.Sentence(3, 3),
+            native: new Faker("ja").Lorem.Sentence(3, 3),
+            romaji: f.Lorem.Sentence(3, 3)
+        ));
+
+    public static Faker<GetAnimeById_Media_Recommendations_RecommendationConnection> AniListRecommendationsFaker => new Faker<GetAnimeById_Media_Recommendations_RecommendationConnection>()
+        .CustomInstantiator(f => new GetAnimeById_Media_Recommendations_RecommendationConnection(
+            nodes: AniListRecommendationNodeFaker.GenerateBetween(0, 3).ToArray()
+        ));
+
+    public static Faker<GetAnimeById_Media_Recommendations_Nodes_Recommendation> AniListRecommendationNodeFaker => new Faker<GetAnimeById_Media_Recommendations_Nodes_Recommendation>()
+        .CustomInstantiator(f => new GetAnimeById_Media_Recommendations_Nodes_Recommendation(
+            mediaRecommendation: AniListRecommendationMediaFaker.Generate()
+        ));
+
+    public static Faker<GetAnimeById_Media_Recommendations_Nodes_MediaRecommendation_Media> AniListRecommendationMediaFaker => new Faker<GetAnimeById_Media_Recommendations_Nodes_MediaRecommendation_Media>()
+        .CustomInstantiator(f => new GetAnimeById_Media_Recommendations_Nodes_MediaRecommendation_Media(
+            id: f.Random.Number(1, 10000),
+            coverImage: AniListRecommendationCoverImageFaker.Generate(),
+            title: AniListRecommendationTitleFaker.Generate(),
+            averageScore: f.Random.Number(0, 100)
+        ));
+
+    public static Faker<GetAnimeById_Media_Recommendations_Nodes_MediaRecommendation_CoverImage_MediaCoverImage> AniListRecommendationCoverImageFaker => new Faker<GetAnimeById_Media_Recommendations_Nodes_MediaRecommendation_CoverImage_MediaCoverImage>()
+        .CustomInstantiator(f => new GetAnimeById_Media_Recommendations_Nodes_MediaRecommendation_CoverImage_MediaCoverImage(
+            large: f.Image.PlaceholderUrl(460, 650),
+            color: f.Random.String2(7, "0123456789ABCDEF")
+        ));
+
+    public static Faker<GetAnimeById_Media_Recommendations_Nodes_MediaRecommendation_Title_MediaTitle> AniListRecommendationTitleFaker => new Faker<GetAnimeById_Media_Recommendations_Nodes_MediaRecommendation_Title_MediaTitle>()
+        .CustomInstantiator(f => new GetAnimeById_Media_Recommendations_Nodes_MediaRecommendation_Title_MediaTitle(
             english: f.Lorem.Sentence(3, 3),
             native: new Faker("ja").Lorem.Sentence(3, 3),
             romaji: f.Lorem.Sentence(3, 3)

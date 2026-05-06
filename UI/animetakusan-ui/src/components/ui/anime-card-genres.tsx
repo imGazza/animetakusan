@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 import { Badge } from "./badge";
 
-const AnimeCardGenres = ({ genres, limit = 10, className }: { genres: string[], limit?: number, className?: string }) => {
+const AnimeGenres = ({ genres, limit = 10, className }: { genres: string[], limit?: number, className?: string }) => {
 
   if (!genres || genres.length === 0) {
     return null;
@@ -17,4 +17,4 @@ const AnimeCardGenres = ({ genres, limit = 10, className }: { genres: string[], 
     </div>
   )
 }
-export default AnimeCardGenres;
+export default AnimeGenres;

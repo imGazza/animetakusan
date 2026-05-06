@@ -1,13 +1,16 @@
 query GetAnimeById($id: Int) { 
   Media (id: $id, type: ANIME) { 
     ...Anime
+    popularity
+    favourites
+    source(version: 3)
     relations {    
       edges {
         relationType(version: 2)
         node {
           id
           coverImage {
-            extraLarge,
+            large,
             color
           }
           title {
@@ -15,6 +18,25 @@ query GetAnimeById($id: Int) {
             native
             romaji
           }
+          format
+          status(version: 2)
+        }
+      }
+    }
+    recommendations(sort: RATING_DESC, page: 1, perPage: 10) {
+      nodes {
+        mediaRecommendation {
+          id
+          coverImage {
+            large,
+            color
+          }
+          title {
+            english
+            native
+            romaji
+          }
+          averageScore
         }
       }
     }

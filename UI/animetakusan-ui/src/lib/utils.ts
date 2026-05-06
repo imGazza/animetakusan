@@ -6,6 +6,11 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
+export const formatDuration = (hours: number, minutes: number): string => {
+  if (hours > 0) return `${hours} hour${hours > 1 ? 's' : ''} and ${minutes} min${minutes > 1 ? 's' : ''}`;
+  return `${minutes} min${minutes > 1 ? 's' : ''}`;
+};
+
 export function calculateDurationFromSeconds(totalSeconds: number): { days: number; hours: number; minutes: number }{
   const days = Math.floor(totalSeconds / 86400);
   const hours = Math.floor((totalSeconds % 86400) / 3600);
@@ -29,4 +34,34 @@ export function createDateFromDetails(detailedDate: DetailedDate | null): Date {
   const { year, month, day } = detailedDate;
   if (!year || !month || !day) return new Date();
   return new Date(year, month - 1, day);
+}
+
+export const getScoreGradient = (score: number): string => {
+  if (score >= 90) return "from-emerald-500 to-cyan-400"
+  if (score >= 80) return "from-cyan-500 to-blue-400"
+  if (score >= 75) return "from-blue-500 to-indigo-400"
+  if (score >= 70) return "from-indigo-500 to-blue-400"
+  if (score >= 40) return "from-orange-500 to-amber-400"
+  if (score >= 30) return "from-rose-500 to-orange-400"
+  return "from-red-600 to-rose-500"
+}
+
+export const getGlowColor = (score: number): string => {
+  if (score >= 90) return "shadow-emerald-500/50"
+  if (score >= 80) return "shadow-cyan-500/50"
+  if (score >= 75) return "shadow-blue-500/50"
+  if (score >= 70) return "shadow-indigo-500/50"
+  if (score >= 40) return "shadow-orange-500/50"
+  if (score >= 30) return "shadow-rose-500/50"
+  return "shadow-red-500/50"
+}
+
+export const getRingColor = (score: number): string => {
+  if (score >= 90) return "ring-emerald-500/50"
+  if (score >= 80) return "ring-cyan-500/50"
+  if (score >= 75) return "ring-blue-500/50"
+  if (score >= 70) return "ring-indigo-500/50"
+  if (score >= 40) return "ring-orange-500/50"
+  if (score >= 30) return "ring-rose-500/50"
+  return "ring-red-500/50"
 }

@@ -10,7 +10,7 @@ import AnimeCardScore from "./anime-card-score"
 import AnimeTimeFrame from "./anime-time-frame"
 import AnimeCardFormat from "./anime-card-format"
 import AnimeCardStudios from "./anime-card-studios"
-import AnimeCardGenres from "./anime-card-genres"
+import AnimeGenres from "./anime-card-genres"
 import AnimeCardSynopsis from "./anime-card-synopsis"
 import AnimeMobileAdd from "./anime-mobile-add"
 
@@ -46,7 +46,7 @@ const AnimeMobileInfo = ({ anime, children, className }: { anime: Anime, childre
           <AnimeCardStudios studios={anime.studios} color={anime.coverImage.color} />
           <AnimeCardSynopsis description={anime.description} />
           <div className="mt-auto">
-            <AnimeCardGenres genres={anime.genres} />
+            <AnimeGenres genres={anime.genres} />
           </div>
           <AnimeMobileAdd />
         </SheetContent>

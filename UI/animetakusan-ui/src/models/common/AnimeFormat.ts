@@ -27,7 +27,7 @@ export const ANIME_FORMAT_DISPLAY: Record<AnimeFormatKey, string> = {
   ONA: "ONA",
   MUSIC: "Music",
   MANGA: "Manga",
-  NOVEL: "Novel",
+  NOVEL: "Light Novel",
   ONE_SHOT: "One Shot"
 } as const;
 

@@ -1,7 +1,7 @@
 import type { Anime } from "@/models/common/Anime";
 import { Card } from "./card";
 import { AspectRatio } from "./aspect-ratio";
-import AnimeCardGenres from "./anime-card-genres";
+import AnimeGenres from "./anime-card-genres";
 import AnimeCardScore from "./anime-card-score";
 import AnimeCardFormat from "./anime-card-format";
 import AnimeTimeFrame from "./anime-time-frame";
@@ -28,7 +28,7 @@ const AnimeTopCard = ({ anime, index }: { anime: Anime, index: number }) => {
           <div className="text-muted-foreground text-sm md:text-md line-clamp-1">
             {anime.title.native || ""}
           </div>
-          <AnimeCardGenres genres={anime.genres} limit={3} className="text-xs" />
+          <AnimeGenres genres={anime.genres} limit={3} className="text-xs" />
         </div>
 
         <div className="hidden md:flex justify-center items-center p-4 md:p-8 ml-auto gap-8 ">

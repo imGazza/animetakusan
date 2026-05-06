@@ -1,4 +1,4 @@
-import { calculateDurationFromSeconds } from "@/lib/utils";
+import { calculateDurationFromSeconds, cn } from "@/lib/utils";
 import type { Anime } from "@/models/common/Anime";
 import { displaySeason } from "@/models/common/AnimeSeason";
 import { useMemo } from "react";
@@ -9,7 +9,7 @@ const formatTimeRemaining = (days: number, hours: number, minutes: number): stri
   return `${minutes} minute${minutes > 1 ? 's' : ''}`;
 };
 
-const AnimeTimeFrame = ( { anime }: { anime: Anime } ) => {
+const AnimeTimeFrame = ( { anime, className }: { anime: Anime, className?: string } ) => {
 
   const timeFrame = useMemo(() => {
     // Next airing episode
@@ -35,6 +35,6 @@ const AnimeTimeFrame = ( { anime }: { anime: Anime } ) => {
     return "TBA";
   }, [anime.nextAiringEpisode, anime.season, anime.seasonYear, anime.startDate, anime.endDate]);
 
-  return <div className="font-semibold text-sm text-muted-foreground">{timeFrame}</div>;
+  return <div className={cn("font-semibold text-sm text-muted-foreground", className)}>{timeFrame}</div>;
 }
 export default AnimeTimeFrame;

@@ -96,7 +96,10 @@ public enum AnimeFormat
     SPECIAL,
     OVA,
     ONA,
-    MUSIC
+    MUSIC,
+    MANGA,
+    NOVEL,
+    ONE_SHOT
 }
 
 public enum AnimeStatus
@@ -116,4 +119,23 @@ public enum AnimeMediaListStatus
     DROPPED,
     PAUSED,
     REPEATING
+}
+
+public enum AnimeSource
+{
+    ORIGINAL,
+    MANGA,
+    LIGHT_NOVEL,
+    VISUAL_NOVEL,
+    VIDEO_GAME,
+    OTHER,
+    NOVEL,
+    DOUJINSHI,
+    ANIME,
+    WEB_NOVEL,
+    LIVE_ACTION,
+    GAME,
+    COMIC,
+    MULTIMEDIA_PROJECT,
+    PICTURE_BOOK
 }

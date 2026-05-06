@@ -8,7 +8,7 @@ import { Button } from "./button"
 import AnimeMobileInfo from "./anime-mobile-info"
 import AnimeAdd from "./anime-add"
 import { Skeleton } from "./skeleton"
-import AnimeCardImage from "./anime-card-image"
+import AnimeImage from "./anime-image"
 
 const AnimeCard = memo(({ anime }: { anime: Anime }) => {
   const triggerRef = useRef<HTMLDivElement>(null)
@@ -30,7 +30,7 @@ const AnimeCard = memo(({ anime }: { anime: Anime }) => {
         <div className="flex relative cursor-pointer">
           <div ref={triggerRef} className="group flex flex-col w-full max-w-(--sm-image-width) md:max-w-(--md-image-width)">
             <AspectRatio ratio={37 / 53} data-state={imageLoaded ? 'loaded' : 'loading'} className="bg-muted rounded-sm overflow-hidden relative transform-opacity data-[state=loaded]:opacity-100 data-[state=loading]:opacity-50">
-              <AnimeCardImage 
+              <AnimeImage 
                 url={anime.coverImage.extraLarge} 
                 title={anime.title.english || anime.title.romaji || ""} 
                 onImageLoad={handleImageLoad}

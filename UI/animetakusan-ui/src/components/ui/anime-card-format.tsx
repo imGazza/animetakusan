@@ -1,11 +1,6 @@
-import { calculateDurationFromMinutes } from "@/lib/utils";
-import { type AnimeFormatKey, displayFormat } from "@/models/common/AnimeFormat";
+import { calculateDurationFromMinutes, formatDuration } from "@/lib/utils";
+import { displayFormat } from "@/models/common/AnimeFormat";
 import { useMemo } from "react";
-
-const formatDuration = (hours: number, minutes: number): string => {
-  if (hours > 0) return `${hours} hour${hours > 1 ? 's' : ''} and ${minutes} minute${minutes > 1 ? 's' : ''}`;
-  return `${minutes} minute${minutes > 1 ? 's' : ''}`;
-};
 
 const AnimeCardFormat = ({ format, episodes, duration }: { format: string; episodes?: number, duration?: number }) => {
 
