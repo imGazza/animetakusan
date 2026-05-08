@@ -1,30 +1,55 @@
 import type { Anime, Title } from "./Anime";
 
 export interface AnimeDetail extends Anime {
-    source: string;
-    popularity: number;
-    favourites: number;
-    relations: Relation[];
-    recommendations: Recommendation[];
+  source: string;
+  popularity: number;
+  favourites: number;
+  relations: Relation[];
+  recommendations: Recommendation[];
+  reviews: Review[];
+  rankings: Ranking[];
 }
 
-export interface Relation {
-    id: number;
-    title: Title;
-    coverImage: SmallCoverImage;
-    relationType: string;
-    format: string;
-    status: string;
+interface Relation {
+  id: number;
+  title: Title;
+  coverImage: SmallCoverImage;
+  relationType: string;
+  format: string;
+  status: string;
 }
 
-export interface Recommendation{
-    id: number;
-    title: Title;
-    coverImage: SmallCoverImage;
-    averageScore: number;
+interface Recommendation {
+  id: number;
+  title: Title;
+  coverImage: SmallCoverImage;
+  averageScore: number;
 }
 
-export interface SmallCoverImage {
-    large: string;
-    color: string;
+interface SmallCoverImage {
+  large: string;
+  color: string;
+}
+
+interface Review {
+  ratingAmount: number;
+  rating: number;
+  score: number;
+  summary: string;
+  siteUrl: string;
+  user: User;
+}
+
+interface User {
+  name: string;
+  avatar: string;
+}
+
+interface Ranking {
+  rank: number;
+  context: string;
+  type: string;
+  allTime: boolean;
+  season: string;
+  year: number;
 }

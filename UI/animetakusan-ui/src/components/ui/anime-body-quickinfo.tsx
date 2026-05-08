@@ -17,7 +17,7 @@ const AnimeBodyQuickInfo = ({ anime }: { anime: AnimeDetail }) => {
       >
         <ItemContent className="items-center gap-1">
           <ItemTitle>
-            <AnimeScore className="text-lg" score={anime.averageScore} />
+            { anime.averageScore ? <AnimeScore className="text-lg" score={anime.averageScore} /> : <span className="text-2xl font-bold leading-none">-</span> }
           </ItemTitle>
           <ItemDescription className="text-muted-foreground/50 text-xs tracking-wider">
             Score
@@ -33,7 +33,7 @@ const AnimeBodyQuickInfo = ({ anime }: { anime: AnimeDetail }) => {
       >
         <ItemContent className="items-center gap-1">
           <ItemTitle className="text-2xl font-bold leading-none">
-            {anime.popularity?.toLocaleString()}
+            {anime.popularity ? anime.popularity.toLocaleString() : "-"}
           </ItemTitle>
           <ItemDescription className="text-muted-foreground/50 text-xs tracking-wider">
             Popularity
@@ -49,7 +49,7 @@ const AnimeBodyQuickInfo = ({ anime }: { anime: AnimeDetail }) => {
       >
         <ItemContent className="items-center gap-1">
           <ItemTitle className="text-2xl font-bold leading-none">
-            {anime.favourites?.toLocaleString()}
+            {anime.favourites ? anime.favourites.toLocaleString() : "-"}
           </ItemTitle>
           <ItemDescription className="text-muted-foreground/50 text-xs tracking-wider">
             Favorites

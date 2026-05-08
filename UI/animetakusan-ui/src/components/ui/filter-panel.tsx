@@ -2,12 +2,12 @@ import MobileFilterPanel from "./mobile-filter-panel";
 import DesktopFilterPanel from "./desktop-filter-panel";
 import type { AnimeFilter } from "@/models/filter/AnimeFilter";
 import { FILTER_FORMATS, FILTER_GENRES, FILTER_SEASONS, FILTER_STATUSES, FILTER_YEARS } from "@/lib/filter-options";
-import useMediaQuery from "@/hooks/useMediaQuery";
+import useMediaQuery, { DESKTOP_BREAKPOINT } from "@/hooks/useMediaQuery";
 
 
 
 const FilterPanel = ({ filter }: { filter: AnimeFilter | null }) => {
-  const isDesktop = useMediaQuery("(min-width: 768px)");
+  const isDesktop = useMediaQuery(DESKTOP_BREAKPOINT);
 
   return (
     <div className="mt-4 md:mt-6">

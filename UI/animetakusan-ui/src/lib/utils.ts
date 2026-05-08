@@ -65,3 +65,13 @@ export const getRingColor = (score: number): string => {
   if (score >= 30) return "ring-rose-500/50"
   return "ring-red-500/50"
 }
+
+export const scoreBadgeClass = (score: number) => {
+  if (score >= 90) return "bg-gradient-to-br from-emerald-500/20 to-cyan-400/20 text-emerald-400 border-emerald-500/20";
+  if (score >= 80) return "bg-gradient-to-br from-cyan-500/20 to-blue-400/20 text-cyan-400 border-cyan-500/20";
+  if (score >= 75) return "bg-gradient-to-br from-blue-500/20 to-indigo-400/20 text-blue-400 border-blue-500/20";
+  if (score >= 70) return "bg-gradient-to-br from-indigo-500/20 to-blue-400/20 text-indigo-400 border-indigo-500/20";
+  if (score >= 40) return "bg-gradient-to-br from-orange-500/20 to-amber-400/20 text-orange-400 border-orange-500/20";
+  if (score >= 30) return "bg-gradient-to-br from-rose-500/20 to-orange-400/20 text-rose-400 border-rose-500/20";
+  return "bg-gradient-to-br from-red-600/20 to-rose-500/20 text-red-400 border-red-500/20";
+};

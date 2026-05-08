@@ -7,6 +7,8 @@ public record AnimeDetailResponse : Anime
     public int Favourites { get; init; }
     public List<Relation> Relations { get; init; }
     public List<Recommendation> Recommendations { get; init; }
+    public List<Review> Reviews { get; init; }
+    public List<Ranking> Rankings { get; init; }
 }
 
 public record Relation
@@ -31,4 +33,31 @@ public record SmallCoverImage {
     public string Large { get; init; }
     public string Color { get; init; }
 }
+
+public record Review
+{
+    public int RatingAmount { get; init; }
+    public int Rating { get; init; }
+    public int Score { get; init; }
+    public string Summary { get; init; }
+    public string SiteUrl { get; init; }
+    public User User { get; init; }
+}
+
+public record User
+{
+    public string Name { get; init; }
+    public string Avatar { get; init; }
+}
+
+public record Ranking
+{
+    public int Rank { get; init; }
+    public string Context { get; init; }
+    public string Type { get; init; }
+    public bool AllTime { get; init; }
+    public AnimeSeason? Season { get; init; }
+    public int? Year { get; init; }
+}
+
 

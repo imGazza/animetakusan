@@ -1,5 +1,7 @@
 import * as React from "react"
 
+export const DESKTOP_BREAKPOINT = "(min-width: 768px)";
+
 const useMediaQuery = (query: string) => {
   const [value, setValue] = React.useState(false)
 

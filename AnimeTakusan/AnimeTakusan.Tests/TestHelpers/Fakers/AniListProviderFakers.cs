@@ -34,7 +34,9 @@ public static class AniListProviderFakers
             popularity: f.Random.Number(0, 100000),
             favourites: f.Random.Number(0, 10000),
             relations: AniListRelationsFaker.Generate(),
-            recommendations: AniListRecommendationsFaker.Generate()
+            recommendations: AniListRecommendationsFaker.Generate(),
+            reviews: null,
+            rankings: null
         ));
 
     public static Faker<GetSeasonalAnime_Page_Media_Media> AniListSeasonalAnimeFaker => new Faker<GetSeasonalAnime_Page_Media_Media>()

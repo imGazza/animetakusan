@@ -1,16 +1,14 @@
 import { useState } from "react";
-import { SquarePen, BookmarkPlus, Plus, Minus } from "lucide-react";
+import { Plus, Minus } from "lucide-react";
 import { Button } from "./button";
 import { Drawer, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from "./drawer";
-import type { Anime } from "@/models/common/Anime";
-import { displayAnimeEntryStatus } from "@/models/common/AnimeEntryStatus";
 import { createDateFromDetails } from "@/lib/utils";
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from "./input-group";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "./alert-dialog";
 import AnimeDetailEntryDate from "./anime-detail-entry-date";
 import AnimeDetailEntryScore from "./anime-detail-entry-score";
 import AnimeDetailEntryStatus from "./anime-detail-entry-status";
-import useMediaQuery from "@/hooks/useMediaQuery";
+import useMediaQuery, { DESKTOP_BREAKPOINT } from "@/hooks/useMediaQuery";
 import AnimeDetailEntryTrigger from "./anime-detail-entry-trigger";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "./dialog";
 import AnimeDetailEntryEpisodes from "./anime-detail-entry-episodes";
@@ -20,7 +18,7 @@ import type { AnimeDetail } from "@/models/common/AnimeDetail";
 
 const AnimeDetailLibraryEntry = ({ anime }: { anime: AnimeDetail }) => {
 
-  const isDesktop = useMediaQuery("(min-width: 768px)");
+  const isDesktop = useMediaQuery(DESKTOP_BREAKPOINT);
 
   const [selectedStatus, setSelectedStatus] = useState<string | null>(
     anime?.mediaListEntry?.status ?? null

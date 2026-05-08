@@ -23,7 +23,7 @@ query GetAnimeById($id: Int) {
         }
       }
     }
-    recommendations(sort: RATING_DESC, page: 1, perPage: 10) {
+    recommendations(sort: RATING_DESC, page: 1, perPage: 21) {
       nodes {
         mediaRecommendation {
           id
@@ -39,6 +39,29 @@ query GetAnimeById($id: Int) {
           averageScore
         }
       }
+    }
+    reviews(sort: RATING_DESC, page: 1, perPage: 50) {
+      nodes {
+        ratingAmount
+        rating
+        score
+        summary
+        siteUrl
+        user {
+          avatar {
+            medium
+          }
+          name
+        }
+      }
+    }
+    rankings {
+      allTime
+      context
+      rank
+      season
+      type
+      year
     }
   }
 }
