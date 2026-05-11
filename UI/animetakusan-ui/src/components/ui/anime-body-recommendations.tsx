@@ -9,7 +9,7 @@ const AnimeBodyRecommendations = ({ anime }: { anime: AnimeDetail }) => {
   if(anime.recommendations.length === 0) return null;
 
   return (
-    <div className="flex flex-col gap-3 bg-muted border p-3 px-4">
+    <div className="flex flex-col gap-3 bg-muted border p-3 px-4 rounded-xs">
       <div className="font-semibold text-xs text-muted-foreground/50 uppercase tracking-widest">
         Recommendations
       </div>
@@ -23,11 +23,10 @@ const AnimeBodyRecommendations = ({ anime }: { anime: AnimeDetail }) => {
               <AnimeImage
                 url={recommendation.coverImage.large}
                 title={recommendation.title.english || recommendation.title.romaji || ""}
-                onImageLoad={() => { }}
               />
             </AspectRatio>
             <div className="p-2 flex flex-col flex-1 justify-between gap-1">
-              <p className="text-xs font-semibold leading-tight line-clamp-2">
+              <p className="text-xs font-semibold leading-tight text-primary/90 line-clamp-2">
                 {recommendation.title.english || recommendation.title.romaji || recommendation.title.native}
               </p>
               {recommendation.averageScore && (

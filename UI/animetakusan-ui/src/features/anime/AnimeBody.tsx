@@ -1,4 +1,5 @@
 import AnimeBodyProduction from "@/components/ui/anime-body-production";
+import AnimeBodyProgress from "@/components/ui/anime-body-progress";
 import AnimeBodyQuickInfo from "@/components/ui/anime-body-quickinfo";
 import AnimeBodyRankings from "@/components/ui/anime-body-rankings";
 import AnimeBodyRecommendations from "@/components/ui/anime-body-recommendations";
@@ -18,7 +19,8 @@ const AnimeBody = ({ anime }: { anime: AnimeDetail }) => {
       {
         isDesktop ?
           <div className="grid grid-cols-[300px_1fr] gap-4 items-start">
-            <div className="flex flex-col gap-4">              
+            <div className="flex flex-col gap-4">
+              <AnimeBodyProgress anime={anime} />
               <AnimeBodyProduction anime={anime} />
               <AnimeBodyRankings anime={anime} />
             </div>
@@ -33,10 +35,11 @@ const AnimeBody = ({ anime }: { anime: AnimeDetail }) => {
           :
           <div className="flex flex-col gap-4">
             <AnimeBodyQuickInfo anime={anime} />
+            <AnimeBodyProgress anime={anime} />
             <AnimeBodyProduction anime={anime} />
             <AnimeBodySynopsis description={anime.description} />
             <AnimeBodyRelations anime={anime} />
-            <AnimeBodyRecommendations anime={anime} />            
+            <AnimeBodyRecommendations anime={anime} />
             <AnimeBodyRankings anime={anime} />
             <AnimeBodyReviews anime={anime} />
           </div>

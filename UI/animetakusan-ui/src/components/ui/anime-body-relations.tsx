@@ -40,7 +40,7 @@ const AnimeBodyRelations = ({ anime }: { anime: AnimeDetail }) => {
   const hiddenCount = anime.relations.length - INITIAL_VISIBLE;
 
   return (
-    <div className="flex flex-col gap-2 bg-muted border p-2 px-4">
+    <div className="flex flex-col gap-2 bg-muted border p-2 px-4 rounded-xs">
       <div className="font-semibold text-xs text-muted-foreground/50 uppercase tracking-widest">
         Relations <span className="text-muted-foreground/30 normal-case font-normal">({anime.relations.length})</span>
       </div>
@@ -51,15 +51,14 @@ const AnimeBodyRelations = ({ anime }: { anime: AnimeDetail }) => {
             <AspectRatio ratio={37 / 53} className="background-muted">
               <AnimeImage
                 url={relation.coverImage.large}
-                title={relation.title.english || relation.title.romaji || ""} 
-                onImageLoad={() => {}} 
+                title={relation.title.english || relation.title.romaji || ""}
               />
             </AspectRatio>
           </div>
           <div className="flex-1 flex flex-col gap-1">
             <CardHeader className="px-2 gap-1">
               <CardDescription className="text-muted-foreground/60 text-xs uppercase tracking-wider">{relation.relationType}</CardDescription>
-              <CardTitle className="text-sm line-clamp-1">{relation.title.english || relation.title.romaji || relation.title.native}</CardTitle>
+              <CardTitle className="text-sm text-primary/90 line-clamp-1">{relation.title.english || relation.title.romaji || relation.title.native}</CardTitle>
             </CardHeader>
             <CardContent className="text-xs tracking-wider text-muted-foreground px-2">
               {displayFormat(relation.format)} • {displayAnimeStatus(relation.status)}

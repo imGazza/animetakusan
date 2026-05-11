@@ -66,7 +66,7 @@ const AnimeBodyRankings = ({ anime }: { anime: AnimeDetail }) => {
   if (anime.rankings.length === 0) return null;
 
   return (
-    <div className="flex flex-col gap-3 p-4 bg-muted border">
+    <div className="flex flex-col gap-3 p-4 bg-muted border rounded-xs">
       <div className="text-muted-foreground/50 uppercase text-xs tracking-wider">
         Rankings
       </div>

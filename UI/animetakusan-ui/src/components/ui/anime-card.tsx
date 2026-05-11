@@ -34,6 +34,7 @@ const AnimeCard = memo(({ anime }: { anime: Anime }) => {
                 url={anime.coverImage.extraLarge} 
                 title={anime.title.english || anime.title.romaji || ""} 
                 onImageLoad={handleImageLoad}
+                className="duration-300 lg:group-hover:scale-[1.1] ease-in-out will-change-transform data-[state=loaded]:opacity-100 data-[state=loading]:opacity-0"
               />
               <AnimeAdd>
                 <Button variant="ghost" size="icon" className="bg-background text-muted-foreground size-8 absolute right-1 top-1 rounded-full z-10 opacity-0 scale-[.40] pointer-events-none lg:group-hover:opacity-80 lg:group-hover:scale-[1] lg:group-hover:pointer-events-auto transition-all duration-200 ease-in-out">

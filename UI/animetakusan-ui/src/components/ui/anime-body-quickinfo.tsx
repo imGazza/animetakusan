@@ -12,7 +12,7 @@ const AnimeBodyQuickInfo = ({ anime }: { anime: AnimeDetail }) => {
       <Item
         variant="outline"
         className={cn(
-          "bg-muted w-full text-muted-foreground rounded-xs cursor-pointer transition-colors p-4"
+          "bg-muted w-full text-muted-foreground rounded-xs transition-colors p-4"
         )}
       >
         <ItemContent className="items-center gap-1">
@@ -28,7 +28,7 @@ const AnimeBodyQuickInfo = ({ anime }: { anime: AnimeDetail }) => {
       <Item
         variant="outline"
         className={cn(
-          "bg-muted w-full text-muted-foreground rounded-xs cursor-pointer transition-colors p-4"
+          "bg-muted w-full text-muted-foreground rounded-xs transition-colors p-4"
         )}
       >
         <ItemContent className="items-center gap-1">
@@ -44,7 +44,7 @@ const AnimeBodyQuickInfo = ({ anime }: { anime: AnimeDetail }) => {
       <Item
         variant="outline"
         className={cn(
-          "bg-muted w-full text-muted-foreground rounded-xs cursor-pointer transition-colors p-4"
+          "bg-muted w-full text-muted-foreground rounded-xs transition-colors p-4"
         )}
       >
         <ItemContent className="items-center gap-1">

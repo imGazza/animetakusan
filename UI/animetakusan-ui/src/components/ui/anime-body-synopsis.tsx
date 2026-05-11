@@ -27,7 +27,7 @@ const AnimeBodySynopsis = ({ description }: { description: string }) => {
       : COLLAPSED_HEIGHT;
 
   return (
-    <div className={cn("flex flex-col p-4 pb-0 border bg-muted", !needsCollapse && "pb-4")}>
+    <div className={cn("flex flex-col p-4 pb-0 border bg-muted rounded-xs", !needsCollapse && "pb-4")}>
       <div
         ref={contentRef}
         style={{ height }}
@@ -47,7 +47,7 @@ const AnimeBodySynopsis = ({ description }: { description: string }) => {
         <div className="font-semibold text-xs text-muted-foreground/50 uppercase tracking-widest">
           Synopsis
         </div>
-        <div dangerouslySetInnerHTML={{ __html: description }} className="text-sm tracking-wide text-balance" />
+        <div dangerouslySetInnerHTML={{ __html: description }} className="text-sm tracking-wide text-balance text-primary/90" />
       </div>
       {needsCollapse && (
         <Button

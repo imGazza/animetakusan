@@ -50,6 +50,6 @@ interface Ranking {
   context: string;
   type: string;
   allTime: boolean;
-  season: string;
+  season: string | null;
   year: number;
 }

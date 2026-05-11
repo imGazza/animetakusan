@@ -19,7 +19,7 @@ const AnimeBodyReviews = ({ anime }: { anime: AnimeDetail }) => {
   const hiddenCount = anime.reviews.length - INITIAL_VISIBLE;
 
   return (
-    <div className="flex flex-col gap-3 bg-muted border p-3 px-4">
+    <div className="flex flex-col gap-3 bg-muted border p-3 px-4 rounded-xs">
       <div className="px-1 font-semibold text-xs text-muted-foreground/50 uppercase tracking-widest">
         Reviews <span className="text-muted-foreground/30 normal-case font-normal">({anime.reviews.length})</span>
       </div>
@@ -38,7 +38,7 @@ const AnimeBodyReviews = ({ anime }: { anime: AnimeDetail }) => {
               </Avatar>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between gap-2 mb-1.5">
-                  <span className="text-xs font-medium truncate">{review.user.name}</span>
+                  <span className="text-xs text-primary/90 font-medium truncate">{review.user.name}</span>
                   <Badge className={cn("shrink-0 rounded-xs border px-1.5 py-0 text-xs font-bold", scoreBadgeClass(review.score))}>
                     {review.score}
                   </Badge>

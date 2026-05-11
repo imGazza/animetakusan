@@ -5,17 +5,13 @@ import { displayAnimeEntryStatus } from "@/models/common/AnimeEntryStatus";
 const AnimeDetailEntryTrigger = ({ anime }: { anime: Anime }) => {
   return (
     anime.mediaListEntry ? (
-      <>
-        <SquarePen className="shrink-0" />
+      <>        
         <span className="font-medium">{displayAnimeEntryStatus(anime.mediaListEntry.status)}</span>
-        {
-          anime.mediaListEntry.progress !== 0 ? (
-            <>
-              <span className="opacity-60 text-xs">|</span>
-              <span className="opacity-80 text-xs">Ep {anime.mediaListEntry.progress} / {anime.episodes || "?"}</span>
-            </>
-          ) : null
-        }
+        <div className="flex gap-2 items-center opacity-60 text-xs">
+          <span>|</span>
+          <span>Edit</span>
+          <SquarePen className="shrink-0 size-3" />
+        </div>
       </>
     ) : (
       <>

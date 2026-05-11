@@ -1,6 +1,7 @@
+import { cn } from "@/lib/utils";
 import { useState } from "react";
 
-const AnimeImage = ({ url, title, onImageLoad }: { url: string, title: string, onImageLoad?: () => void, className?: string }) => {
+const AnimeImage = ({ url, title, onImageLoad, className }: { url: string, title: string, onImageLoad?: () => void, className?: string }) => {
 
   const [loaded, setLoaded] = useState(false);
 
@@ -11,7 +12,7 @@ const AnimeImage = ({ url, title, onImageLoad }: { url: string, title: string, o
       loading="lazy"
       onLoad={() => { setLoaded(true); onImageLoad?.(); }}
       data-state={loaded ? 'loaded' : 'loading'}
-      className="h-full w-full duration-300 object-cover lg:group-hover:scale-[1.1] ease-in-out will-change-transform data-[state=loaded]:opacity-100 data-[state=loading]:opacity-0"
+      className={cn(`h-full w-full object-cover ${className}`)}
     />
   )
 }

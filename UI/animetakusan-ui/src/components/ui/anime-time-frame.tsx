@@ -3,20 +3,13 @@ import type { Anime } from "@/models/common/Anime";
 import { displaySeason } from "@/models/common/AnimeSeason";
 import { useMemo } from "react";
 
-const formatTimeRemaining = (days: number, hours: number, minutes: number): string => {
-  if (days > 0) return `${days} day${days > 1 ? 's' : ''}`;
-  if (hours > 0) return `${hours} hour${hours > 1 ? 's' : ''}`;
-  return `${minutes} minute${minutes > 1 ? 's' : ''}`;
-};
-
 const AnimeTimeFrame = ( { anime, className }: { anime: Anime, className?: string } ) => {
 
   const timeFrame = useMemo(() => {
     // Next airing episode
     if (anime.nextAiringEpisode) {
-      const { days, hours, minutes } = calculateDurationFromSeconds(anime.nextAiringEpisode.timeUntilAiring);
-      const timeRemaining = formatTimeRemaining(days, hours, minutes);
-      return `Ep ${anime.nextAiringEpisode.episode} in ${timeRemaining}`;
+      const timeRemaining = calculateDurationFromSeconds(anime.nextAiringEpisode.timeUntilAiring);
+      return `Ep. ${anime.nextAiringEpisode.episode} in ${timeRemaining}`;
     }
 
     // Season and year

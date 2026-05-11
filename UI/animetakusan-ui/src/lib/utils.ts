@@ -11,12 +11,18 @@ export const formatDuration = (hours: number, minutes: number): string => {
   return `${minutes} min${minutes > 1 ? 's' : ''}`;
 };
 
-export function calculateDurationFromSeconds(totalSeconds: number): { days: number; hours: number; minutes: number }{
+export function calculateDurationFromSeconds(totalSeconds: number): string {
   const days = Math.floor(totalSeconds / 86400);
   const hours = Math.floor((totalSeconds % 86400) / 3600);
   const minutes = Math.floor((totalSeconds % 3600) / 60);
-  return { days, hours, minutes };
+  return formatTimeRemaining(days, hours, minutes);
 }
+
+const formatTimeRemaining = (days: number, hours: number, minutes: number): string => {
+  if (days > 0) return `${days} day${days > 1 ? 's' : ''}`;
+  if (hours > 0) return `${hours} hour${hours > 1 ? 's' : ''}`;
+  return `${minutes} minute${minutes > 1 ? 's' : ''}`;
+};
 
 export function calculateDurationFromMinutes(totalMinutes: number): { hours: number; minutes: number }{
   const hours = Math.floor((totalMinutes % 1440) / 60);
