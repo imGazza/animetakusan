@@ -41,7 +41,7 @@ const AnimeDetailLibraryEntry = ({ anime }: { anime: AnimeDetail }) => {
         <DialogTrigger asChild>
           <Button
             size="sm"
-            className="rounded-xs w-full md:w-60 gap-2 px-3"
+            className="rounded-xs w-60 gap-2 px-3"
           >
             <AnimeDetailEntryTrigger anime={anime} />
           </Button>
@@ -92,7 +92,7 @@ const AnimeDetailLibraryEntry = ({ anime }: { anime: AnimeDetail }) => {
       <DrawerTrigger asChild>
         <Button
           size="sm"
-          className="rounded-xs gap-2 px-3"
+          className="rounded-xs w-full gap-2 px-3"
         >
           <AnimeDetailEntryTrigger anime={anime} />
         </Button>

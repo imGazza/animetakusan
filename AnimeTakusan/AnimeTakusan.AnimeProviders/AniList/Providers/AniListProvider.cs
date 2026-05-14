@@ -85,6 +85,21 @@ public class AniListProvider : IAnimeProvider
         return response.Data.MediaListCollection.Adapt<AnimeUserListResponse>();
     }
 
+    public async Task<AnimeEntryUpsertResponse> UpsertAnimeEntry(AnimeEntryUpsertRequest upsertRequest)
+    {
+        var response = await _client.UpsertAnimeEntry.ExecuteAsync(
+            upsertRequest.StartedAt.Adapt<FuzzyDateInput>(),
+            upsertRequest.CompletedAt.Adapt<FuzzyDateInput>(),
+            upsertRequest.MediaId,
+            ParseEnumOrDefault(upsertRequest.Status.ToString(), MediaListStatus.Planning),
+            upsertRequest.Progress,
+            upsertRequest.Score
+        );
+
+        EnsureNoErrors(response);
+        return response.Data.SaveMediaListEntry.Adapt<AnimeEntryUpsertResponse>();
+    }
+
     private void EnsureNoErrors(IOperationResult operationResult)
     {
         try

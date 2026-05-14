@@ -19,7 +19,7 @@ const AnimeBodyProduction = ({ anime }: { anime: AnimeDetail }) => {
 
   return (
     <>
-      <div className="block md:flex md:flex-col md:gap-4 rounded-xs overflow-hidden">
+      <div className="block md:flex md:flex-col md:gap-4 rounded-xs overflow-hidden animate-in fade-in duration-300">
         <div className="border bg-muted p-4 flex flex-col gap-2">
           <div className="grid grid-cols-2 gap-4 w-full md:grid-cols-1">
             <div className="flex flex-col gap-1.5">

@@ -10,4 +10,5 @@ public interface IAnimeProvider
     Task<AnimeBrowseResponse> GetAnimeBrowseSection(AnimeBrowseSectionRequest animeBroseSectionRequest);
     Task<AnimePageResponse> GetAnime(AnimeFilterRequest animeFilterRequest);
     Task<AnimeUserListResponse> GetUserAnimeList(int aniListUserId);
+    Task<AnimeEntryUpsertResponse> UpsertAnimeEntry(AnimeEntryUpsertRequest upsertRequest);
 }

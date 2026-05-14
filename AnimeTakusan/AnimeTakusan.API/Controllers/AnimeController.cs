@@ -48,6 +48,12 @@ namespace AnimeTakusan.API.Controllers
         {
             return Ok(await _animeService.GetUserAnimeList(userId));
         }
+
+        [HttpPost("upsert")]
+        public async Task<IActionResult> UpsertAnimeEntry([FromBody] AnimeEntryUpsertRequest animeEntryUpsertRequest)
+        {
+            return Ok(await _animeService.UpsertAnimeEntry(animeEntryUpsertRequest));
+        }
     }
     
 }

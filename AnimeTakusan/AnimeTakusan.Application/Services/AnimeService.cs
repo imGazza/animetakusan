@@ -53,6 +53,11 @@ public class AnimeService : IAnimeService, IInjectable
        return await _animeProvider.GetUserAnimeList(userId);
     }
 
+    public async Task<AnimeEntryUpsertResponse> UpsertAnimeEntry(AnimeEntryUpsertRequest animeEntryUpsertRequest)
+    {
+        return await _animeProvider.UpsertAnimeEntry(animeEntryUpsertRequest);
+    }
+
     private AnimeBrowseSectionRequest CreateAnimeBrowseSectionRequest()
     {
         string currentSeason = SeasonUtility.GetCurrentSeason(DateTime.Now);

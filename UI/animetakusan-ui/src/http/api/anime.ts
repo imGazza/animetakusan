@@ -1,6 +1,9 @@
 import type { AnimeDetail } from "@/models/common/AnimeDetail";
 import { httpClient } from "../client";
+import type { AnimeEntryUpsert } from "@/models/common/AnimeEntryUpsert";
+import type { MediaListEntry } from "@/models/common/Anime";
 
 export const animeApis = {
-  animeDetail: (id: number) => httpClient.get<AnimeDetail>(`/anime/${id}`)
+  animeDetail: (id: number) => httpClient.get<AnimeDetail>(`/anime/${id}`),
+  animeEntryUpsert: (entry: AnimeEntryUpsert): Promise<MediaListEntry> => httpClient.post(`/anime/upsert`, entry),
 }

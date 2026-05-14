@@ -8,7 +8,7 @@ const AnimeBodyQuickInfo = ({ anime }: { anime: AnimeDetail }) => {
 
 
   return (
-    <div className="flex gap-2 w-full">
+    <div className="flex gap-2 w-full animate-in fade-in duration-300">
       <Item
         variant="outline"
         className={cn(
@@ -17,7 +17,7 @@ const AnimeBodyQuickInfo = ({ anime }: { anime: AnimeDetail }) => {
       >
         <ItemContent className="items-center gap-1">
           <ItemTitle>
-            { anime.averageScore ? <AnimeScore className="text-lg" score={anime.averageScore} /> : <span className="text-2xl font-bold leading-none">-</span> }
+            { anime.averageScore ? <AnimeScore className="text-md md:text-lg" score={anime.averageScore} /> : <span className="text-2xl font-bold leading-none">-</span> }
           </ItemTitle>
           <ItemDescription className="text-muted-foreground/50 text-xs tracking-wider">
             Score

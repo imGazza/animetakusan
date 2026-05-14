@@ -65,7 +65,7 @@ public record Studio
 
 public record MediaListEntry
 {
-    public int Id { get; init; }
+    public int MediaId { get; init; }
     public int CreatedAt { get; init; }
     public int Progress { get; init; }
     public AnimeMediaListStatus Status { get; init; }

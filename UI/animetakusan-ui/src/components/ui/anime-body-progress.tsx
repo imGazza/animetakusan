@@ -4,7 +4,9 @@ import { Badge } from "./badge";
 import { Progress } from "./progress";
 import { calculateDurationFromSeconds, cn } from "@/lib/utils";
 import { Button } from "./button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useDebouncedCallback } from "use-debounce";
+import { useAnimeEntryMutation } from "@/features/anime/queries";
 
 const statusClasses: Record<string, { gradient: string; bg: string; bgMuted: string; text: string }> = {
   "CURRENT": { gradient: "bg-gradient-to-r from-blue-400 to-cyan-600", bg: "bg-blue-400/10", bgMuted: "bg-blue-500/30", text: "text-blue-500" },
@@ -36,12 +38,36 @@ const AnimeBodyProgress = ({ anime }: { anime: AnimeDetail }) => {
 
   if (!anime.mediaListEntry || !anime.episodes || anime.status === "NOT_YET_RELEASED") return null;
 
-  const [progress, setProgress] = useState(anime.mediaListEntry?.progress || 0);
+  const { mutate } = useAnimeEntryMutation();
   const cls = statusClasses[anime.mediaListEntry?.status || ""] ?? defaultClasses;
-  const displayProgress = anime.episodes ? (progress) / anime.episodes * 100 : 0;
+
+  const [localProgress, setLocalProgress] = useState(anime.mediaListEntry.progress);
+
+  // Sync back to server value once mutation settles
+  useEffect(() => {
+    setLocalProgress(anime.mediaListEntry!.progress);
+  }, [anime.mediaListEntry?.progress]);
+
+  const displayProgress = anime.episodes ? localProgress / anime.episodes * 100 : 0;
+
+  const debouncedMutate = useDebouncedCallback((progress: number) => {
+    const { createdAt: _, ...entry } = anime.mediaListEntry!;
+    mutate({ ...entry, progress });
+  }, 500);
+
+  // If the user navigates away mid-debounce, ensure the mutation is sent with the most recent value
+  useEffect(() => () => { debouncedMutate.flush(); }, []);
+
+  const handleProgressUpdate = () => {
+    setLocalProgress(prev => {
+      const next = prev + 1;
+      debouncedMutate(next);
+      return next;
+    });
+  };
 
   return (
-    <div className={cn("w-full rounded-xs overflow-hidden p-[1px]", cls.gradient)}>
+    <div className={cn("w-full rounded-xs overflow-hidden p-[1px]", cls.gradient, "animate-in fade-in duration-300")}>
       <div className="bg-background">
         <div className={cn("w-full p-4", cls.bg)}>
           {/* HEADER */}
@@ -52,7 +78,7 @@ const AnimeBodyProgress = ({ anime }: { anime: AnimeDetail }) => {
               </div>
             </div>
             <Badge className={cn("font-semibold", cls.text, cls.bgMuted)}>
-              <span className="font-semibold">{anime.mediaListEntry?.progress}</span> <span className="text-muted-foreground font-light">/ {anime.episodes || "?"}</span>
+              <span className="font-semibold">{localProgress}</span> <span className="text-muted-foreground font-light">/ {anime.episodes || "?"}</span>
             </Badge>
           </div>
           {/* PROGRESS BAR */}
@@ -63,12 +89,12 @@ const AnimeBodyProgress = ({ anime }: { anime: AnimeDetail }) => {
           <div className="flex justify-between items-center mt-3">
             <span className={cn(cls.text, "font-semibold tracking-tight text-sm")}>
               {
-                context(anime.status || "", anime.mediaListEntry?.status || "", anime.mediaListEntry?.progress || 0, anime.nextAiringEpisode?.timeUntilAiring, anime.nextAiringEpisode?.episode)
+                context(anime.status || "", anime.mediaListEntry?.status || "", localProgress, anime.nextAiringEpisode?.timeUntilAiring, anime.nextAiringEpisode?.episode)
               }
             </span>
             {
               anime.mediaListEntry?.status !== "COMPLETED" && (
-                <Button disabled={anime.mediaListEntry?.progress === ((anime.nextAiringEpisode?.episode || 0) - 1)} onClick={() => setProgress(progress + 1)} size="sm" variant="outline" className="text-xs rounded-xs tracking-tight text-muted-foreground">
+                <Button onClick={() => handleProgressUpdate()} disabled={localProgress === ((anime.nextAiringEpisode?.episode || 0) - 1)} size="sm" variant="outline" className="text-xs rounded-xs tracking-tight text-muted-foreground">
                   <Play className="size-3" />
                   Mark watched
                 </Button>

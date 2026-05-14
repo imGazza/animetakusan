@@ -3,6 +3,7 @@ import AnimeImage from "@/components/ui/anime-image";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Badge } from "@/components/ui/badge";
 import Container from "@/components/ui/container";
+import { Skeleton } from "@/components/ui/skeleton";
 import type { AnimeDetail } from "@/models/common/AnimeDetail";
 import { displayFormat } from "@/models/common/AnimeFormat";
 import { displayAnimeStatus } from "@/models/common/AnimeStatus";
@@ -10,20 +11,24 @@ import { Radio } from "lucide-react";
 
 const AnimeHeader = ({ anime }: { anime: AnimeDetail }) => {
 
-  // TODO: Metti gradiente random se manca banner image
-  // TODO: Metti lo score col tondino su top all time e sul dettaglio per mobile
-
   return (
     <div>
-      <div className="relative w-full h-[200px] md:h-[400px] overflow-hidden">
-        {anime.bannerImage &&
+      <div className="relative w-full h-[200px] md:h-[400px]">
+        {anime.bannerImage ? (
           <>
-            <div className="absolute inset-0" style={{ backgroundImage: `url(${anime.bannerImage})`, backgroundRepeat: "no-repeat", backgroundSize: "cover", backgroundPosition: "center" }} />
-            <div className="absolute -inset-px bg-linear-to-b from-(--primary-foreground)/20 to-(--background)" />
+            <div className="absolute -inset-0 animate-in fade-in duration-300" style={{ backgroundImage: `url(${anime.bannerImage})`, backgroundRepeat: "no-repeat", backgroundSize: "cover", backgroundPosition: "center" }} >
+              <div className="w-full h-full bg-linear-to-b from-(--primary-foreground)/20 to-(--background)" />
+            </div>
           </>
-        }
-        <Container className="h-full relative flex items-end p-4 py-4 px-6 gap-4">
-          <div className="w-28 md:w-50 shrink-0 rounded-xs overflow-hidden">
+        ) : (
+          <>
+            <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, #1a0533 0%, #2d1b4e 25%, #0e2444 55%, #0a3d2e 100%)" }} >
+              <div className="w-full h-full" style={{ background: "linear-gradient(to bottom, rgba(13,15,20,.1) 0%, rgba(13,15,20,.5) 60%, var(--background) 100%)" }} />
+            </div>
+          </>
+        )}
+        <Container className="h-full relative flex items-end p-4 py-4 px-3 gap-4">
+          <div className="w-28 md:w-54 shrink-0 rounded-xs overflow-hidden">
             <AspectRatio ratio={37 / 53} className="bg-muted">
               <AnimeImage
                 url={anime.coverImage.extraLarge}
@@ -43,16 +48,14 @@ const AnimeHeader = ({ anime }: { anime: AnimeDetail }) => {
             </div>
             <div className="flex flex-wrap gap-2 text-xs md:text-sm">
               <Badge>
-                { anime.status === "RELEASING" && <Radio /> }
+                {anime.status === "RELEASING" && <Radio />}
                 {displayAnimeStatus(anime.status)}
               </Badge>
               <Badge variant="ghost">{displayFormat(anime.format)}</Badge>
               {anime.episodes && <Badge variant="ghost">{`${anime.episodes} episode${anime.episodes === 1 ? "" : "s"}`}</Badge>}
             </div>
 
-            <div className="flex gap-4">
-              <AnimeDetailLibraryEntry anime={anime} />
-            </div>
+            <AnimeDetailLibraryEntry anime={anime} />
 
           </div>
         </Container>
@@ -62,4 +65,29 @@ const AnimeHeader = ({ anime }: { anime: AnimeDetail }) => {
 }
 export default AnimeHeader;
 
-// {anime.title.english || anime.title.romaji}
+const AnimeHeaderSkeleton = () => {
+  return (
+    <div>
+      <div className="relative w-full h-[200px] md:h-[400px] overflow-hidden">
+        <Container className="h-full relative flex items-end p-4 py-4 px-6 gap-4">
+          <div className="w-28 md:w-54 shrink-0 rounded-xs overflow-hidden">
+            <AspectRatio ratio={37 / 53}>
+              <Skeleton className="h-full w-full rounded-xs" />
+            </AspectRatio>
+          </div>
+          <div className="flex flex-col gap-2 md:gap-4 w-full">
+            <div className="flex flex-col gap-0.5">
+              <Skeleton className="h-6 w-3/4" />
+              <Skeleton className="h-4 w-1/2" />
+            </div>
+            <div className="flex flex-wrap gap-2 text-xs md:text-sm">
+              <Skeleton className="h-4 w-1/4" />
+            </div>
+
+          </div>
+        </Container>
+      </div>
+    </div>
+  )
+}
+export { AnimeHeaderSkeleton };

@@ -40,4 +40,9 @@ public class FakeAnimeProvider : IAnimeProvider
     {
         throw new NotImplementedException();
     }
+
+    public Task<AnimeEntryUpsertResponse> UpsertAnimeEntry(AnimeEntryUpsertRequest upsertRequest)
+    {
+        throw new NotImplementedException();
+    }
 }

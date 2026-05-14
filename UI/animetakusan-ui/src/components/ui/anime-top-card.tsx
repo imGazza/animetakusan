@@ -2,10 +2,10 @@ import type { Anime } from "@/models/common/Anime";
 import { Card } from "./card";
 import { AspectRatio } from "./aspect-ratio";
 import AnimeGenres from "./anime-card-genres";
-import AnimeCardScore from "./anime-card-score";
 import AnimeCardFormat from "./anime-card-format";
 import AnimeTimeFrame from "./anime-time-frame";
 import { Skeleton } from "./skeleton";
+import AnimeScore from "./anime-score";
 
 const AnimeTopCard = ({ anime, index }: { anime: Anime, index: number }) => {
   return (
@@ -33,7 +33,7 @@ const AnimeTopCard = ({ anime, index }: { anime: Anime, index: number }) => {
 
         <div className="hidden md:flex justify-center items-center p-4 md:p-8 ml-auto gap-8 ">
           <div className="w-16">
-            {anime.averageScore && <AnimeCardScore score={anime.averageScore} />}
+            {anime.averageScore && <AnimeScore className="text-md" score={anime.averageScore} />}
           </div>
           <div className="w-40">
             <AnimeCardFormat format={anime.format} episodes={anime.episodes ?? 0} duration={anime.duration ?? 0} />

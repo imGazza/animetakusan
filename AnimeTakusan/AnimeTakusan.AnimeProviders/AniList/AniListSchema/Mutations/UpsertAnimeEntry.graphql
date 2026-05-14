@@ -1,0 +1,19 @@
+mutation UpsertAnimeEntry($startedAt: FuzzyDateInput, $completedAt: FuzzyDateInput, $mediaId: Int, $status: MediaListStatus, $progress: Int, $score: Float) {
+  SaveMediaListEntry(startedAt: $startedAt, completedAt: $completedAt, mediaId: $mediaId, status: $status, progress: $progress, score: $score) {
+    completedAt {
+      day
+      month
+      year
+    }
+    startedAt {
+      day
+      month
+      year
+    }
+    progress
+    status
+    mediaId
+    score(format: POINT_100)
+    createdAt
+  }
+}

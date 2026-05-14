@@ -19,7 +19,7 @@ const AnimeBodyReviews = ({ anime }: { anime: AnimeDetail }) => {
   const hiddenCount = anime.reviews.length - INITIAL_VISIBLE;
 
   return (
-    <div className="flex flex-col gap-3 bg-muted border p-3 px-4 rounded-xs">
+    <div className="flex flex-col gap-3 bg-muted border p-3 px-4 rounded-xs animate-in fade-in duration-300">
       <div className="px-1 font-semibold text-xs text-muted-foreground/50 uppercase tracking-widest">
         Reviews <span className="text-muted-foreground/30 normal-case font-normal">({anime.reviews.length})</span>
       </div>

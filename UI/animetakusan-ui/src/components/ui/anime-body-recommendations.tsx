@@ -9,7 +9,7 @@ const AnimeBodyRecommendations = ({ anime }: { anime: AnimeDetail }) => {
   if(anime.recommendations.length === 0) return null;
 
   return (
-    <div className="flex flex-col gap-3 bg-muted border p-3 px-4 rounded-xs">
+    <div className="flex flex-col gap-3 bg-muted border p-3 px-4 rounded-xs animate-in fade-in duration-300">
       <div className="font-semibold text-xs text-muted-foreground/50 uppercase tracking-widest">
         Recommendations
       </div>
