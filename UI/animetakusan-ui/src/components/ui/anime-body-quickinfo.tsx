@@ -4,9 +4,6 @@ import { cn } from "@/lib/utils";
 import AnimeScore from "./anime-score";
 
 const AnimeBodyQuickInfo = ({ anime }: { anime: AnimeDetail }) => {
-
-
-
   return (
     <div className="flex gap-2 w-full animate-in fade-in duration-300">
       <Item

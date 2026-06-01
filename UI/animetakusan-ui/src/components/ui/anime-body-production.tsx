@@ -43,7 +43,7 @@ const AnimeBodyProduction = ({ anime }: { anime: AnimeDetail }) => {
                 Start Date
               </div>
               <div className="text-md font-semibold leading-none text-primary/90">
-                {anime.startDate ? format(createDateFromDetails(anime.startDate), "PPP") : "TBA"}
+                {anime.startDate ? format(createDateFromDetails(anime.startDate) ?? new Date(), "PPP") : "TBA"}
               </div>
             </div>
             <div className="flex flex-col gap-1.5">
@@ -51,7 +51,7 @@ const AnimeBodyProduction = ({ anime }: { anime: AnimeDetail }) => {
                 End Date
               </div>
               <div className="text-md font-semibold leading-none text-primary/90">
-                {anime.endDate ? format(createDateFromDetails(anime.endDate), "PPP") : "TBA"}
+                {anime.endDate ? format(createDateFromDetails(anime.endDate) ?? new Date(), "PPP") : "TBA"}
               </div>
             </div>
             <div className="flex flex-col gap-1.5">

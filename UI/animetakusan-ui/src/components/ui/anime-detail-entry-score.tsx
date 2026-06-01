@@ -1,8 +1,6 @@
 import { cn, getGlowColor, getScoreGradient } from "@/lib/utils"
 import { Slider } from "./slider"
 
-
-
 const AnimeDetailEntryScore = ({ score, setScore }: { score: number, setScore: (score: number) => void }) => {
 
   const gradient = getScoreGradient(score)

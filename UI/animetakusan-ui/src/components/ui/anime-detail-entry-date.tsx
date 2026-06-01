@@ -4,10 +4,10 @@ import { Popover, PopoverContent, PopoverTrigger } from "./popover";
 import { Button } from "./button";
 import { Calendar } from "./calendar";
 
-const AnimeDetailEntryDate = ({ date, setDate }: { date: Date | undefined, setDate: (date: Date | undefined) => void }) => {
+const AnimeDetailEntryDate = ({ title, date, setDate }: { title: string, date: Date | undefined, setDate: (date: Date | undefined) => void }) => {
   return (
     <div className="flex flex-col gap-2 w-full">
-      <div className="text-muted-foreground text-sm">Started On</div>
+      <div className="text-muted-foreground text-sm">{title}</div>
       <div className="relative">
         <Popover>
           <PopoverTrigger asChild>
@@ -35,7 +35,7 @@ const AnimeDetailEntryDate = ({ date, setDate }: { date: Date | undefined, setDa
             size="icon-xs"
             className="absolute right-1 top-1/2 -translate-y-1/2 text-muted-foreground"
             onClick={() => setDate(undefined)}
-            aria-label="Clear started date"
+            aria-label={`Clear ${title.toLowerCase()}`}
           >
             <X className="size-3.5" />
           </Button>

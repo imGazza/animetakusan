@@ -18,7 +18,7 @@ public class GraphQLLoggingHandler : DelegatingHandler
         if (request.Content is not null)
         {
             var body = await request.Content.ReadAsStringAsync(cancellationToken);
-            _logger.LogDebug("GraphQL Request: {Body}", body);
+            _logger.LogInformation("GraphQL Request: {Body}", body);
 
             // Re-set the content so downstream handlers can still read it
             request.Content = new StringContent(body, System.Text.Encoding.UTF8, "application/json");

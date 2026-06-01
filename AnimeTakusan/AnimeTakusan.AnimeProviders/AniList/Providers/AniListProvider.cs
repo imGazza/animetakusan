@@ -91,7 +91,7 @@ public class AniListProvider : IAnimeProvider
             upsertRequest.StartedAt.Adapt<FuzzyDateInput>(),
             upsertRequest.CompletedAt.Adapt<FuzzyDateInput>(),
             upsertRequest.MediaId,
-            ParseEnumOrDefault(upsertRequest.Status.ToString(), MediaListStatus.Planning),
+            ParseEnumOrNull<MediaListStatus>(upsertRequest.Status.ToString()),
             upsertRequest.Progress,
             upsertRequest.Score
         );

@@ -59,7 +59,7 @@ export interface MediaListEntry{
   createdAt: number;
   progress: number;
   status: string;
-  startedAt: DetailedDate;
-  completedAt: DetailedDate;
-  score: number | null;
+  startedAt: DetailedDate | null;
+  completedAt: DetailedDate | null;
+  score: number;
 }

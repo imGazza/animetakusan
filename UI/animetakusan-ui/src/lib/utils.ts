@@ -35,10 +35,10 @@ export function capitalize(value: string ): string {
   return value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
 }
 
-export function createDateFromDetails(detailedDate: DetailedDate | null): Date {
-  if (!detailedDate) return new Date();
+export function createDateFromDetails(detailedDate: DetailedDate | null): Date | null {
+  if (!detailedDate) return null;
   const { year, month, day } = detailedDate;
-  if (!year || !month || !day) return new Date();
+  if (!year || !month || !day) return null;
   return new Date(year, month - 1, day);
 }
 

@@ -1,11 +1,12 @@
 using System.Text;
 using System.Text.Json.Nodes;
+using Microsoft.Extensions.Logging;
 
 namespace AnimeTakusan.AnimeProviders.AniList.Helpers.HttpHandlers;
 
 /// <summary>
-/// Removes null-valued variables from GraphQL requests so they are omitted
-/// entirely rather than being serialized as explicit nulls.
+/// Removes null-valued variables from GraphQL Query operations so they are omitted
+/// Leave Mutation operations unchanged to preserve intended null values
 /// </summary>
 public class NullGraphQLVariablesHandler : DelegatingHandler
 {
@@ -21,16 +22,24 @@ public class NullGraphQLVariablesHandler : DelegatingHandler
             if (json is JsonObject jsonObject &&
                 jsonObject["variables"] is JsonObject variables)
             {
+                // var queryText = jsonObject["query"]?.GetValue<string>() ?? string.Empty;
+                // if (queryText.TrimStart().StartsWith("mutation", StringComparison.OrdinalIgnoreCase))
+                // {
+                //     return await base.SendAsync(request, cancellationToken);
+                // }
+
                 var nullKeys = variables
                     .Where(kv => kv.Value is null)
                     .Select(kv => kv.Key)
-                    .ToList();
+                    .ToList();                
 
                 foreach (var key in nullKeys)
                     variables.Remove(key);
 
+                var sanitized = json.ToJsonString();
+
                 request.Content = new StringContent(
-                    json.ToJsonString(),
+                    sanitized,
                     Encoding.UTF8,
                     "application/json");
             }
