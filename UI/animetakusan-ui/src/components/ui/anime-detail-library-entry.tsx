@@ -11,19 +11,19 @@ import AnimeDetailEntryTrigger from "./anime-detail-entry-trigger";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "./dialog";
 import AnimeDetailEntryEpisodes from "./anime-detail-entry-episodes";
 import type { AnimeDetail } from "@/models/common/AnimeDetail";
-import { useAnimeEntryMutation } from "@/features/anime/queries";
 import { AnimeEntryStatusKeySchema } from "@/models/common/AnimeEntryStatus";
 import type { AnimeEntryUpsert } from "@/models/common/AnimeEntryUpsert";
+import { useAnimeEntryMutation } from "@/features/queries";
 
 // The entry state is intentionally initialised as a blank object (all nulls) rather
-// than a clone of anime.mediaListEntry. This allows us to send the server only the
+// than a clone of anime.mediaListEntry. This allows me to send to the server only the
 // fields the user explicitly changed and leaving everything else
 // null so the server ignores those fields.
 //
-// The motivation is a specific backend side-effect: when status=COMPLETED is sent, the
+// The motivation is a specific AniList side-effect: when status=COMPLETED is sent, the
 // server automatically overwrites progress with the maximum episode count. By keeping
-// status null when the user only adjusts progress (and vice-versa), we avoid triggering
-// that behaviour unintentionally. displayEntry merges state over anime.mediaListEntry
+// status null when the user only adjusts progress (and vice-versa), triggering
+// that behaviour unintentionally is avoided. displayEntry merges state over anime.mediaListEntry
 // for rendering the values of fields.
 const defaultEntry = (anime: AnimeDetail): AnimeEntryUpsert => ({
   mediaId: anime.id,

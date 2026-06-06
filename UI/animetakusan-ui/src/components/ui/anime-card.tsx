@@ -1,6 +1,6 @@
 import type { Anime } from "@/models/common/Anime"
 import { AspectRatio } from "./aspect-ratio"
-import { BookmarkPlus, Info } from "lucide-react"
+import { BookmarkCheck, BookmarkPlus, Info } from "lucide-react"
 import AnimeCardInfo from "./anime-card-info"
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "./hover-card"
 import { memo, useCallback, useRef, useState } from "react"
@@ -9,11 +9,16 @@ import AnimeMobileInfo from "./anime-mobile-info"
 import AnimeAdd from "./anime-add"
 import { Skeleton } from "./skeleton"
 import AnimeImage from "./anime-image"
+import { useNavigate } from "react-router"
+import type { AnimeEntryUpsert } from "@/models/common/AnimeEntryUpsert"
+import { useAnimeEntryMutation } from "@/features/queries"
 
 const AnimeCard = memo(({ anime }: { anime: Anime }) => {
   const triggerRef = useRef<HTMLDivElement>(null)
   const [cardSize, setCardSize] = useState<{ height: number; width: number }>({ height: 0, width: 0 })
   const [imageLoaded, setImageLoaded] = useState(false)
+  const navigate = useNavigate();
+  const { mutate } = useAnimeEntryMutation();
 
   const handleImageLoad = useCallback(() => setImageLoaded(true), [])
 
@@ -24,25 +29,46 @@ const AnimeCard = memo(({ anime }: { anime: Anime }) => {
     }
   }, [])
 
+  const handleAddToLibrary = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+
+    if (anime.mediaListEntry) return; // Already in library, do nothing
+
+    const entry: AnimeEntryUpsert = {
+      mediaId: anime.id,
+      status: "PLANNING",
+      progress: null,
+      startedAt: null,
+      completedAt: null,
+      score: null,
+    }
+    mutate(entry);
+  }, [anime.id, mutate])
+
   return (
     <HoverCard openDelay={0} closeDelay={0} onOpenChange={handleOpenChange}>
       <HoverCardTrigger asChild>
-        <div className="flex relative cursor-pointer">
+        <div className="flex relative cursor-pointer" onClick={() => navigate(`/anime/${anime.id}`)}>
           <div ref={triggerRef} className="group flex flex-col w-full max-w-(--sm-image-width) md:max-w-(--md-image-width)">
             <AspectRatio ratio={37 / 53} data-state={imageLoaded ? 'loaded' : 'loading'} className="bg-muted rounded-sm overflow-hidden relative transform-opacity data-[state=loaded]:opacity-100 data-[state=loading]:opacity-50">
-              <AnimeImage 
-                url={anime.coverImage.extraLarge} 
-                title={anime.title.english || anime.title.romaji || ""} 
+              <AnimeImage
+                url={anime.coverImage.extraLarge}
+                title={anime.title.english || anime.title.romaji || ""}
                 onImageLoad={handleImageLoad}
                 className="duration-300 lg:group-hover:scale-[1.1] ease-in-out will-change-transform data-[state=loaded]:opacity-100 data-[state=loading]:opacity-0"
               />
-              <AnimeAdd>
-                <Button variant="ghost" size="icon" className="bg-background text-muted-foreground size-8 absolute right-1 top-1 rounded-full z-10 opacity-0 scale-[.40] pointer-events-none lg:group-hover:opacity-80 lg:group-hover:scale-[1] lg:group-hover:pointer-events-auto transition-all duration-200 ease-in-out">
-                  <BookmarkPlus className="size-4" />
+              <AnimeAdd tooltipText={anime.mediaListEntry ? "Already in library" : "Add to library"}>
+                <Button onClick={handleAddToLibrary} variant="ghost" size="icon" className="bg-background text-muted-foreground size-8 absolute right-1 top-1 rounded-full z-10 opacity-0 scale-[.40] pointer-events-none lg:group-hover:opacity-80 lg:group-hover:scale-[1] lg:group-hover:pointer-events-auto transition-all duration-200 ease-in-out">
+                  {
+                    anime.mediaListEntry ?
+                    <BookmarkCheck className="size-4" /> :
+                    <BookmarkPlus className="size-4" />
+                  }
                 </Button>
               </AnimeAdd>
-              <div data-state={imageLoaded ? 'loaded' : 'loading'} className="absolute inset-0 bg-gradient-to-b from-transparent via-black/10 md:via-black/10 to-black/60 md:to-black/60 duration-300 ease-in-out data-[state=loaded]:opacity-100 data-[state=loading]:opacity-0"/>
-              <AnimeMobileInfo anime={anime} className="lg:hidden">
+              <div data-state={imageLoaded ? 'loaded' : 'loading'} className="absolute inset-0 bg-gradient-to-b from-transparent via-black/10 md:via-black/10 to-black/60 md:to-black/60 duration-300 ease-in-out data-[state=loaded]:opacity-100 data-[state=loading]:opacity-0" />
+              <AnimeMobileInfo anime={anime} className="lg:hidden" onAddToLibrary={() => handleAddToLibrary}>
                 <Button variant="ghost" size="icon" className="size-6 absolute right-1 top-1 rounded-full bg-black/10 backdrop-blur-[2px]">
                   <Info className="size-4" />
                 </Button>

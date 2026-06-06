@@ -7,7 +7,7 @@ import Container from "@/components/ui/container";
 const AnimeDetail = () => {
 
   const { id } = useParams();
-  const { data: anime, isLoading, error } = useAnimeDetailQuery(id ? parseInt(id) : 0);
+  const { data: anime, isLoading } = useAnimeDetailQuery(id ? parseInt(id) : 0);
 
   if (isLoading || !anime) {
     return (

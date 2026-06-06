@@ -6,9 +6,9 @@ import { calculateDurationFromSeconds, cn, createDateFromDetails } from "@/lib/u
 import { Button } from "./button";
 import { useState, useEffect } from "react";
 import { useDebouncedCallback } from "use-debounce";
-import { useAnimeEntryMutation } from "@/features/anime/queries";
 import { format } from "date-fns";
 import type { DetailedDate } from "@/models/common/Anime";
+import { useAnimeEntryMutation } from "@/features/queries";
 
 const statusClasses: Record<string, { gradient: string; bg: string; bgMuted: string; text: string }> = {
   "CURRENT": { gradient: "bg-gradient-to-r from-blue-400 to-cyan-600", bg: "bg-blue-400/10", bgMuted: "bg-blue-500/30", text: "text-blue-500" },

@@ -1,22 +1,16 @@
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet"
 import type { Anime } from "@/models/common/Anime"
 import AnimeTimeFrame from "./anime-time-frame"
 import AnimeCardFormat from "./anime-card-format"
 import AnimeCardStudios from "./anime-card-studios"
 import AnimeGenres from "./anime-card-genres"
 import AnimeCardSynopsis from "./anime-card-synopsis"
-import AnimeMobileAdd from "./anime-mobile-add"
 import AnimeScore from "./anime-score"
 import { Drawer, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTrigger } from "./drawer"
+import { Button } from "./button"
+import { BookmarkPlus } from "lucide-react"
 
 
-const AnimeMobileInfo = ({ anime, children, className }: { anime: Anime, children: React.ReactNode, className?: string }) => {
+const AnimeMobileInfo = ({ anime, children, className, onAddToLibrary }: { anime: Anime, children: React.ReactNode, className?: string, onAddToLibrary?: () => void }) => {
 
   return (
     <div className={className}>
@@ -51,7 +45,9 @@ const AnimeMobileInfo = ({ anime, children, className }: { anime: Anime, childre
           </div>
 
           <DrawerFooter className="px-2">
-            <AnimeMobileAdd />
+            <Button onClick={onAddToLibrary} size="icon" variant="outline" className="p-2 rounded-xs w-full tracking-wide text-muted-foreground" >
+              <BookmarkPlus className="size-4 ml-2" /> Add to library
+            </Button>
           </DrawerFooter>
 
         </DrawerContent>
