@@ -24,7 +24,7 @@ export const useBrowseQuery = (filter: AnimeFilter, sort: string = "PopularityDe
 
 export const useSimpleBrowseQuery = (filter: AnimeFilter, sort: string = "PopularityDesc", enabled: boolean = true) =>
   useQuery({
-    queryKey: browseQueryKey(filter, sort),
+    queryKey: ['simpleBrowse', filter, sort] as const,
     queryFn: () => browseApis.browse({ filter: filter, page: { page: 1, perPage: 20 }, sort }),
     staleTime: Infinity,
     enabled
