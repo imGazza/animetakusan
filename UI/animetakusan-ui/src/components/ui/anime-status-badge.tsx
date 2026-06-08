@@ -5,10 +5,10 @@ import { Plus } from "lucide-react";
 import { displayAnimeEntryStatus } from "@/models/common/AnimeEntryStatus";
 
 const statusClasses: Record<string, string> = {
-  "CURRENT": "bg-cyan-500",
-  "PLANNING": "bg-yellow-500",
-  "COMPLETED": "bg-violet-500",
-  "DROPPED": "bg-red-500",
+  "CURRENT": "bg-cyan-500 shadow-cyan-500/50",
+  "PLANNING": "bg-yellow-500 shadow-yellow-500/50",
+  "COMPLETED": "bg-violet-500 shadow-violet-500/50",
+  "DROPPED": "bg-red-500 shadow-red-500/50",
 };
 
 const AnimeStatusBadge = ({ animeEntry, imageLoaded, handleAddToLibrary }: { animeEntry: MediaListEntry | null, imageLoaded: boolean, handleAddToLibrary: (e: React.MouseEvent) => void }) => {
@@ -18,17 +18,24 @@ const AnimeStatusBadge = ({ animeEntry, imageLoaded, handleAddToLibrary }: { ani
     <>
       {
         animeEntry ? (
-          <div className={cn(
-            "absolute left-1 top-1 z-10 py-1 px-2 group-hover:bg-muted rounded-xs flex gap-2 items-center transition-colors duration-200 pointer-events-none opacity-100",
-            !imageLoaded && "opacity-0"
-          )}>
-            <div
-              className={cn(
-                "w-2.5 h-2.5 rounded-full flex items-center gap-1 text-accent-foreground text-[10px] font-semibold pointer-events-none",
-                statusClasses[animeEntry.status]
-              )} />
-            <span className="tracking-wide text-muted-foreground font-semibold text-[10px] opacity-0 group-hover:opacity-100 transition-opacity duration-200">{displayAnimeEntryStatus(animeEntry.status)}</span>
-          </div>
+          <>
+            <div className={cn(
+              "absolute top-0 left-0 right-0",
+              "h-[3px] group-hover:h-5",
+              "transition-all duration-200 ease-in-out",
+              "flex items-center justify-center",
+              imageLoaded ? "opacity-100" : "opacity-0",
+              statusClasses[animeEntry.status]
+            )}>
+              <span className={cn(
+                "text-xs font-medium tracking-wide text-transparent",
+                "group-hover:text-primary transition-colors duration-100 delay-100",
+                "whitespace-nowrap select-none"
+              )}>
+                {displayAnimeEntryStatus(animeEntry.status)}
+              </span>
+            </div>
+          </>
         ) : (
           <Button
             variant="default"
