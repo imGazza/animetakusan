@@ -1,21 +1,16 @@
+import { arrayStringParser, integerParser, stringParser } from "@/lib/filter-parsers";
 import { presetFilters } from "@/lib/preset-filters";
-import { capitalize } from "@/lib/utils";
 import type { AnimeFilter } from "@/models/filter/AnimeFilter";
-import { createParser, parseAsArrayOf, parseAsInteger, parseAsString, useQueryState, useQueryStates } from "nuqs";
-
-const capitalizedSeasonParser = createParser({
-  parse: value => capitalize(value),
-  serialize: value => capitalize(value),
-});
+import { parseAsString, useQueryState, useQueryStates } from "nuqs";
 
 const queryParamsSchema = {
-  season: capitalizedSeasonParser,
-  year: parseAsInteger,
-  format: parseAsString,
-  search: parseAsString,
-  status: parseAsString,
-  score: parseAsInteger,
-  genre: parseAsArrayOf(parseAsString)
+  season: stringParser,
+  year: integerParser,
+  format: stringParser,
+  search: stringParser,
+  status: stringParser,
+  score: integerParser,
+  genre: arrayStringParser,
 };
 
 const emptyFilterQueryValues = {
@@ -42,7 +37,7 @@ const filterMapToQueryKey: Record<keyof AnimeFilter, keyof typeof queryParamsSch
 const useFilter = () => {
 
   const [params, setParams] = useQueryStates(queryParamsSchema);
-  const [sort, setSort] = useQueryState("sort", parseAsString);
+  const [sort, setSort] = useQueryState("sort", stringParser);
 
   const translateQueryParamsToFilter = () => ({
     season: params.season ?? undefined,
@@ -89,7 +84,7 @@ const useFilter = () => {
     filter: filter,
     sort: sort ?? undefined,
     removeFilter: removeSingleFilter,
-    resetAllFilters: () => { setParams(emptyFilterQueryValues); setSort("PopularityDesc"); },
+    resetAllFilters: () => { setParams(emptyFilterQueryValues); setSort(sort == "PopularityDesc" ? null : sort); },
     applyPresetFilter
   }
 }

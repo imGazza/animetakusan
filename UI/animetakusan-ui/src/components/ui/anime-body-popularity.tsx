@@ -3,7 +3,7 @@ import { Item, ItemContent, ItemDescription, ItemTitle } from "./item";
 import { cn } from "@/lib/utils";
 import AnimeScore from "./anime-score";
 
-const AnimeBodyQuickInfo = ({ anime }: { anime: AnimeDetail }) => {
+const AnimeBodyPopularity = ({ anime }: { anime: AnimeDetail }) => {
   return (
     <div className="flex gap-2 w-full animate-in fade-in duration-300">
       <Item
@@ -56,4 +56,4 @@ const AnimeBodyQuickInfo = ({ anime }: { anime: AnimeDetail }) => {
     </div>
   )
 }
-export default AnimeBodyQuickInfo;
+export default AnimeBodyPopularity;

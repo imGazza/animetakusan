@@ -1,9 +1,10 @@
-import { parseAsArrayOf, parseAsString, useQueryState } from "nuqs";
+import { useQueryState } from "nuqs";
 import FilterCombobox from "./filter-combobox";
 import FilterSelect from "./filter-select";
 import type { AnimeFilter } from "@/models/filter/AnimeFilter";
 import { capitalize } from "@/lib/utils";
 import type { FilterSeasonOption } from "@/lib/filter-options";
+import { arrayStringParser, stringParser } from "@/lib/filter-parsers";
 
 const MobileFilterPanel = ({ genres, years, seasons, formats, statuses, filter }:
 	{
@@ -16,11 +17,11 @@ const MobileFilterPanel = ({ genres, years, seasons, formats, statuses, filter }
 	}
 ) => {
 
-  const [, setGenre ] = useQueryState('genre', parseAsArrayOf(parseAsString));
-  const [, setFormat ] = useQueryState('format', parseAsString);
-  const [, setStatus ] = useQueryState('status', parseAsString);
-  const [, setSeason ] = useQueryState('season', parseAsString);
-  const [, setYear ] = useQueryState('year', parseAsString);
+  const [, setGenre ] = useQueryState('genre', arrayStringParser);
+  const [, setFormat ] = useQueryState('format', stringParser);
+  const [, setStatus ] = useQueryState('status', stringParser);
+  const [, setSeason ] = useQueryState('season', stringParser);
+  const [, setYear ] = useQueryState('year', stringParser);
 
   const setSeasonYear = (season: string | null) => {
     setSeason(season);

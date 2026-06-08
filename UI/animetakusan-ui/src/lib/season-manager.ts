@@ -1,8 +1,8 @@
 const getSeasonFromMonth = (month: number): string => {
-  if (month <= 3) return "WINTER";
-  if (month <= 6) return "SPRING";
-  if (month <= 9) return "SUMMER";
-  return "FALL";
+  if (month <= 3) return "Winter";
+  if (month <= 6) return "Spring";
+  if (month <= 9) return "Summer";
+  return "Fall";
 };
 
 export const getCurrentSeason = (): string => {
@@ -16,22 +16,22 @@ export const getCurrentSeasonYear = (): number => {
 
 export const getNextSeason = (): string => {
   const seasons: Record<string, string> = {
-    WINTER: "SPRING", SPRING: "SUMMER", SUMMER: "FALL", FALL: "WINTER",
+    Winter: "Spring", Spring: "Summer", Summer: "Fall", Fall: "Winter",
   };
   return seasons[getCurrentSeason()];
 };
 
 export const getNextSeasonYear = (): number => {
-  return getCurrentSeason() === "FALL" ? getCurrentSeasonYear() + 1 : getCurrentSeasonYear();
+  return getCurrentSeason() === "Fall" ? getCurrentSeasonYear() + 1 : getCurrentSeasonYear();
 };
 
 export const getPreviousSeason = (): string => {
   const seasons: Record<string, string> = {
-    WINTER: "FALL", SPRING: "WINTER", SUMMER: "SPRING", FALL: "SUMMER",
+    Winter: "Fall", Spring: "Winter", Summer: "Spring", Fall: "Summer",
   };
   return seasons[getCurrentSeason()];
 };
 
 export const getPreviousSeasonYear = (): number => {
-  return getCurrentSeason() === "WINTER" ? getCurrentSeasonYear() - 1 : getCurrentSeasonYear();
+  return getCurrentSeason() === "Winter" ? getCurrentSeasonYear() - 1 : getCurrentSeasonYear();
 };

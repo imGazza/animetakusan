@@ -11,10 +11,11 @@ export const useAnimeEntryMutation = () =>
   useMutation({
     mutationFn: (animeEntry: AnimeEntryUpsert) => animeApis.animeEntryUpsert(animeEntry),
     onMutate: async (parameterEntry, context) => {
-      console.log("entered onmutate: ", parameterEntry);
 
       // Cancel all eventual outgoing refetches
       await context.client.cancelQueries({ queryKey: ['anime', parameterEntry.mediaId] });
+      await context.client.cancelQueries({ queryKey: ['browseSection'] });
+      await context.client.cancelQueries({ queryKey: ['browse'] });
 
       const oldAnimeDetail = optimisticallyUpdateAnimeDetail(parameterEntry, context);
       const oldBrowseSection = optimisticallyUpdateBrowseSection(parameterEntry, context);
@@ -24,15 +25,11 @@ export const useAnimeEntryMutation = () =>
       return { oldAnimeDetail, oldBrowseSection, oldBrowse };
     },
     onSuccess: (updatedEntry, parameterEntry, _, context) => {
-      console.log("entered on success")
-      updateAnimeDetail(parameterEntry, updatedEntry, context);
-      console.log("updated detail on success")
-      updateBrowseSection(parameterEntry, updatedEntry, context);
-      console.log("updated browse section on success")
-      updateBrowse(parameterEntry, updatedEntry, context);
-      console.log("updated browse on success")
 
-      toast.success("Entry updated successfully");
+      //Update the cache with the response from the server
+      updateAnimeDetail(parameterEntry, updatedEntry, context);
+      updateBrowseSection(parameterEntry, updatedEntry, context);
+      updateBrowse(parameterEntry, updatedEntry, context);
     },
     onError: (_, parameterEntry, onMutateResult, context) => {
       if (onMutateResult?.oldAnimeDetail) {
@@ -97,9 +94,6 @@ const optimisticallyUpdateBrowseSection = (parameterEntry: AnimeEntryUpsert, con
     top: updatePage(oldBrowseSection.top),
   }));
 
-  console.log("exited opt browseSection: ", parameterEntry);
-
-
   return oldBrowseSection;
 }
 
@@ -130,8 +124,7 @@ const optimisticallyUpdateBrowse = (parameterEntry: AnimeEntryUpsert, context: M
   return oldBrowse;
 }
 
-const updateAnimeDetail = (parameterEntry: AnimeEntryUpsert, updatedEntry: MediaListEntry, context: MutationFunctionContext) => {
-  //Update the cache with the response from the server
+const updateAnimeDetail = (parameterEntry: AnimeEntryUpsert, updatedEntry: MediaListEntry, context: MutationFunctionContext) => {  
   context.client.setQueryData(['anime', parameterEntry.mediaId], (oldAnime: AnimeDetail | undefined) =>
     oldAnime ?
       {
@@ -141,15 +134,13 @@ const updateAnimeDetail = (parameterEntry: AnimeEntryUpsert, updatedEntry: Media
 }
 
 const updateBrowseSection = (parameterEntry: AnimeEntryUpsert, updatedEntry: MediaListEntry, context: MutationFunctionContext) => {
-  const updatePage = (page: AnimePage) => {
-    console.log("updating page: ", page); ({
+  const updatePage = (page: AnimePage) => ({
       ...page,
       data: page.data.map(anime => anime.id === parameterEntry.mediaId ? {
         ...anime,
         mediaListEntry: updatedEntry
       } : anime)
-    })
-  };
+    });
 
   context.client.setQueryData(['browseSection'], (oldBrowseSection: BrowseSection) => (
     oldBrowseSection ? {

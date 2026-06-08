@@ -9,6 +9,8 @@ import { useDebouncedCallback } from "use-debounce";
 import { format } from "date-fns";
 import type { DetailedDate } from "@/models/common/Anime";
 import { useAnimeEntryMutation } from "@/features/queries";
+import { toast } from "sonner";
+import { displayAnimeEntryStatus } from "@/models/common/AnimeEntryStatus";
 
 const statusClasses: Record<string, { gradient: string; bg: string; bgMuted: string; text: string }> = {
   "CURRENT": { gradient: "bg-gradient-to-r from-blue-400 to-cyan-600", bg: "bg-blue-400/10", bgMuted: "bg-blue-500/30", text: "text-blue-500" },
@@ -54,7 +56,18 @@ const AnimeBodyProgress = ({ anime }: { anime: AnimeDetail }) => {
     if (!anime.mediaListEntry) return;
 
     const { createdAt: _, ...entry } = anime.mediaListEntry!;
-    mutate({ ...entry, progress });
+    const startedAt = new Date();
+
+    mutate({
+      ...entry,
+      progress,
+      status: progress === 1 && anime.mediaListEntry.status === "PLANNING" ? "CURRENT" : null,
+      startedAt: { day: startedAt.getDate(), month: startedAt.getMonth() + 1, year: startedAt.getFullYear() },
+    }, {
+      onError(){
+        toast.error("Failed to update progress. Please try again.");
+      },
+    });
   }, 500);
 
   // Sync back to server value once mutation settles
@@ -87,22 +100,33 @@ const AnimeBodyProgress = ({ anime }: { anime: AnimeDetail }) => {
     <div className={cn("w-full rounded-xs overflow-hidden p-[1px]", statusClass.gradient, "animate-in fade-in duration-300")}>
       <div className="bg-background">
         <div className={cn("w-full p-4", statusClass.bg)}>
+
           {/* HEADER */}
+
           <div className="flex justify-between items-center">
-            <div className="flex gap-4 items-center">
-              <div className={cn("flex w-8 h-8 p-2 rounded-xs items-center", statusClass.bgMuted)}>
-                <Tv className={statusClass.text} />
+            <div className="flex items-center gap-3">
+              <div className="flex gap-4 items-center">
+                <div className={cn("flex w-8 h-8 p-2 rounded-xs items-center", statusClass.bgMuted)}>
+                  <Tv className={statusClass.text} />
+                </div>
               </div>
+              <p className={cn("text-sm font-medium", statusClass.text)}>
+                {displayAnimeEntryStatus(anime.mediaListEntry?.status)}
+              </p>
             </div>
             <Badge className={cn("font-semibold", statusClass.text, statusClass.bgMuted)}>
               <span className="font-semibold">{localProgress}</span> <span className="text-muted-foreground font-light">/ {anime.episodes || "?"}</span>
             </Badge>
           </div>
+
           {/* PROGRESS BAR */}
+
           <div className="w-full h-2 rounded-xs bg-muted mt-4">
             <Progress value={displayProgress} className={cn(statusClass.gradient)} />
           </div>
+
           {/* FOOTER */}
+          
           <div className="flex justify-between items-center mt-3">
             <span className={cn(statusClass.text, "font-semibold text-sm")}>
               {

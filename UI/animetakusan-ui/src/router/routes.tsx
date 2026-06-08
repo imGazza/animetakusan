@@ -3,7 +3,7 @@ import LoginLayout from "@/features/auth/LoginLayout";
 import Browse from "@/features/browse/Browse";
 import AppLayout from "@/features/layout/AppLayout";
 import RootLayout from "@/features/layout/RootLayout";
-import AnimeDetail from "@/features/anime/AnimeDetail";
+import AnimeDetail from "@/features/anime-detail/AnimeDetail";
 import { createBrowserRouter } from "react-router";
 
 export const routes = createBrowserRouter([

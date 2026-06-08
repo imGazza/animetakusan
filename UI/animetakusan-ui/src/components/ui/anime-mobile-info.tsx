@@ -10,7 +10,7 @@ import { Button } from "./button"
 import { BookmarkCheck, BookmarkPlus } from "lucide-react"
 
 
-const AnimeMobileInfo = ({ anime, children, className, onAddToLibrary, onOpenChange }: { anime: Anime, children: React.ReactNode, className?: string, onAddToLibrary?: () => void, onOpenChange?: (open: boolean) => void }) => {
+const AnimeMobileInfo = ({ anime, children, className, onAddToLibrary, onOpenChange }: { anime: Anime, children: React.ReactNode, className?: string, onAddToLibrary?: (e: React.MouseEvent) => void, onOpenChange?: (open: boolean) => void }) => {
 
   return (
     <div className={className}>

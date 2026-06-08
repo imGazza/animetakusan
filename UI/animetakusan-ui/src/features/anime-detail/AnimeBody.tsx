@@ -1,6 +1,6 @@
 import AnimeBodyProduction from "@/components/ui/anime-body-production";
 import AnimeBodyProgress from "@/components/ui/anime-body-progress";
-import AnimeBodyQuickInfo from "@/components/ui/anime-body-quickinfo";
+import AnimeBodyPopularity from "@/components/ui/anime-body-popularity";
 import AnimeBodyRankings from "@/components/ui/anime-body-rankings";
 import AnimeBodyRecommendations from "@/components/ui/anime-body-recommendations";
 import AnimeBodyRelations from "@/components/ui/anime-body-relations";
@@ -24,7 +24,7 @@ const AnimeBody = ({ anime }: { anime: AnimeDetail }) => {
               <AnimeBodyRankings anime={anime} />
             </div>
             <div className="flex flex-col gap-4">
-              <AnimeBodyQuickInfo anime={anime} />
+              <AnimeBodyPopularity anime={anime} />
               <AnimeBodySynopsis description={anime.description} />
               <AnimeBodyRelations anime={anime} />
               <AnimeBodyRecommendations anime={anime} />
@@ -33,7 +33,7 @@ const AnimeBody = ({ anime }: { anime: AnimeDetail }) => {
           </div>
           :
           <div className="flex flex-col gap-4 animate-in slide-in-from-bottom duration-300">
-            <AnimeBodyQuickInfo anime={anime} />
+            <AnimeBodyPopularity anime={anime} />
             <AnimeBodyProgress anime={anime} />
             <AnimeBodyProduction anime={anime} />
             <AnimeBodySynopsis description={anime.description} />

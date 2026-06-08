@@ -13,7 +13,7 @@ export type AnimeEntryStatusKey = z.infer<typeof AnimeEntryStatusKeySchema>;
 
 export const ANIME_ENTRY_STATUS_DISPLAY: Record<AnimeEntryStatusKey, string> = {
   CURRENT: "Watching",
-  PLANNING: "Planned",
+  PLANNING: "Planning",
   COMPLETED: "Completed",
   DROPPED: "Dropped",
   PAUSED: "Paused",

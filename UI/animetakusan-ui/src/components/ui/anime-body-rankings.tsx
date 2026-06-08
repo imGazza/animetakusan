@@ -70,29 +70,32 @@ const AnimeBodyRankings = ({ anime }: { anime: AnimeDetail }) => {
       <div className="text-muted-foreground/50 uppercase text-xs tracking-wider">
         Rankings
       </div>
-      <div className="flex flex-wrap gap-2">
-        {anime.rankings.map((ranking, index) => {
+      <div className="flex flex-col gap-2">
+        {anime.rankings.sort((a, b) => a.rank - b.rank).map((ranking, index) => {
           const tier = getRankTier(ranking.rank);
           return (
-            <div key={index} className={cn("flex-1 min-w-[160px] inline-flex items-center gap-3 rounded-xl border-l-2 border", tier.accent, tier.border, "bg-gradient-to-r", tier.bg, "px-2 py-2")}>
+            <div key={index} className={cn("min-w-[160px] inline-flex items-center gap-3 rounded-xl border-l-2 border", tier.accent, tier.border, "bg-gradient-to-r", tier.bg, "px-2 py-2")}>
               <div className={cn("flex h-8 w-8 shrink-0 items-center justify-center rounded-full", tier.iconBg)}>
                 <Trophy className={cn("size-4", tier.icon)} />
               </div>
 
-              <div className="flex flex-col gap-0">
-                <div className="flex items-baseline gap-1.5">
-                  <span className={cn("text-lg font-bold tabular-nums", tier.rank)}>
-                    #{ranking.rank}
-                  </span>
-                  <span className="text-sm text-muted-foreground capitalize">
+              <div className="flex justify-between w-full items-center">
+                <div className="flex gap-2 items-center">
+                  <div className="flex items-baseline gap-1.5">
+                    <span className={cn("text-lg font-bold tabular-nums", tier.rank)}>
+                      #{ranking.rank}
+                    </span>
+
+                  </div>
+                  <span className={cn("text-sm font-semibold capitalize", tier.label)}>
                     {ranking.type}
                   </span>
-                </div>
 
-                <span className={cn("text-xs font-medium", tier.label)}>
+                </div>
+                <span className={cn("text-sm font-medium", tier.label)}>
                   {ranking.allTime
-                  ? "All Time"
-                  : [displaySeason(ranking.season), ranking.year].filter(Boolean).join(" ")}
+                    ? "All Time"
+                    : [displaySeason(ranking.season), ranking.year].filter(Boolean).join(" ")}
                 </span>
               </div>
             </div>

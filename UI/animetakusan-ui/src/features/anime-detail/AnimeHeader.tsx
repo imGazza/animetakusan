@@ -14,6 +14,9 @@ const AnimeHeader = ({ anime }: { anime: AnimeDetail }) => {
   return (
     <div>
       <div className="relative w-full h-[200px] md:h-[400px]">
+
+        {/* BANNER */}
+
         {anime.bannerImage ? (
           <>
             <div className="absolute -inset-0 animate-in fade-in duration-300" style={{ backgroundImage: `url(${anime.bannerImage})`, backgroundRepeat: "no-repeat", backgroundSize: "cover", backgroundPosition: "center" }} >
@@ -27,6 +30,9 @@ const AnimeHeader = ({ anime }: { anime: AnimeDetail }) => {
             </div>
           </>
         )}
+
+        {/* ELEMENTS */}
+
         <Container className="h-full relative flex items-end p-4 py-4 px-3 gap-4">
           <div className="w-28 md:w-54 shrink-0 rounded-xs overflow-hidden">
             <AspectRatio ratio={37 / 53} className="bg-muted">
@@ -54,6 +60,8 @@ const AnimeHeader = ({ anime }: { anime: AnimeDetail }) => {
               <Badge variant="ghost">{displayFormat(anime.format)}</Badge>
               {anime.episodes && <Badge variant="ghost">{`${anime.episodes} episode${anime.episodes === 1 ? "" : "s"}`}</Badge>}
             </div>
+
+            {/* ANIME ENTRY COMPONENT */}
 
             <AnimeDetailLibraryEntry anime={anime} />
 
