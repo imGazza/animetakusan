@@ -14,9 +14,9 @@ public record AnimeBrowseResponse : AnimeSectionResponse
 {
     public override AnimeSection Section => AnimeSection.BROWSE;
 
-    public AnimePageResponse Season { get; set; }
-    public AnimePageResponse NextSeason { get; set; }
-    public AnimePageResponse TopLastSeason { get; set; }
-    public AnimePageResponse Top { get; set; }
+    public AnimePageResponse Season { get; init; }
+    public AnimePageResponse NextSeason { get; init; }
+    public AnimePageResponse TopLastSeason { get; init; }
+    public AnimePageResponse Top { get; init; }
 
 }

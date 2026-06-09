@@ -55,5 +55,8 @@ public class AniListMappingConfig : IRegister, IAnimeProviderMapper
         config.NewConfig<IGetAnimeById_Media_Reviews_Nodes_User, User>()
             .Map(dest => dest.Name, src => src.Name)
             .Map(dest => dest.Avatar, src => src.Avatar.Medium);
+
+        config.NewConfig<ToggleFavouriteResult, ToggleFavouriteResponse>()            
+            .Map(dest => dest.IsMarkedAsFavorite, src => src.ToggleFavourite.Anime.Nodes.Count > 0);
     }
 }

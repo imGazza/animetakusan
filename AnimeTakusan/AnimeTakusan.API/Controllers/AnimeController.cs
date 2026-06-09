@@ -54,6 +54,13 @@ namespace AnimeTakusan.API.Controllers
         {
             return Ok(await _animeService.UpsertAnimeEntry(animeEntryUpsertRequest));
         }
+
+        [HttpPost("toggle-favourite/{animeId}")]
+        public async Task<IActionResult> ToggleFavourite(int animeId)
+        {
+            return Ok(await _animeService.ToggleFavourite(animeId));
+        }
+
     }
     
 }

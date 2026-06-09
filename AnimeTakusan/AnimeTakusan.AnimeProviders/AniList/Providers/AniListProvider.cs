@@ -100,6 +100,14 @@ public class AniListProvider : IAnimeProvider
         return response.Data.SaveMediaListEntry.Adapt<AnimeEntryUpsertResponse>();
     }
 
+    public async Task<ToggleFavouriteResponse> ToggleFavourite(int animeId)
+    {
+        var response = await _client.ToggleFavourite.ExecuteAsync(animeId);
+        
+        EnsureNoErrors(response);
+        return response.Data.Adapt<ToggleFavouriteResponse>();
+    }
+
     private void EnsureNoErrors(IOperationResult operationResult)
     {
         try

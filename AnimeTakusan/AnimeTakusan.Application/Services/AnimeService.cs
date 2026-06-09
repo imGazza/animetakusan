@@ -58,6 +58,11 @@ public class AnimeService : IAnimeService, IInjectable
         return await _animeProvider.UpsertAnimeEntry(animeEntryUpsertRequest);
     }
 
+    public async Task<ToggleFavouriteResponse> ToggleFavourite(int animeId)
+    {
+        return await _animeProvider.ToggleFavourite(animeId);
+    }
+
     private AnimeBrowseSectionRequest CreateAnimeBrowseSectionRequest()
     {
         string currentSeason = SeasonUtility.GetCurrentSeason(DateTime.Now);

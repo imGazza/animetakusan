@@ -45,4 +45,9 @@ public class FakeAnimeProvider : IAnimeProvider
     {
         throw new NotImplementedException();
     }
+
+    public Task<ToggleFavouriteResponse> ToggleFavourite(int animeId)
+    {
+        throw new NotImplementedException();
+    }
 }
