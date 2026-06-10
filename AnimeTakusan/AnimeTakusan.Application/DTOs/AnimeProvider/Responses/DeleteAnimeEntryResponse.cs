@@ -1,6 +1,6 @@
 ﻿namespace AnimeTakusan.Application.DTOs.AnimeProvider.Responses;
 
-public record DeleteMediaListEntryResponse
+public record DeleteAnimeEntryResponse
 {
     public bool Deleted { get; init; }
 }

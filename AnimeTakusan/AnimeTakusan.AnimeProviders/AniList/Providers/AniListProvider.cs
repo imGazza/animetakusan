@@ -23,7 +23,7 @@ public class AniListProvider : IAnimeProvider
         var response = await _client.GetAnimeById.ExecuteAsync(id);
 
         EnsureNoErrors(response);
-        return response.Data.Media.Adapt<AnimeDetailResponse>();
+        return response.Data.Adapt<AnimeDetailResponse>();
     }
 
     // Kept for now, maybe to remove in the future if not needed.
@@ -38,7 +38,7 @@ public class AniListProvider : IAnimeProvider
         );
 
         EnsureNoErrors(response);
-        return response.Data.Page.Adapt<AnimePageResponse>();
+        return response.Data.Adapt<AnimePageResponse>();
     }
 
     public async Task<AnimeBrowseResponse> GetAnimeBrowseSection(AnimeBrowseSectionRequest animeBrowseSectionRequest)
@@ -72,7 +72,7 @@ public class AniListProvider : IAnimeProvider
         );
 
         EnsureNoErrors(response);
-        return response.Data.Page.Adapt<AnimePageResponse>();
+        return response.Data.Adapt<AnimePageResponse>();
     }
 
     public async Task<AnimeUserListResponse> GetUserAnimeList(int aniListUserId)
@@ -82,7 +82,7 @@ public class AniListProvider : IAnimeProvider
         );
 
         EnsureNoErrors(response);
-        return response.Data.MediaListCollection.Adapt<AnimeUserListResponse>();
+        return response.Data.Adapt<AnimeUserListResponse>();
     }
 
     public async Task<AnimeEntryUpsertResponse> UpsertAnimeEntry(AnimeEntryUpsertRequest upsertRequest)
@@ -97,7 +97,7 @@ public class AniListProvider : IAnimeProvider
         );
 
         EnsureNoErrors(response);
-        return response.Data.SaveMediaListEntry.Adapt<AnimeEntryUpsertResponse>();
+        return response.Data.Adapt<AnimeEntryUpsertResponse>();
     }
 
     public async Task<ToggleFavouriteResponse> ToggleFavourite(int animeId)
@@ -106,6 +106,14 @@ public class AniListProvider : IAnimeProvider
         
         EnsureNoErrors(response);
         return response.Data.Adapt<ToggleFavouriteResponse>();
+    }
+
+    public async Task<DeleteAnimeEntryResponse> DeleteAnimeEntry(int animeEntryId)
+    {
+        var response = await _client.DeleteAnimeEntry.ExecuteAsync(animeEntryId);
+        
+        EnsureNoErrors(response);
+        return response.Data.Adapt<DeleteAnimeEntryResponse>();
     }
 
     private void EnsureNoErrors(IOperationResult operationResult)

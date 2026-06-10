@@ -86,7 +86,7 @@ const AnimeBodyProduction = ({ anime }: { anime: AnimeDetail }) => {
         </div>
         {
           anime.genres && anime.genres.length > 0 && (
-            <div className="flex-col gap-1.5 hidden md:flex p-4 bg-muted border">
+            <div className="flex-col gap-2 hidden md:flex p-4 bg-muted border">
               <div className="text-muted-foreground/50 uppercase text-xs tracking-wider">
                 Genres
               </div>

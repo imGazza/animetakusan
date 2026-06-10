@@ -33,6 +33,7 @@ fragment Anime on Media {
   isFavourite
   averageScore
   mediaListEntry {
+    id
     mediaId
     createdAt
     progress

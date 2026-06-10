@@ -8,7 +8,8 @@
     "Queries/GetAnime.graphql",
     "Queries/GetUserAnimeList.graphql",
     "Mutations/UpsertAnimeEntry.graphql",
-    "Mutations/ToggleFavourite.graphql"
+    "Mutations/ToggleFavourite.graphql",
+    "Mutations/DeleteAnimeEntry.graphql"
   ],
   "extensions": {
     "strawberryShake": {

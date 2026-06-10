@@ -63,6 +63,11 @@ public class AnimeService : IAnimeService, IInjectable
         return await _animeProvider.ToggleFavourite(animeId);
     }
 
+    public async Task<DeleteAnimeEntryResponse> DeleteAnimeEntry(int animeEntryId)
+    {
+        return await _animeProvider.DeleteAnimeEntry(animeEntryId);
+    }
+
     private AnimeBrowseSectionRequest CreateAnimeBrowseSectionRequest()
     {
         string currentSeason = SeasonUtility.GetCurrentSeason(DateTime.Now);

@@ -55,7 +55,7 @@ const AnimeBodyProgress = ({ anime }: { anime: AnimeDetail }) => {
   const debouncedMutate = useDebouncedCallback((progress: number) => {
     if (!anime.mediaListEntry) return;
 
-    const { createdAt: _, ...entry } = anime.mediaListEntry!;
+    const { createdAt: _, id: __, ...entry } = anime.mediaListEntry!;
     const startedAt = new Date();
 
     mutate({

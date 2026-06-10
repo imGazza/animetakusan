@@ -60,6 +60,12 @@ namespace AnimeTakusan.API.Controllers
         {
             return Ok(await _animeService.ToggleFavourite(animeId));
         }
+        
+        [HttpPost("{animeEntryId}/delete-entry")]
+        public async Task<IActionResult> DeleteAnimeEntry(int animeEntryId)
+        {
+            return Ok(await _animeService.DeleteAnimeEntry(animeEntryId));
+        }
 
     }
     

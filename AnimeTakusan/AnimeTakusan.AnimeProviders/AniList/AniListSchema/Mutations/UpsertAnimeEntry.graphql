@@ -15,5 +15,6 @@ mutation UpsertAnimeEntry($startedAt: FuzzyDateInput, $completedAt: FuzzyDateInp
     mediaId
     score(format: POINT_100)
     createdAt
+    id
   }
 }

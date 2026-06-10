@@ -14,6 +14,7 @@ import type { AnimeDetail } from "@/models/common/AnimeDetail";
 import { AnimeEntryStatusKeySchema } from "@/models/common/AnimeEntryStatus";
 import type { AnimeEntryUpsert } from "@/models/common/AnimeEntryUpsert";
 import { useAnimeEntryMutation } from "@/features/queries";
+import { useDeleteAnimeEntry } from "@/features/anime-detail/queries";
 
 // The entry state is intentionally initialised as a blank object (all nulls) rather
 // than a clone of anime.mediaListEntry. This allows me to send to the server only the
@@ -39,7 +40,8 @@ const defaultEntry = (anime: AnimeDetail): AnimeEntryUpsert => ({
 const AnimeDetailLibraryEntry = ({ anime }: { anime: AnimeDetail }) => {
 
   const isDesktop = useMediaQuery(DESKTOP_BREAKPOINT);
-  const { mutate } = useAnimeEntryMutation();
+  const { mutate: upsertEntryMutate } = useAnimeEntryMutation();
+  const { mutate: deleteMutate } = useDeleteAnimeEntry(anime.id);
   const [open, setOpen] = useState(false);
   const [saveConfirmOpen, setSaveConfirmOpen] = useState(false);
 
@@ -52,7 +54,7 @@ const AnimeDetailLibraryEntry = ({ anime }: { anime: AnimeDetail }) => {
   }, [open]);
 
   const displayEntry = {
-    status: mediaListEntry.status ?? anime.mediaListEntry?.status ?? null,
+    status: mediaListEntry.status ?? anime.mediaListEntry?.status ?? "PLANNING",
     progress: mediaListEntry.progress ?? anime.mediaListEntry?.progress ?? 0,
     startedAt: mediaListEntry.startedAt ?? anime.mediaListEntry?.startedAt ?? null,
     completedAt: mediaListEntry.completedAt ?? anime.mediaListEntry?.completedAt ?? null,
@@ -112,8 +114,17 @@ const AnimeDetailLibraryEntry = ({ anime }: { anime: AnimeDetail }) => {
       isDateSet(entry.startedAt) || isDateSet(entry.completedAt);
     if (!hasChanges) return;
 
-    mutate(entry);
+    upsertEntryMutate(entry);
   };
+
+  // ------ Delete helper methods --------
+
+  const handleDeleteEntry = () => {
+    setOpen(false);
+    if(!anime.mediaListEntry || !anime.mediaListEntry.id) return;
+
+    deleteMutate(anime.mediaListEntry!.id);
+  }
 
   // ---------- DOM ----------
 
@@ -189,7 +200,7 @@ const AnimeDetailLibraryEntry = ({ anime }: { anime: AnimeDetail }) => {
                   </AlertDialogHeader>
                   <AlertDialogFooter>
                     <AlertDialogCancel size="sm" className="rounded-xs">Cancel</AlertDialogCancel>
-                    <AlertDialogAction size="sm" className="rounded-xs">Continue</AlertDialogAction>
+                    <AlertDialogAction onClick={handleDeleteEntry} size="sm" className="rounded-xs">Continue</AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialog>
@@ -274,7 +285,7 @@ const AnimeDetailLibraryEntry = ({ anime }: { anime: AnimeDetail }) => {
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel size="sm" className="rounded-xs">Cancel</AlertDialogCancel>
-                  <AlertDialogAction size="sm" className="rounded-xs">Continue</AlertDialogAction>
+                  <AlertDialogAction onClick={handleDeleteEntry} size="sm" className="rounded-xs">Continue</AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>}

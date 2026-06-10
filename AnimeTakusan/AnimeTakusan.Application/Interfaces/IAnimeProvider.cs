@@ -12,4 +12,5 @@ public interface IAnimeProvider
     Task<AnimeUserListResponse> GetUserAnimeList(int aniListUserId);
     Task<AnimeEntryUpsertResponse> UpsertAnimeEntry(AnimeEntryUpsertRequest upsertRequest);
     Task<ToggleFavouriteResponse> ToggleFavourite(int animeId);
+    Task<DeleteAnimeEntryResponse> DeleteAnimeEntry(int animeEntryId);
 }

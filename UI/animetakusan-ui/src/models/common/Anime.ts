@@ -55,6 +55,7 @@ export interface Studio {
 }
 
 export interface MediaListEntry{
+  id: number;
   mediaId: number;
   createdAt: number;
   progress: number;

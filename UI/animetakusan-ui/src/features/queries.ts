@@ -5,7 +5,6 @@ import type { AnimeDetail } from "@/models/common/AnimeDetail";
 import type { AnimeEntryUpsert } from "@/models/common/AnimeEntryUpsert";
 import type { AnimePage } from "@/models/common/AnimePage";
 import { useMutation, type InfiniteData, type MutationFunctionContext } from "@tanstack/react-query";
-import { toast } from "sonner";
 
 export const useAnimeEntryMutation = () =>
   useMutation({
@@ -56,6 +55,7 @@ const optimisticallyUpdateAnimeDetail = (parameterEntry: AnimeEntryUpsert, conte
         ...oldAnime,
         mediaListEntry: {
           createdAt: oldAnime.mediaListEntry?.createdAt ?? Math.floor(Date.now() / 1000), // Now in Unix
+          id: oldAnime.mediaListEntry?.id ?? -1, // Temp Id. Server Response will update
           status: parameterEntry.status ?? oldAnime.mediaListEntry?.status ?? null,
           progress: parameterEntry.progress ?? oldAnime.mediaListEntry?.progress ?? 0,
           startedAt: parameterEntry.startedAt ?? oldAnime.mediaListEntry?.startedAt ?? null,
@@ -78,6 +78,7 @@ const optimisticallyUpdateBrowseSection = (parameterEntry: AnimeEntryUpsert, con
       ...anime,
       mediaListEntry: {
         createdAt: anime.mediaListEntry?.createdAt ?? Math.floor(Date.now() / 1000), // Now in Unix
+        id: anime.mediaListEntry?.id ?? -1, // Temp Id. Server Response will update
         status: parameterEntry.status ?? anime.mediaListEntry?.status ?? null,
         progress: parameterEntry.progress ?? anime.mediaListEntry?.progress ?? 0,
         startedAt: parameterEntry.startedAt ?? anime.mediaListEntry?.startedAt ?? null,
@@ -111,6 +112,7 @@ const optimisticallyUpdateBrowse = (parameterEntry: AnimeEntryUpsert, context: M
             ...anime,
             mediaListEntry: {
               createdAt: anime.mediaListEntry?.createdAt ?? Math.floor(Date.now() / 1000), // Now in Unix
+              id: anime.mediaListEntry?.id ?? -1, // Temp Id. Server Response will update
               status: parameterEntry.status ?? anime.mediaListEntry?.status ?? null,
               progress: parameterEntry.progress ?? anime.mediaListEntry?.progress ?? 0,
               startedAt: parameterEntry.startedAt ?? anime.mediaListEntry?.startedAt ?? null,

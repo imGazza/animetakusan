@@ -1,0 +1,5 @@
+﻿mutation DeleteAnimeEntry($mediaListEntryId: Int) {
+    DeleteMediaListEntry(id: $mediaListEntryId) {
+        deleted
+    }
+}

@@ -50,4 +50,9 @@ public class FakeAnimeProvider : IAnimeProvider
     {
         throw new NotImplementedException();
     }
+
+    public Task<DeleteAnimeEntryResponse> DeleteAnimeEntry(int animeId)
+    {
+        throw new NotImplementedException();
+    }
 }
