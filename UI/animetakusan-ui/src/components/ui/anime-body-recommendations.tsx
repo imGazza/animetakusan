@@ -3,8 +3,10 @@ import { AspectRatio } from "./aspect-ratio";
 import AnimeImage from "./anime-image";
 import { Badge } from "./badge";
 import { cn, scoreBadgeClass } from "@/lib/utils";
+import { useNavigate } from "react-router";
 
 const AnimeBodyRecommendations = ({ anime }: { anime: AnimeDetail }) => {
+  const navigate = useNavigate();
 
   if(anime.recommendations.length === 0) return null;
 
@@ -17,7 +19,8 @@ const AnimeBodyRecommendations = ({ anime }: { anime: AnimeDetail }) => {
         {anime.recommendations.filter(rec => rec).map((recommendation, index) => (
           <div
             key={index}
-            className="flex-none w-32 md:w-26 lg:w-32 snap-start rounded-xs overflow-hidden bg-popover-accent/50 flex flex-col"
+            onClick={() => navigate(`/anime/${recommendation.id}`)}
+            className="cursor-pointer flex-none w-32 md:w-26 lg:w-32 snap-start rounded-xs overflow-hidden bg-popover-accent/50 flex flex-col"
           >
             <AspectRatio ratio={37 / 53} className="bg-muted">
               <AnimeImage

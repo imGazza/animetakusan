@@ -17,6 +17,7 @@ interface Relation {
   relationType: string;
   format: string;
   status: string;
+  type: string;
 }
 
 interface Recommendation {

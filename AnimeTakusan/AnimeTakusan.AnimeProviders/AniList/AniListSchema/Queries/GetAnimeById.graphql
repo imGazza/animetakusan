@@ -20,6 +20,7 @@ query GetAnimeById($id: Int) {
           }
           format
           status(version: 2)
+          type
         }
       }
     }

@@ -14,7 +14,7 @@ const AnimeSort = ({ sort }: { sort?: string }) => {
         <PopoverTrigger asChild>
           <div className="text-muted-foreground text-xs flex gap-2">
             <ArrowUpDown className="size-4" />
-            {getSortName(sort || "PopularityDesc")}
+            {getSortName(!sort || sort === "SearchMatch" ? "PopularityDesc" : sort)}
           </div>
         </PopoverTrigger>
         <PopoverContent className="w-fit border-none rounded-xs mt-2 p-2.5">

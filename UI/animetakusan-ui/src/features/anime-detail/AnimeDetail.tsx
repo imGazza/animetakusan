@@ -20,7 +20,7 @@ const AnimeDetail = () => {
   return (
     <>
       <AnimeHeader anime={anime} />
-      <Container className="pt-2 px-3">
+      <Container className="pt-4 md:pt-1 px-3">
         <AnimeBody anime={anime} />
       </Container>
     </>

@@ -15,7 +15,7 @@ public static class AnimeProviderFakers
         .RuleFor(a => a.Season, f => f.PickRandom<AnimeSeason>())
         .RuleFor(a => a.SeasonYear, f => f.Random.Number(2000, 2026))
         .RuleFor(a => a.Description, f => f.Lorem.Paragraphs(1, 3))
-        .RuleFor(a => a.Type, f => f.PickRandom<AnimeType>())
+        .RuleFor(a => a.Type, f => f.PickRandom<MediaType>())
         .RuleFor(a => a.Format, f => f.PickRandom<AnimeFormat>())
         .RuleFor(a => a.Status, f => f.PickRandom<AnimeStatus>())
         .RuleFor(a => a.Episodes, f => f.Random.Number(1, 50))

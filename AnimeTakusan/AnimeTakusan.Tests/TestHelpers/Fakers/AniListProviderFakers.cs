@@ -205,7 +205,8 @@ public static class AniListProviderFakers
             coverImage: AniListRelationNodeCoverImageFaker.Generate(),
             title: AniListRelationNodeTitleFaker.Generate(),
             format: f.PickRandom<MediaFormat>(),
-            status: f.PickRandom<MediaStatus>()
+            status: f.PickRandom<MediaStatus>(),
+            type: f.PickRandom<MediaType>()
         ));
 
     public static Faker<GetAnimeById_Media_Relations_Edges_Node_CoverImage_MediaCoverImage> AniListRelationNodeCoverImageFaker => new Faker<GetAnimeById_Media_Relations_Edges_Node_CoverImage_MediaCoverImage>()

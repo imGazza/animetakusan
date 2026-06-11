@@ -8,9 +8,12 @@ import AnimeScore from "./anime-score"
 import { Drawer, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTrigger } from "./drawer"
 import { Button } from "./button"
 import { BookmarkCheck, BookmarkPlus } from "lucide-react"
+import { useAuth } from "@/hooks/useAuth"
 
 
 const AnimeMobileInfo = ({ anime, children, className, onAddToLibrary, onOpenChange }: { anime: Anime, children: React.ReactNode, className?: string, onAddToLibrary?: (e: React.MouseEvent) => void, onOpenChange?: (open: boolean) => void }) => {
+
+  const { isAuthenticated } = useAuth();
 
   return (
     <div className={className}>
@@ -44,15 +47,17 @@ const AnimeMobileInfo = ({ anime, children, className, onAddToLibrary, onOpenCha
             <AnimeGenres genres={anime.genres} />
           </div>
 
-          <DrawerFooter className="px-2">
-            <Button disabled={!!anime.mediaListEntry} onClick={onAddToLibrary} size="icon" variant="outline" className="p-2 rounded-xs w-full tracking-wide text-muted-foreground" >
-              {
-                anime.mediaListEntry ?
-                <><BookmarkCheck className="size-4" /> Already in library</> :
-                <><BookmarkPlus className="size-4 ml-2" /> Add to library</>
+          {isAuthenticated && (
+            <DrawerFooter className="px-2">
+              <Button disabled={!!anime.mediaListEntry} onClick={onAddToLibrary} size="icon" variant="outline" className="p-2 rounded-xs w-full tracking-wide text-muted-foreground" >
+                {
+                  anime.mediaListEntry ?
+                  <><BookmarkCheck className="size-4" /> Already in library</> :
+                  <><BookmarkPlus className="size-4 ml-2" /> Add to library</>
               }
             </Button>
           </DrawerFooter>
+        )}
 
         </DrawerContent>
       </Drawer>

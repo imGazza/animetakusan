@@ -11,7 +11,7 @@ public record Anime
     public AnimeSeason Season { get; init; }
     public int? SeasonYear { get; init; }
     public string Description { get; init; }
-    public AnimeType Type { get; init; }
+    public MediaType Type { get; init; }
     public AnimeFormat Format { get; init; }
     public AnimeStatus Status { get; init; }
     public bool IsFavourite { get; init; }
@@ -83,7 +83,7 @@ public enum AnimeSeason
     FALL
 }
 
-public enum AnimeType
+public enum MediaType
 {
     ANIME,
     MANGA

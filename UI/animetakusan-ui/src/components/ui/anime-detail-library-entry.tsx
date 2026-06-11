@@ -35,8 +35,6 @@ const defaultEntry = (anime: AnimeDetail): AnimeEntryUpsert => ({
   completedAt: null
 });
 
-//TODO: Find a solution for the Toast that moves when scrollbar disappears or appears at dialog open/close
-
 const AnimeDetailLibraryEntry = ({ anime }: { anime: AnimeDetail }) => {
 
   const isDesktop = useMediaQuery(DESKTOP_BREAKPOINT);
@@ -218,7 +216,7 @@ const AnimeDetailLibraryEntry = ({ anime }: { anime: AnimeDetail }) => {
       <DrawerTrigger asChild>
         <Button
           size="sm"
-          className="rounded-xs w-full gap-2 px-3"
+          className="rounded-xs flex-1 gap-2 px-3"
         >
           <AnimeDetailEntryTrigger anime={anime} />
         </Button>

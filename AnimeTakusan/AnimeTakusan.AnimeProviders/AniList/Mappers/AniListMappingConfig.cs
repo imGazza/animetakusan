@@ -37,7 +37,8 @@ public class AniListMappingConfig : IRegister, IAnimeProviderMapper
             .Map(dest => dest.CoverImage, src => src.Node.CoverImage)
             .Map(dest => dest.Title, src => src.Node.Title)
             .Map(dest => dest.Format, src => src.Node.Format)
-            .Map(dest => dest.Status, src => src.Node.Status);
+            .Map(dest => dest.Status, src => src.Node.Status)
+            .Map(dest => dest.Type, src => src.Node.Type);
 
         config.NewConfig<IGetAnimeById_Media, AnimeDetailResponse>()
             .Map(dest => dest.Relations, src => src.Relations.Edges)
@@ -49,7 +50,7 @@ public class AniListMappingConfig : IRegister, IAnimeProviderMapper
             .Map(dest => dest.Avatar, src => src.Avatar.Medium);
 
         config.NewConfig<ToggleFavouriteResult, ToggleFavouriteResponse>()            
-            .Map(dest => dest.IsMarkedAsFavorite, src => src.ToggleFavourite.Anime.Nodes.Count > 0);
+            .Map(dest => dest.IsMarkedAsFavourite, src => src.ToggleFavourite.Anime.Nodes.Count > 0);
 
         config.NewConfig<GetAnimeByIdResult, AnimeDetailResponse>()
             .MapWith(src => src.Media.Adapt<AnimeDetailResponse>());

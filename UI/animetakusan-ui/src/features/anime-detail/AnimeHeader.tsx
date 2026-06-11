@@ -1,15 +1,19 @@
+import AnimeDetailFavourite from "@/components/ui/anime-detail-favourite";
 import AnimeDetailLibraryEntry from "@/components/ui/anime-detail-library-entry";
 import AnimeImage from "@/components/ui/anime-image";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Badge } from "@/components/ui/badge";
 import Container from "@/components/ui/container";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useAuth } from "@/hooks/useAuth";
 import type { AnimeDetail } from "@/models/common/AnimeDetail";
 import { displayFormat } from "@/models/common/AnimeFormat";
 import { displayAnimeStatus } from "@/models/common/AnimeStatus";
 import { Radio } from "lucide-react";
 
 const AnimeHeader = ({ anime }: { anime: AnimeDetail }) => {
+
+  const { isAuthenticated } = useAuth();
 
   return (
     <div>
@@ -63,7 +67,13 @@ const AnimeHeader = ({ anime }: { anime: AnimeDetail }) => {
 
             {/* ANIME ENTRY COMPONENT */}
 
-            <AnimeDetailLibraryEntry anime={anime} />
+            {
+              isAuthenticated &&
+              <div className="flex items-center gap-2 mt-2">
+                <AnimeDetailLibraryEntry anime={anime} />
+                <AnimeDetailFavourite anime={anime} />
+              </div>
+            }
 
           </div>
         </Container>

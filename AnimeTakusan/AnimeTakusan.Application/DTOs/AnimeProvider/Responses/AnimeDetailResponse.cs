@@ -19,6 +19,7 @@ public record Relation
     public string RelationType { get; init; }
     public AnimeFormat Format { get; init; }
     public AnimeStatus Status { get; init; } 
+    public MediaType Type { get; init; }
 }
 
 public record Recommendation

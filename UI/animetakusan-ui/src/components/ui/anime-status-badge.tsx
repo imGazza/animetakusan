@@ -3,6 +3,7 @@ import { Button } from "./button";
 import { cn } from "@/lib/utils";
 import { Plus } from "lucide-react";
 import { displayAnimeEntryStatus } from "@/models/common/AnimeEntryStatus";
+import { useAuth } from "@/hooks/useAuth";
 
 const statusClasses: Record<string, string> = {
   "CURRENT": "bg-cyan-500 shadow-cyan-500/50",
@@ -13,6 +14,9 @@ const statusClasses: Record<string, string> = {
 
 const AnimeStatusBadge = ({ animeEntry, imageLoaded, handleAddToLibrary }: { animeEntry: MediaListEntry | null, imageLoaded: boolean, handleAddToLibrary: (e: React.MouseEvent) => void }) => {
 
+  const { isAuthenticated } = useAuth();
+
+  if (!isAuthenticated) return null;
 
   return (
     <>

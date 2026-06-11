@@ -8,10 +8,12 @@ import AnimeBodyReviews from "@/components/ui/anime-body-reviews";
 import AnimeBodySynopsis from "@/components/ui/anime-body-synopsis";
 import useMediaQuery, { DESKTOP_BREAKPOINT } from "@/hooks/useMediaQuery";
 import type { AnimeDetail } from "@/models/common/AnimeDetail";
+import { useAuth } from "@/hooks/useAuth";
 
 const AnimeBody = ({ anime }: { anime: AnimeDetail }) => {
 
   const isDesktop = useMediaQuery(DESKTOP_BREAKPOINT);
+  const { isAuthenticated } = useAuth();
 
   return (
     <>
@@ -19,7 +21,7 @@ const AnimeBody = ({ anime }: { anime: AnimeDetail }) => {
         isDesktop ?
           <div className="grid grid-cols-[300px_1fr] gap-4 items-start animate-in slide-in-from-bottom duration-300">
             <div className="flex flex-col gap-4">
-              <AnimeBodyProgress anime={anime} />
+              {isAuthenticated && <AnimeBodyProgress anime={anime} />}
               <AnimeBodyProduction anime={anime} />
               <AnimeBodyRankings anime={anime} />
             </div>
@@ -34,7 +36,7 @@ const AnimeBody = ({ anime }: { anime: AnimeDetail }) => {
           :
           <div className="flex flex-col gap-4 animate-in slide-in-from-bottom duration-300">
             <AnimeBodyPopularity anime={anime} />
-            <AnimeBodyProgress anime={anime} />
+            {isAuthenticated && <AnimeBodyProgress anime={anime} />}
             <AnimeBodyProduction anime={anime} />
             <AnimeBodySynopsis description={anime.description} />
             <AnimeBodyRelations anime={anime} />
