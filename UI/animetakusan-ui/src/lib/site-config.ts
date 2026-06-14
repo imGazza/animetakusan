@@ -5,7 +5,7 @@ export const siteConfig = {
   navItems: [
     { label: "Home", href: "#", coming: true },
     { label: "Browse", href: "/browse", coming: false },
-    { label: "Library", href: "#", coming: true },
+    { label: "Library", href: "/library", coming: false },
   ],
   profileNavItems: [
     { label: "Profile", icon: User },

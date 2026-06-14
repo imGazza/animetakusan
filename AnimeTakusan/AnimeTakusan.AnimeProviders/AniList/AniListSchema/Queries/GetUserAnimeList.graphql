@@ -3,6 +3,7 @@ query GetUserAnimeList($userId: Int) {
     lists {
       name
       entries {
+        id
         media{
           ...Anime
         }

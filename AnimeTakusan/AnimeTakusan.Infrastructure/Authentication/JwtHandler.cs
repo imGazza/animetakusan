@@ -78,9 +78,12 @@ public class JwtHandler : IJwtHandler
             claims.Add(new Claim(ClaimTypes.Role, role));
         }
 
-        // Include AniList Token if synced
+        // Include AniList Token and AniList UserId if synced
         if (user.AniListUser != null && IsValidToken(user.AniListUser.AccessToken, user.AniListUser.AccessTokenExpiry ?? DateTime.MinValue))
+        {
             claims.Add(new Claim(AniListClaimTypes.AccessToken, user.AniListUser.AccessToken));
+            claims.Add(new Claim(AniListClaimTypes.AniListUserId, user.AniListUser.AniListUserId.ToString()));
+        }
 
         var expiresAt = DateTime.UtcNow.AddMinutes(15);
 

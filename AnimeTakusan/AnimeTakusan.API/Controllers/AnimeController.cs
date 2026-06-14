@@ -1,11 +1,12 @@
 using AnimeTakusan.Application.DTOs.AnimeProvider.Requests;
 using AnimeTakusan.Application.Interfaces;
+using AnimeTakusan.Application.Utility;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 
 namespace AnimeTakusan.API.Controllers
-{    
+{
     [ApiController]
     [EnableCors("Public")]
     [EnableRateLimiting("anime")]
@@ -43,10 +44,13 @@ namespace AnimeTakusan.API.Controllers
             return Ok(await _animeService.GetAnime(animeFilterRequest));
         }
 
-        [HttpGet("user/{userId}/list")]
-        public async Task<IActionResult> GetUserAnimeList(int userId)
+        [HttpGet("library")]
+        public async Task<IActionResult> GetUserAnimeList()
         {
-            return Ok(await _animeService.GetUserAnimeList(userId));
+            // AniListUserId is exctracted from the JWT token
+            return User.FindFirst(AniListClaimTypes.AniListUserId)?.Value is not string userId
+                ? throw new Exception("Please link your AniList account to access your anime library.")
+                : Ok(await _animeService.GetUserAnimeList(int.Parse(userId)));
         }
 
         [HttpPost("upsert")]
@@ -60,7 +64,7 @@ namespace AnimeTakusan.API.Controllers
         {
             return Ok(await _animeService.ToggleFavourite(animeId));
         }
-        
+
         [HttpPost("{animeEntryId}/delete-entry")]
         public async Task<IActionResult> DeleteAnimeEntry(int animeEntryId)
         {
@@ -68,5 +72,5 @@ namespace AnimeTakusan.API.Controllers
         }
 
     }
-    
+
 }

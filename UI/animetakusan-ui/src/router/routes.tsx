@@ -5,6 +5,7 @@ import AppLayout from "@/features/layout/AppLayout";
 import RootLayout from "@/features/layout/RootLayout";
 import AnimeDetail from "@/features/anime-detail/AnimeDetail";
 import { createBrowserRouter } from "react-router";
+import Library from "@/features/library/Library";
 
 export const routes = createBrowserRouter([
     {
@@ -40,6 +41,17 @@ export const routes = createBrowserRouter([
                     {
                         index: true,
                         Component: AnimeDetail
+                    }
+                ]
+            },
+            {
+                path: "/library",
+                //errorElement: <ErrorPage />,
+                Component: AppLayout,
+                children: [
+                    {
+                        index: true,
+                        Component: Library
                     }
                 ]
             }

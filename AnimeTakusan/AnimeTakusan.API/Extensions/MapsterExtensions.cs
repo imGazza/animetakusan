@@ -1,7 +1,6 @@
 using AnimeTakusan.AnimeProviders.AniList.Mappers;
-using AnimeTakusan.Application.Interfaces;
+using AnimeTakusan.Application.Handlers.Mappers;
 using Mapster;
-using MapsterMapper;
 using System.Reflection;
 
 namespace AnimeTakusan.API.Extensions;
@@ -16,7 +15,8 @@ public static class MapsterExtensions
         // Assemblies to scan for IRegister implementations
         List<Assembly> assemblies = new()
         {
-            typeof(IAnimeProviderMapper).Assembly
+            typeof(IAnimeProviderMapper).Assembly,
+            typeof(IUserMapper).Assembly
         };
 
         TypeAdapterConfig.GlobalSettings.Scan(assemblies.ToArray());

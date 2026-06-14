@@ -54,7 +54,7 @@ namespace AnimeTakusan.API.Controllers
 
             var aniListTokenResponse = await response.Content.ReadFromJsonAsync<AniListTokenResponse>();
             await _aniListAuthService.LinkAniListAccountToUser(aniListTokenResponse);
-            return Redirect(_configuration["Authentication:Logged:RedirectUri"]);
+            return Redirect(_configuration["Authentication:Logged:RedirectUri"]!);
         }
 
         private bool AreAniListAuthSettingsValid()
