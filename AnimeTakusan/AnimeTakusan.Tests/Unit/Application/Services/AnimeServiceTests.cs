@@ -134,14 +134,14 @@ public class AnimeServiceTests
     {
         // Arrange
         var userId = 99;
-        var expected = new AnimeUserListResponse();
-        _mockAnimeProvider.Setup(x => x.GetUserAnimeList(userId)).ReturnsAsync(expected);
+        var expected = new AnimeUserLibraryResponse();
+        _mockAnimeProvider.Setup(x => x.GetUserAnimeLibrary(userId)).ReturnsAsync(expected);
 
         // Act
-        var result = await _animeService.GetUserAnimeList(userId);
+        var result = await _animeService.GetUserAnimeLibrary(userId);
 
         // Assert
-        _mockAnimeProvider.Verify(x => x.GetUserAnimeList(userId), Times.Once);
+        _mockAnimeProvider.Verify(x => x.GetUserAnimeLibrary(userId), Times.Once);
         result.Should().Be(expected);
     }
 

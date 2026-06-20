@@ -30,6 +30,8 @@ public record Title
     public string Romaji { get; init; }
     public string English { get; init; }
     public string Native { get; init; }
+    public string UserPreferred { get; init; }
+
 }
 
 public record CoverImage

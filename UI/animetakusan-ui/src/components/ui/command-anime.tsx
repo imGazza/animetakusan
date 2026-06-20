@@ -1,10 +1,14 @@
 import type { Anime } from "@/models/common/Anime"
 import { AspectRatio } from "./aspect-ratio"
 import { displayFormat } from "@/models/common/AnimeFormat";
+import { useNavigate } from "react-router";
 
-const CommandAnime = ({ anime }: { anime: Anime }) => {
+const CommandAnime = ({ anime, setOpen }: { anime: Anime, setOpen: (open: boolean) => void }) => {
+
+  const navigate = useNavigate();
+
   return (
-    <div className="flex gap-4 items-center">
+    <div className="flex gap-4 items-center cursor-pointer" onClick={() => { navigate(`/anime/${anime.id}`); setOpen(false); }}>
       <div className="rounded-xs bg-muted h-10 w-10">
         <AspectRatio ratio={1 / 1} className="overflow-hidden">
           <img

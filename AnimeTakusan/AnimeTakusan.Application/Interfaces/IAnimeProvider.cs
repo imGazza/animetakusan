@@ -9,7 +9,7 @@ public interface IAnimeProvider
     Task<AnimeDetailResponse> GetAnimeById(int id);
     Task<AnimeBrowseResponse> GetAnimeBrowseSection(AnimeBrowseSectionRequest animeBroseSectionRequest);
     Task<AnimePageResponse> GetAnime(AnimeFilterRequest animeFilterRequest);
-    Task<AnimeUserListResponse> GetUserAnimeList(int aniListUserId);
+    Task<AnimeUserLibraryResponse> GetUserAnimeLibrary(int aniListUserId);
     Task<AnimeEntryUpsertResponse> UpsertAnimeEntry(AnimeEntryUpsertRequest upsertRequest);
     Task<ToggleFavouriteResponse> ToggleFavourite(int animeId);
     Task<DeleteAnimeEntryResponse> DeleteAnimeEntry(int animeEntryId);

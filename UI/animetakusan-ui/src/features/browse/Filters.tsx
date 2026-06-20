@@ -16,14 +16,11 @@ const Filters = ({ filter, sort, onRemoveFilter, onResetFilter }: {
 
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
-  // TODO: Check the color glithc of filter button
-
   return (
     <>
       <Collapsible open={isFilterOpen} onOpenChange={setIsFilterOpen}>
         <div className="flex flex-col gap-3 py-0">
           <div className="flex flex-col gap-3 w-full">
-            <h1 className="text-3xl font-bold tracking-tight">Browse Anime</h1>
             <div className="flex w-full gap-2">
               <FilterSearch className="flex-1" />
               <CollapsibleTrigger asChild>

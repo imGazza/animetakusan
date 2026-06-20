@@ -168,7 +168,8 @@ public static class AniListProviderFakers
         .CustomInstantiator(f => new GetAnimeById_Media_Title_MediaTitle(
             english: f.Lorem.Sentence(3, 3),
             romaji: f.Lorem.Sentence(3, 3),
-            native: new Faker("ja").Lorem.Sentence(3, 3)
+            native: new Faker("ja").Lorem.Sentence(3, 3),
+            userPreferred: f.Lorem.Sentence(3, 3)
         ));
 
     public static Faker<GetAnimeById_Media_CoverImage_MediaCoverImage> AniListCoverImageFaker => new Faker<GetAnimeById_Media_CoverImage_MediaCoverImage>()

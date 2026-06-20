@@ -1216,7 +1216,7 @@ public class AniListProviderTest
             .ReturnsAsync(mockResult);
 
         // Act
-        await _aniListProvider.GetUserAnimeList(userId);
+        await _aniListProvider.GetUserAnimeLibrary(userId);
 
         // Assert
         _mockGetUserAnimeListQuery.Verify(
@@ -1232,8 +1232,8 @@ public class AniListProviderTest
         var mediaList1 = _userAnimeListMediaFaker.Generate(2);
         var mediaList2 = _userAnimeListMediaFaker.Generate(3);
 
-        var entries1 = mediaList1.Select(m => new GetUserAnimeList_MediaListCollection_Lists_Entries_MediaList(m)).ToList();
-        var entries2 = mediaList2.Select(m => new GetUserAnimeList_MediaListCollection_Lists_Entries_MediaList(m)).ToList();
+        var entries1 = mediaList1.Select(m => new GetUserAnimeList_MediaListCollection_Lists_Entries_MediaList(id: 0, media: m)).ToList();
+        var entries2 = mediaList2.Select(m => new GetUserAnimeList_MediaListCollection_Lists_Entries_MediaList(id: 0, media: m)).ToList();
 
         var listGroups = new List<GetUserAnimeList_MediaListCollection_Lists_MediaListGroup>
         {
@@ -1253,7 +1253,7 @@ public class AniListProviderTest
             .ReturnsAsync(mockResult);
 
         // Act
-        var result = await _aniListProvider.GetUserAnimeList(userId);
+        var result = await _aniListProvider.GetUserAnimeLibrary(userId);
 
         // Assert
         result.Should().NotBeNull();
@@ -1278,7 +1278,7 @@ public class AniListProviderTest
             .ReturnsAsync(mockResult);
 
         // Act
-        var result = await _aniListProvider.GetUserAnimeList(userId);
+        var result = await _aniListProvider.GetUserAnimeLibrary(userId);
 
         // Assert
         result.Should().NotBeNull();
@@ -1295,7 +1295,7 @@ public class AniListProviderTest
         {
             var media = _userAnimeListMediaFaker.Generate(2);
             var entries = media
-                .Select(m => new GetUserAnimeList_MediaListCollection_Lists_Entries_MediaList(m))
+                .Select(m => new GetUserAnimeList_MediaListCollection_Lists_Entries_MediaList(id: 0, media: m))
                 .Cast<IGetUserAnimeList_MediaListCollection_Lists_Entries>()
                 .ToList();
             return new GetUserAnimeList_MediaListCollection_Lists_MediaListGroup(name, entries);
@@ -1309,7 +1309,7 @@ public class AniListProviderTest
             .ReturnsAsync(mockResult);
 
         // Act
-        var result = await _aniListProvider.GetUserAnimeList(userId);
+        var result = await _aniListProvider.GetUserAnimeLibrary(userId);
 
         // Assert
         result.Should().NotBeNull();
@@ -1335,7 +1335,7 @@ public class AniListProviderTest
             .ReturnsAsync(mockResult);
 
         // Act & Assert
-        var act = async () => await _aniListProvider.GetUserAnimeList(userId);
+        var act = async () => await _aniListProvider.GetUserAnimeLibrary(userId);
         await act.Should().ThrowAsync<GraphQLQueryFailedException>()
             .WithMessage($"{ProviderName} query failed: Unauthorized, User not found");
     }

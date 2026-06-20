@@ -17,13 +17,29 @@
             "processId": "${command:pickRemoteProcess}",
             "pipeTransport": {
                 "pipeProgram": "docker",
-                "pipeArgs": ["exec", "-i", "animetakusan-animetakusanapi-1"],
+                "pipeArgs": [
+                    "exec",
+                    "-i",
+                    "animetakusan-animetakusanapi-1"
+                ],
                 "debuggerPath": "/vsdbg/vsdbg",
                 "pipeCwd": "${workspaceRoot}",
                 "quoteArgs": false
             },
             "sourceFileMap": {
                 "/src": "${workspaceFolder}/AnimeTakusan"
+            }
+        },
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "Debug React App",
+            "url": "http://localhost:5173",
+            "webRoot": "${workspaceFolder}/UI/animetakusan-ui",
+            "sourceMaps": true,
+            "sourceMapPathOverrides": {
+                "/@fs/*": "/*",
+                "/src/*": "${workspaceFolder}/UI/animetakusan-ui/src/*"
             }
         }
     ]

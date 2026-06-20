@@ -2,21 +2,13 @@ import AnimePreview from "@/components/ui/anime-preview"
 import AnimeTopPreview from "@/components/ui/anime-top-preview"
 import { useBrowseSectionQuery } from "./queries";
 import { toast } from "sonner";
-import { useState, useEffect, startTransition } from "react";
+import useDeferredRendering from "@/hooks/useDeferredRendering";
 
 const BrowseSection = () => {
 
   const { data: browseSection, isLoading, error } = useBrowseSectionQuery();
 
-  // isReady starts false on every mount.
-  // startTransition defers the card tree render so skeletons paint first, even on cache hits.
-  const [isReady, setIsReady] = useState(false);
-  useEffect(() => {
-    if (!isReady && browseSection) {
-      startTransition(() => setIsReady(true));
-      return;
-    }
-  }, [browseSection, isReady]);
+  const isReady = useDeferredRendering(browseSection);
 
   if (error) {
     toast.error(error.message || "Error loading browse section. Please try again.");

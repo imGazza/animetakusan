@@ -50,7 +50,7 @@ namespace AnimeTakusan.API.Controllers
             // AniListUserId is exctracted from the JWT token
             return User.FindFirst(AniListClaimTypes.AniListUserId)?.Value is not string userId
                 ? throw new Exception("Please link your AniList account to access your anime library.")
-                : Ok(await _animeService.GetUserAnimeList(int.Parse(userId)));
+                : Ok(await _animeService.GetUserAnimeLibrary(int.Parse(userId)));
         }
 
         [HttpPost("upsert")]

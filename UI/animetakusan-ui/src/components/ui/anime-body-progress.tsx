@@ -4,13 +4,10 @@ import { Badge } from "./badge";
 import { Progress } from "./progress";
 import { calculateDurationFromSeconds, cn, createDateFromDetails } from "@/lib/utils";
 import { Button } from "./button";
-import { useState, useEffect } from "react";
-import { useDebouncedCallback } from "use-debounce";
 import { format } from "date-fns";
 import type { DetailedDate } from "@/models/common/Anime";
-import { useAnimeEntryMutation } from "@/features/queries";
-import { toast } from "sonner";
 import { displayAnimeEntryStatus } from "@/models/common/AnimeEntryStatus";
+import { useAnimeProgress } from "@/hooks/useAnimeProgress";
 
 const statusClasses: Record<string, { gradient: string; bg: string; bgMuted: string; text: string }> = {
   "CURRENT": { gradient: "bg-gradient-to-r from-blue-400 to-cyan-600", bg: "bg-blue-400/10", bgMuted: "bg-blue-500/30", text: "text-blue-500" },
@@ -27,9 +24,6 @@ const getProgressLabel = (animeStatus: string, entryStatus: string, entryEpisode
   }
   else if (animeStatus === "COMPLETED" && entryStatus === "CURRENT") {
     return `Ep. ${entryEpisodeProgress + 1}`;
-  }
-  else if (entryStatus === "COMPLETED") {
-    return `Series completed`;
   }
   else if (nextEpisode && entryEpisodeProgress < (nextEpisode - 1)) {
     return `Ep. ${entryEpisodeProgress + 1}`;
@@ -49,52 +43,13 @@ const AnimeBodyProgress = ({ anime }: { anime: AnimeDetail }) => {
 
   // ----- HOOKS -----
 
-  const { mutate } = useAnimeEntryMutation();
-  const [localProgress, setLocalProgress] = useState(anime.mediaListEntry?.progress ?? 0);
-
-  const debouncedMutate = useDebouncedCallback((progress: number) => {
-    if (!anime.mediaListEntry) return;
-
-    const { createdAt: _, id: __, ...entry } = anime.mediaListEntry!;
-    const startedAt = new Date();
-
-    mutate({
-      ...entry,
-      progress,
-      status: progress === 1 && anime.mediaListEntry.status === "PLANNING" ? "CURRENT" : null,
-      startedAt: { day: startedAt.getDate(), month: startedAt.getMonth() + 1, year: startedAt.getFullYear() },
-    }, {
-      onError(){
-        toast.error("Failed to update progress. Please try again.");
-      },
-    });
-  }, 500);
-
-  // Sync back to server value once mutation settles
-  useEffect(() => {
-    if (!anime.mediaListEntry) return;
-
-    setLocalProgress(anime.mediaListEntry?.progress ?? 0);
-  }, [anime.mediaListEntry?.progress]);
-
-  // If the user navigates away mid-debounce, ensure the mutation is sent with the most recent value
-  useEffect(() => () => { debouncedMutate.flush(); }, [debouncedMutate]);
+  const { localProgress, handleProgressUpdate, isCaughtUp, displayProgress } = useAnimeProgress(anime);
 
   // ------- LOGIC -------
 
   if (!anime.mediaListEntry || anime.status === "NOT_YET_RELEASED") return null;
 
   const statusClass = statusClasses[anime.mediaListEntry?.status || ""] ?? defaultClasses;
-  const displayProgress = anime.episodes ? localProgress / anime.episodes * 100 : 0;
-  const isCaughtUp = localProgress === ((anime.nextAiringEpisode?.episode || 0) - 1);
-
-  const handleProgressUpdate = () => {
-    setLocalProgress(prev => {
-      const next = prev + 1;
-      debouncedMutate(next);
-      return next;
-    });
-  };
 
   return (
     <div className={cn("w-full rounded-xs overflow-hidden p-[1px]", statusClass.gradient, "animate-in fade-in duration-300")}>

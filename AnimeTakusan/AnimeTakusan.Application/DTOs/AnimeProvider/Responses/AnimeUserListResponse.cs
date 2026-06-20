@@ -1,14 +1,14 @@
 namespace AnimeTakusan.Application.DTOs.AnimeProvider.Responses;
 
-public record AnimeUserListResponse
+public record AnimeUserLibraryResponse
 {
-    public AnimeUserList[] Lists { get; init; }
+    public List<AnimeUserList> Lists { get; init; }
 }
 
 public record AnimeUserList
 {
     public string Name { get; init; }
-    public AnimeListEntry[] Entries { get; init; }
+    public List<AnimeListEntry> Entries { get; init; }
 }
 
 public record AnimeListEntry

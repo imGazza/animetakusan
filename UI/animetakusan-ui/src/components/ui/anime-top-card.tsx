@@ -6,12 +6,16 @@ import AnimeCardFormat from "./anime-card-format";
 import AnimeTimeFrame from "./anime-time-frame";
 import { Skeleton } from "./skeleton";
 import AnimeScore from "./anime-score";
+import { useNavigate } from "react-router";
 
 const AnimeTopCard = ({ anime, index }: { anime: Anime, index: number }) => {
+
+  const navigate = useNavigate();
+
   return (
     <Card className="w-full bg-muted rounded-xs border border-none p-2">
       <div className="flex gap-4 animate-in fade-in duration-500 will-change-transform">
-        <div className="w-20 md:w-26 h-full shrink-0">
+        <div className="w-20 md:w-26 h-full shrink-0 cursor-pointer" onClick={() => navigate(`/anime/${anime.id}`)}>
           <AspectRatio ratio={37 / 53} className="bg-muted rounded-xs overflow-hidden relative">
             <img
               src={anime.coverImage.extraLarge}
@@ -22,7 +26,11 @@ const AnimeTopCard = ({ anime, index }: { anime: Anime, index: number }) => {
         </div>
 
         <div className="flex flex-col gap-1 py-2">
-          <div className="text-muted-foreground text-md md:text-lg font-semibold tracking-wide line-clamp-1" style={{ color: anime.coverImage.color || "inherit" }}>
+          <div
+            className="text-muted-foreground text-md md:text-lg font-semibold tracking-wide line-clamp-1 cursor-pointer"
+            style={{ color: anime.coverImage.color || "inherit" }}
+            onClick={() => navigate(`/anime/${anime.id}`)}
+          >
             {anime.title.english || anime.title.romaji}
           </div>
           <div className="text-muted-foreground text-sm md:text-md line-clamp-1">

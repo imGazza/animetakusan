@@ -63,7 +63,7 @@ const SimpleSearch = ({ className }: { className?: string }) => {
               <CommandList className="max-h-full">
                 <div className="flex flex-col gap-4 h-full">
                   {animes.map(anime => (
-                    <CommandAnime key={anime.id} anime={anime} />
+                    <CommandAnime key={anime.id} anime={anime} setOpen={setOpen} />
                   ))}
                   <div className="w-full flex justify-center"><Button variant="ghost" size="xs" onClick={viewAllResults}>View All</Button></div>
                 </div>

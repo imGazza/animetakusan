@@ -48,9 +48,20 @@ public class AnimeService : IAnimeService, IInjectable
         return await _animeProvider.GetAnime(animeFilterRequest);
     }
 
-    public async Task<AnimeUserListResponse> GetUserAnimeList(int userId)
+    public async Task<AnimeUserLibraryResponse> GetUserAnimeLibrary(int userId)
     {
-       return await _animeProvider.GetUserAnimeList(userId);
+       var library = await _animeProvider.GetUserAnimeLibrary(userId);
+       return library with
+       {
+           Lists = library.Lists
+                .Select(list => list with
+                {
+                    Entries = list.Entries
+                        .OrderBy(entry => entry.Anime.Title.English ?? entry.Anime.Title.Romaji)
+                        .ToList()
+                })
+                .ToList()
+       };
     }
 
     public async Task<AnimeEntryUpsertResponse> UpsertAnimeEntry(AnimeEntryUpsertRequest animeEntryUpsertRequest)

@@ -36,7 +36,7 @@ public class FakeAnimeProvider : IAnimeProvider
         throw new NotImplementedException();
     }
 
-    public Task<AnimeUserListResponse> GetUserAnimeList(int aniListUserId)
+    public Task<AnimeUserLibraryResponse> GetUserAnimeLibrary(int aniListUserId)
     {
         throw new NotImplementedException();
     }

@@ -15,7 +15,7 @@ const AnimeBodyRecommendations = ({ anime }: { anime: AnimeDetail }) => {
       <div className="font-semibold text-xs text-muted-foreground/50 uppercase tracking-widest">
         Recommendations
       </div>
-      <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory no-scrollbar md:snap-none md:grid md:grid-cols-[repeat(auto-fit,minmax(100px,1fr))] lg:grid-cols-[repeat(auto-fit,minmax(120px,1fr))]">
+      <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory no-scrollbar md:snap-none md:grid md:grid-cols-[repeat(auto-fill,minmax(100px,1fr))] lg:grid-cols-[repeat(auto-fill,minmax(120px,1fr))]">
         {anime.recommendations.filter(rec => rec).map((recommendation, index) => (
           <div
             key={index}

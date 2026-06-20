@@ -17,7 +17,7 @@ import { useAnimeEntryMutation } from "@/features/queries";
 import { useDeleteAnimeEntry } from "@/features/anime-detail/queries";
 
 // The entry state is intentionally initialised as a blank object (all nulls) rather
-// than a clone of anime.mediaListEntry. This allows me to send to the server only the
+// than a clone of anime.mediaListEntry. This allows to send to the server only the
 // fields the user explicitly changed and leaving everything else
 // null so the server ignores those fields.
 //
@@ -28,7 +28,7 @@ import { useDeleteAnimeEntry } from "@/features/anime-detail/queries";
 // for rendering the values of fields.
 const defaultEntry = (anime: AnimeDetail): AnimeEntryUpsert => ({
   mediaId: anime.id,
-  status: null,
+  status: !anime.mediaListEntry ? "PLANNING" : null,
   score: null,
   progress: null,
   startedAt: null,
@@ -105,6 +105,10 @@ const AnimeDetailLibraryEntry = ({ anime }: { anime: AnimeDetail }) => {
   const commitSave = (entry: AnimeEntryUpsert) => {
     setOpen(false);
     setSaveConfirmOpen(false);
+
+    // If adding a new entry and  
+    if(!anime.mediaListEntry?.id && !entry.status)
+      entry.status = AnimeEntryStatusKeySchema.enum.PLANNING;
 
     const isDateSet = (d: typeof entry.startedAt) =>
       d !== null && (d.year !== null || d.month !== null || d.day !== null);

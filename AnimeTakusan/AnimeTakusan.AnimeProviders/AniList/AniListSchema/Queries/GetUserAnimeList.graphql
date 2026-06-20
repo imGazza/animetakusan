@@ -1,5 +1,5 @@
 query GetUserAnimeList($userId: Int) {
-  MediaListCollection(userId: $userId, type: ANIME) {
+  MediaListCollection(userId: $userId, type: ANIME, sort: STATUS) {
     lists {
       name
       entries {

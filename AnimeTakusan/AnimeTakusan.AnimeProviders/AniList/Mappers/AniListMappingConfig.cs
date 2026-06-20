@@ -69,7 +69,7 @@ public class AniListMappingConfig : IRegister, IAnimeProviderMapper
             .Map(dest => dest.Page, src => src.Page.PageInfo)
             .Map(dest => dest.Data, src => src.Page.Media);
 
-        config.NewConfig<GetUserAnimeListResult, AnimeUserListResponse>()
+        config.NewConfig<GetUserAnimeListResult, AnimeUserLibraryResponse>()
             .Map(dest => dest.Lists, src => src.MediaListCollection.Lists);
 
         config.NewConfig<UpsertAnimeEntryResult, AnimeEntryUpsertResponse>()

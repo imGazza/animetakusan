@@ -81,3 +81,8 @@ export const scoreBadgeClass = (score: number) => {
   if (score >= 30) return "bg-gradient-to-br from-rose-500/20 to-orange-400/20 text-rose-400 border-rose-500/20";
   return "bg-gradient-to-br from-red-600/20 to-rose-500/20 text-red-400 border-red-500/20";
 };
+
+export const getUnixFromDetailedDate = (detailedDate: DetailedDate | null): number | null => {
+  const date = createDateFromDetails(detailedDate);
+  return date ? Math.floor(date.getTime() / 1000) : null;
+}

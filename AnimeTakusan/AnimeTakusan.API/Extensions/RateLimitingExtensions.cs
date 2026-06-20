@@ -40,7 +40,7 @@ public static class RateLimitingExtensions
         options.AddFixedWindowLimiter("anime", opt =>
         {
             opt.Window = TimeSpan.FromMinutes(1);
-            opt.PermitLimit = 50;
+            opt.PermitLimit = 30;
             opt.QueueProcessingOrder = System.Threading.RateLimiting.QueueProcessingOrder.OldestFirst;
             opt.QueueLimit = 20;
         });

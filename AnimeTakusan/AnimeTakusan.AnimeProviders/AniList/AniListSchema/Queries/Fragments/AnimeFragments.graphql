@@ -4,6 +4,7 @@ fragment Anime on Media {
     english
     romaji
     native
+    userPreferred
   }
   coverImage {
     extraLarge

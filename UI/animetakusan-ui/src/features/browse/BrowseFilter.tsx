@@ -1,10 +1,11 @@
-import { startTransition, useEffect, useMemo, useState } from "react";
+import {  useEffect, useMemo } from "react";
 import { useInView } from "react-intersection-observer";
 import { useBrowseQuery } from "./queries";
 import { toast } from "sonner";
 import type { AnimeFilter } from "@/models/filter/AnimeFilter";
 import AnimeDisplay from "@/components/ui/anime-display";
 import AnimeCard, { AnimeCardSkeleton } from "@/components/ui/anime-card";
+import useDeferredRendering from "@/hooks/useDeferredRendering";
 
 const BrowseFilter = ({ filter, sort }: { filter: AnimeFilter, sort?: string }) => {
   const { data: browseResult, isLoading, isFetching, fetchNextPage, hasNextPage, error } = useBrowseQuery(filter, sort);
@@ -17,16 +18,8 @@ const BrowseFilter = ({ filter, sort }: { filter: AnimeFilter, sort?: string }) 
     window.scrollTo({ top: 0 });
   }, []);
 
-  // isReady starts false on every mount (filter changes trigger remount via the key in Browse.tsx).
-  // startTransition defers the card tree render so skeletons paint first, even on cache hits.
-  // Pagination is gated on isReady so the sentinel can't trigger fetchNextPage
-  // while skeletons are still displayed.
-  const [isReady, setIsReady] = useState(false);
-  useEffect(() => {
-    if (!isReady && browseResult) {
-      startTransition(() => setIsReady(true));
-      return;
-    }
+  const isReady = useDeferredRendering(browseResult);
+  useEffect(() => {    
     if (isReady && inView && hasNextPage && !isFetching) {
       fetchNextPage();
     }

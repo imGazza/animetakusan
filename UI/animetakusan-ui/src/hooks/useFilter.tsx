@@ -1,7 +1,7 @@
 import { arrayStringParser, integerParser, stringParser } from "@/lib/filter-parsers";
 import { presetFilters } from "@/lib/preset-filters";
 import type { AnimeFilter } from "@/models/filter/AnimeFilter";
-import { parseAsString, useQueryState, useQueryStates } from "nuqs";
+import { useQueryState, useQueryStates } from "nuqs";
 
 const queryParamsSchema = {
   season: stringParser,
@@ -81,10 +81,10 @@ const useFilter = () => {
   return {
     isFilterActive,
     isSortActive,
-    filter: filter,
+    filter,
     sort: sort ?? undefined,
     removeFilter: removeSingleFilter,
-    resetAllFilters: () => { setParams(emptyFilterQueryValues); setSort(sort == "PopularityDesc" ? null : sort); },
+    resetAllFilters: () => { setParams(emptyFilterQueryValues); setSort(sort == "PopularityDesc" || sort == "SearchMatch" ? null : sort); },
     applyPresetFilter
   }
 }

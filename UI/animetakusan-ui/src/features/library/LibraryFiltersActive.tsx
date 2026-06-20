@@ -1,15 +1,17 @@
 import Chip from "@/components/ui/chip";
-import type { AnimeFilter } from "@/models/filter/AnimeFilter";
 import AnimeSort from "@/components/ui/anime-sort";
+import type { LibraryFilter } from "@/models/filter/LibraryFilter";
+import LibrarySort from "@/components/ui/library-sort";
 
 interface FiltersActiveProps {
-  filter: AnimeFilter | null;
+  filter: LibraryFilter | null;
   sort: string | null;
-  onRemoveFilter?: (key: keyof AnimeFilter, value: string) => void;
+  setSort: (sort: string) => void;
+  onRemoveFilter?: (key: keyof LibraryFilter, value: string) => void;
   onResetFilter?: () => void;
 }
 
-const categoryLabels: Record<keyof AnimeFilter, "default" | "search" | "year" | "genre" | "season" | "status" | "format" | "averageScoreGreater"> = {
+const categoryLabels: Record<keyof LibraryFilter, "default" | "search" | "year" | "genre" | "season" | "status" | "format" | "averageScoreGreater"> = {
   genreIn: "genre",
   status: "status",
   seasonYear: "year",
@@ -19,7 +21,7 @@ const categoryLabels: Record<keyof AnimeFilter, "default" | "search" | "year" | 
   search: "search"
 }
 
-const FiltersActive = ({ filter, sort, onRemoveFilter, onResetFilter }: FiltersActiveProps) => {
+const LibraryFiltersActive = ({ filter, sort, setSort, onRemoveFilter, onResetFilter }: FiltersActiveProps) => {
 
   if (!filter && !sort) return null;
 
@@ -49,9 +51,9 @@ const FiltersActive = ({ filter, sort, onRemoveFilter, onResetFilter }: FiltersA
             filterEntries
               .map(({ key, label }) => (
                 <Chip
-                  onRemoveFilter={() => onRemoveFilter?.(key as keyof AnimeFilter, label)}
+                  onRemoveFilter={() => onRemoveFilter?.(key as keyof LibraryFilter, label)}
                   key={`${key}-${label}`}
-                  variant={categoryLabels[key as keyof AnimeFilter]}
+                  variant={categoryLabels[key as keyof LibraryFilter]}
                   className="capitalize">
                   {key === 'averageScoreGreater' ? `≥ ${label}%` : label}
                 </Chip>
@@ -65,9 +67,9 @@ const FiltersActive = ({ filter, sort, onRemoveFilter, onResetFilter }: FiltersA
             </Chip> : null
         }
       </div>
-      <AnimeSort sort={sort ?? "PopularityDesc"} />
+      <LibrarySort sort={sort ?? "Title"} onChange={setSort} />
 
     </div>
   )
 }
-export default FiltersActive;
+export default LibraryFiltersActive;

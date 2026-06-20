@@ -75,14 +75,14 @@ public class AniListProvider : IAnimeProvider
         return response.Data.Adapt<AnimePageResponse>();
     }
 
-    public async Task<AnimeUserListResponse> GetUserAnimeList(int aniListUserId)
+    public async Task<AnimeUserLibraryResponse> GetUserAnimeLibrary(int aniListUserId)
     {
         var response = await _client.GetUserAnimeList.ExecuteAsync(
             aniListUserId
         );
 
         EnsureNoErrors(response);
-        return response.Data.Adapt<AnimeUserListResponse>();
+        return response.Data.Adapt<AnimeUserLibraryResponse>();
     }
 
     public async Task<AnimeEntryUpsertResponse> UpsertAnimeEntry(AnimeEntryUpsertRequest upsertRequest)

@@ -12,7 +12,10 @@ export const useUserQuery = () =>
     queryFn: authApis.userInfo,
     staleTime: Infinity,
     retry: 2,
-    select: (data) => {localStorage.setItem('isAuthenticated', JSON.stringify(!!data.id)); return data?.id ? data : null; },
+    select: (data) => {
+      localStorage.setItem('isAuthenticated', JSON.stringify(!!data.id)); 
+      data.userName && localStorage.setItem('user', data.userName);
+      return data?.id ? data : null; },
   });
 
 export const useLoginMutation = (refetchUser: () => void, navigate: NavigateFunction) =>
