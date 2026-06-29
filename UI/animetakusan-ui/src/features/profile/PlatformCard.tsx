@@ -19,7 +19,7 @@ const PlatformCard = ({ platform, connected }: PlatformCardProps) => {
   return (
     <Card
       className={cn(
-        "relative gap-0 overflow-hidden py-0 transition-all duration-300",
+        "relative gap-0 overflow-hidden rounded-xs py-0 transition-all duration-300",
         "hover:-translate-y-0.5 hover:shadow-md",
         connected ? "border-border" : "hover:border-foreground/20"
       )}
@@ -34,7 +34,7 @@ const PlatformCard = ({ platform, connected }: PlatformCardProps) => {
       <CardHeader className="flex items-start gap-4 p-5 pb-4">
         {/* Logo tile */}
         <div
-          className="flex size-12 shrink-0 items-center justify-center rounded-xl text-white shadow-sm ring-1 ring-black/5"
+          className="flex size-12 shrink-0 items-center justify-center rounded-xs text-white shadow-sm ring-1 ring-black/5"
           style={{ backgroundImage: `linear-gradient(140deg, ${brand}, ${brandTo})` }}
         >
           <Logo className="size-7" />
@@ -44,7 +44,7 @@ const PlatformCard = ({ platform, connected }: PlatformCardProps) => {
           <div className="flex items-center gap-2">
             <CardTitle className="text-base">{name}</CardTitle>
             {connected && (
-              <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/15 px-2 py-0.5 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
+              <span className="inline-flex items-center gap-1 rounded-xs bg-emerald-500/15 px-2 py-0.5 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
                 <Check className="size-3" strokeWidth={3} />
                 Connected
               </span>

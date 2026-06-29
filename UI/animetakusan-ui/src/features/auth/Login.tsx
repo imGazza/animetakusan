@@ -3,15 +3,10 @@ import { LoginForm } from "./LoginForm";
 import Logo from "@/components/ui/logo";
 import SignUpForm from "./SignUpForm";
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
 
 const Login = () => {
 
   const [ selectedTab, setSelectedTab ] = useState<'login' | 'signup'>('login');
-
-  const handleClick = () => {
-    window.location.href = `${import.meta.env.VITE_API_BASE_URL}/malauth/login`;
-  };
 
   return (
     <div className="grid min-h-svh lg:grid-cols-2">
@@ -40,7 +35,6 @@ const Login = () => {
         <div className="bg-muted rounded-xl block w-full h-full flex flex-col gap-6 justify-center p-30">
           <h1 className="text-4xl font-semibold tracking-tighter">Track all your favorite anime from all platforms in one single place.</h1>
           <p className="text-balance">An open-source anime tracking app to log watched shows and journal your anime journey.</p>
-          <Button onClick={handleClick}>Call API</Button>
         </div>
       </div>
     </div>

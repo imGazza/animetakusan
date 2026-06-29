@@ -26,7 +26,7 @@ const Profile = () => {
     return (
       <Container>
         <PageHeaderBlock variant="profile" title="Profile" />
-        <div className="mt-10 flex flex-col items-center justify-center gap-4 rounded-xl border border-dashed py-16 text-center">
+        <div className="mt-10 flex flex-col items-center justify-center gap-4 rounded-xs border border-dashed py-16 text-center">
           <p className="max-w-sm text-balance text-muted-foreground">
             Sign in to manage your profile and connect your tracking platforms.
           </p>
@@ -47,7 +47,7 @@ const Profile = () => {
       <PageHeaderBlock variant="profile" title="Profile" />
 
       {/* Account summary */}
-      <div className="mb-8 flex flex-col gap-4 rounded-xl border bg-card p-5 sm:flex-row sm:items-center sm:gap-5">
+      <div className="mb-8 flex flex-col gap-4 rounded-xs border bg-card p-5 sm:flex-row sm:items-center sm:gap-5">
         <Avatar className="size-16 ring-2 ring-border">
           <AvatarImage src={user.profilePicture} alt={user.userName} className="grayscale" />
           <AvatarFallback className="text-lg font-semibold">
@@ -63,7 +63,7 @@ const Profile = () => {
           )}
         </div>
         <div className="sm:ml-auto">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-muted px-3 py-1 text-sm font-medium text-muted-foreground">
+          <span className="inline-flex items-center gap-1.5 rounded-xs bg-muted px-3 py-1 text-sm font-medium text-muted-foreground">
             <span
               className="size-1.5 rounded-full"
               style={{ backgroundColor: "var(--accent-profile)" }}
