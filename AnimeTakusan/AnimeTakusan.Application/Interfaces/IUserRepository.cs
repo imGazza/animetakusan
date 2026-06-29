@@ -5,5 +5,8 @@ namespace AnimeTakusan.Application.Interfaces;
 public interface IUserRepository
 {
     Task<User> GetUserByRefreshToken(string refreshToken);
-    Task AddAniListUserAsync(AniListUser aniListUser);
+    Task UpsertAniListUserAsync(AniListUser aniListUser);
+    Task LinkMalUserAsync(MyAnimeListUser malUser);
+    Task<MyAnimeListUser> GetMalUserByUserId(Guid userId);
+    Task UpdateMalUserAsync(MyAnimeListUser malUser);
 }

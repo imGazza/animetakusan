@@ -8,8 +8,8 @@ export const siteConfig = {
     { label: "Library", href: "/library", coming: false },
   ],
   profileNavItems: [
-    { label: "Profile", icon: User },
-    { label: "Platforms", icon: Monitor },
+    { label: "Profile", icon: User, href: "/profile" },
+    { label: "Platforms", icon: Monitor, href: "/profile" },
     { label: "Settings", icon: Settings }
   ],
   urls: {

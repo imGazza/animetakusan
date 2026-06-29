@@ -13,9 +13,9 @@ export const useAnimeDetailQuery = (id: number) =>
     staleTime: Infinity,
   });
 
-export const useDeleteAnimeEntry = (animeId: number) => 
+export const useDeleteAnimeEntry = (animeId: number, malId: number) => 
   useMutation({
-    mutationFn: (animeEntryId: number) => animeApis.deleteAnimeEntry(animeEntryId),
+    mutationFn: (mediaListEntryId: number) => animeApis.deleteAnimeEntry({ mediaListEntryId, malId }),
     onMutate: async (_, context) => {
 
       // Cancel all eventual outgoing refetches

@@ -1,7 +1,7 @@
-import { LibraryBig, Compass } from "lucide-react";
+import { LibraryBig, Compass, UserRound } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-type PageHeaderVariant = "library" | "browse";
+type PageHeaderVariant = "library" | "browse" | "profile";
 
 const VARIANT_CONFIG: Record<
   PageHeaderVariant,
@@ -14,6 +14,10 @@ const VARIANT_CONFIG: Record<
   browse: {
     Icon: Compass,
     colorVar: "var(--accent-browse)",
+  },
+  profile: {
+    Icon: UserRound,
+    colorVar: "var(--accent-profile)",
   },
 };
 

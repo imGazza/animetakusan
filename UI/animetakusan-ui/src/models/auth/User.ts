@@ -5,5 +5,5 @@ export interface User {
     profilePicture: string;
     firstName: string;
     lastName: string;
-    aniListUserId: number | null;
+    linkedAccounts: string[];
 }

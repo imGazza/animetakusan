@@ -178,7 +178,7 @@ public class AniListAuthServiceTests
         _mockJwtHandler.Setup(x => x.GetRefreshToken()).Returns("refresh-token");
         _mockUserRepository.Setup(x => x.GetUserByRefreshToken("refresh-token"))
             .ReturnsAsync(user);
-        _mockUserRepository.Setup(x => x.AddAniListUserAsync(It.IsAny<AniListUser>()))
+        _mockUserRepository.Setup(x => x.UpsertAniListUserAsync(It.IsAny<AniListUser>()))
             .ThrowsAsync(new Exception("Database error"));
 
         // Act
@@ -201,14 +201,14 @@ public class AniListAuthServiceTests
         _mockJwtHandler.Setup(x => x.GetRefreshToken()).Returns("refresh-token");
         _mockUserRepository.Setup(x => x.GetUserByRefreshToken("refresh-token"))
             .ReturnsAsync(user);
-        _mockUserRepository.Setup(x => x.AddAniListUserAsync(It.IsAny<AniListUser>()))
+        _mockUserRepository.Setup(x => x.UpsertAniListUserAsync(It.IsAny<AniListUser>()))
             .Returns(Task.CompletedTask);
 
         // Act
         await _aniListAuthService.LinkAniListAccountToUser(tokenData);
 
         // Assert
-        _mockUserRepository.Verify(x => x.AddAniListUserAsync(It.Is<AniListUser>(a =>
+        _mockUserRepository.Verify(x => x.UpsertAniListUserAsync(It.Is<AniListUser>(a =>
             a.AniListUserId == aniListUserId &&
             a.UserId == user.Id &&
             a.AccessToken == tokenData.AccessToken

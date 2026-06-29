@@ -1,5 +1,6 @@
 export interface Anime {
   id: number;
+  idMal: number;
   title: Title;
   coverImage: CoverImage;
   startDate: DetailedDate;

@@ -3,7 +3,6 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using AnimeTakusan.Application.Interfaces;
-using AnimeTakusan.Application.Utility;
 using AnimeTakusan.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -57,8 +56,8 @@ public class JwtHandler : IJwtHandler
         return (tokenString, expiresAt);
     }
 
-    public (string Token, DateTime ExpiresAt) GenerateUserAccessToken(User user, IList<string> userRoles)
-    {     
+    public (string Token, DateTime ExpiresAt) GenerateUserAccessToken(User user, List<Claim> additionalClaims)
+    {
         (string jwtKey, string jwtIssuer, string jwtAudience) = ValidateJwtConfig();
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
@@ -72,17 +71,9 @@ public class JwtHandler : IJwtHandler
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
         };
 
-        // User Roles
-        foreach (var role in userRoles)
+        foreach (var claim in additionalClaims)
         {
-            claims.Add(new Claim(ClaimTypes.Role, role));
-        }
-
-        // Include AniList Token and AniList UserId if synced
-        if (user.AniListUser != null && IsValidToken(user.AniListUser.AccessToken, user.AniListUser.AccessTokenExpiry ?? DateTime.MinValue))
-        {
-            claims.Add(new Claim(AniListClaimTypes.AccessToken, user.AniListUser.AccessToken));
-            claims.Add(new Claim(AniListClaimTypes.AniListUserId, user.AniListUser.AniListUserId.ToString()));
+            claims.Add(claim);
         }
 
         var expiresAt = DateTime.UtcNow.AddMinutes(15);
@@ -99,6 +90,8 @@ public class JwtHandler : IJwtHandler
         var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
         return (tokenString, expiresAt);
     }
+
+    
 
     public string GenerateRefreshToken()
     {
@@ -166,10 +159,5 @@ public class JwtHandler : IJwtHandler
         }
 
         return (_configuration["Jwt:Key"]!, _configuration["Jwt:Issuer"]!, _configuration["Jwt:Audience"]!);
-    }
-
-    private bool IsValidToken(string token, DateTime expiry)
-    {
-        return !string.IsNullOrEmpty(token) && expiry > DateTime.UtcNow;
-    }
+    }    
 }

@@ -10,6 +10,7 @@ public static class AniListProviderFakers
     public static Faker<GetAnimeById_Media_Media> AniListAnimeFaker => new Faker<GetAnimeById_Media_Media>()
         .CustomInstantiator(f => new GetAnimeById_Media_Media(
             id: f.Random.Number(1, 10000),
+            idMal: f.Random.Number(1, 10000),
             title: AniListTitleFaker.Generate(),
             coverImage: AniListCoverImageFaker.Generate(),
             startDate: null,
@@ -42,6 +43,7 @@ public static class AniListProviderFakers
     public static Faker<GetSeasonalAnime_Page_Media_Media> AniListSeasonalAnimeFaker => new Faker<GetSeasonalAnime_Page_Media_Media>()
         .CustomInstantiator(f => new GetSeasonalAnime_Page_Media_Media(
             id: f.Random.Number(1, 10000),
+            idMal: f.Random.Number(1, 10000),
             title: AniListTitleFaker.Generate(),
             coverImage: AniListCoverImageFaker.Generate(),
             startDate: null,
@@ -67,6 +69,7 @@ public static class AniListProviderFakers
     public static Faker<GetBrowseSection_Season_Media_Media> AniListBrowseSeasonAnimeFaker => new Faker<GetBrowseSection_Season_Media_Media>()
         .CustomInstantiator(f => new GetBrowseSection_Season_Media_Media(
             id: f.Random.Number(1, 10000),
+            idMal: f.Random.Number(1, 10000),
             title: AniListTitleFaker.Generate(),
             coverImage: AniListCoverImageFaker.Generate(),
             startDate: null,
@@ -92,6 +95,7 @@ public static class AniListProviderFakers
     public static Faker<GetBrowseSection_NextSeason_Media_Media> AniListBrowseNextSeasonAnimeFaker => new Faker<GetBrowseSection_NextSeason_Media_Media>()
         .CustomInstantiator(f => new GetBrowseSection_NextSeason_Media_Media(
             id: f.Random.Number(1, 10000),
+            idMal: f.Random.Number(1, 10000),
             title: AniListTitleFaker.Generate(),
             coverImage: AniListCoverImageFaker.Generate(),
             startDate: null,
@@ -117,6 +121,7 @@ public static class AniListProviderFakers
     public static Faker<GetBrowseSection_TopLastSeason_Media_Media> AniListBrowseTopLastSeasonAnimeFaker => new Faker<GetBrowseSection_TopLastSeason_Media_Media>()
         .CustomInstantiator(f => new GetBrowseSection_TopLastSeason_Media_Media(
             id: f.Random.Number(1, 10000),
+            idMal: f.Random.Number(1, 10000),
             title: AniListTitleFaker.Generate(),
             coverImage: AniListCoverImageFaker.Generate(),
             startDate: null,
@@ -142,6 +147,7 @@ public static class AniListProviderFakers
     public static Faker<GetBrowseSection_Top_Media_Media> AniListBrowseTopAnimeFaker => new Faker<GetBrowseSection_Top_Media_Media>()
         .CustomInstantiator(f => new GetBrowseSection_Top_Media_Media(
             id: f.Random.Number(1, 10000),
+            idMal: f.Random.Number(1, 10000),
             title: AniListTitleFaker.Generate(),
             coverImage: AniListCoverImageFaker.Generate(),
             startDate: null,
@@ -257,6 +263,7 @@ public static class AniListProviderFakers
     public static Faker<GetAnime_Page_Media_Media> AniListGetAnimeAnimeFaker => new Faker<GetAnime_Page_Media_Media>()
         .CustomInstantiator(f => new GetAnime_Page_Media_Media(
             id: f.Random.Number(1, 10000),
+            idMal: f.Random.Number(1, 10000),
             title: AniListTitleFaker.Generate(),
             coverImage: AniListCoverImageFaker.Generate(),
             startDate: null,
@@ -282,6 +289,7 @@ public static class AniListProviderFakers
     public static Faker<GetUserAnimeList_MediaListCollection_Lists_Entries_Media_Media> AniListUserAnimeListMediaFaker => new Faker<GetUserAnimeList_MediaListCollection_Lists_Entries_Media_Media>()
         .CustomInstantiator(f => new GetUserAnimeList_MediaListCollection_Lists_Entries_Media_Media(
             id: f.Random.Number(1, 10000),
+            idMal: f.Random.Number(1, 10000),
             title: AniListTitleFaker.Generate(),
             coverImage: AniListCoverImageFaker.Generate(),
             startDate: null,

@@ -3,6 +3,7 @@ namespace AnimeTakusan.Application.DTOs.AnimeProvider.Responses;
 public record Anime
 {
     public int Id { get; init; }
+    public int IdMal { get; init; }
     public Title Title { get; init; }
     public CoverImage CoverImage { get; init; }
     public DetailedDate StartDate { get; init; }

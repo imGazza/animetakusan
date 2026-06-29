@@ -5,6 +5,7 @@ namespace AnimeTakusan.Application.DTOs.AnimeProvider.Requests;
 public record AnimeEntryUpsertRequest
 {
     public int MediaId { get; init; }
+    public int MalId { get; init; }
     public int? Progress { get; init; }
     public AnimeMediaListStatus? Status { get; init; }
     public DetailedDate CompletedAt { get; init; }

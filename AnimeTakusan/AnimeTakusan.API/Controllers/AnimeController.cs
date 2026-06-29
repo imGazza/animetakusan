@@ -1,4 +1,5 @@
 using AnimeTakusan.Application.DTOs.AnimeProvider.Requests;
+using AnimeTakusan.Application.DTOs.Messages;
 using AnimeTakusan.Application.Interfaces;
 using AnimeTakusan.Application.Utility;
 using Microsoft.AspNetCore.Cors;
@@ -14,10 +15,14 @@ namespace AnimeTakusan.API.Controllers
     public class AnimeController : ControllerBase
     {
         private readonly IAnimeService _animeService;
+        private readonly IMalSyncService _malSyncService;
+        private readonly ILogger<AnimeController> _logger;
 
-        public AnimeController(IAnimeService animeService)
+        public AnimeController(IAnimeService animeService, IMalSyncService malSyncService, ILogger<AnimeController> logger)
         {
             _animeService = animeService;
+            _malSyncService = malSyncService;
+            _logger = logger;
         }
 
         [HttpGet("{id}")]
@@ -53,22 +58,55 @@ namespace AnimeTakusan.API.Controllers
                 : Ok(await _animeService.GetUserAnimeLibrary(int.Parse(userId)));
         }
 
+        [EnableCors("Authenticated")]
         [HttpPost("upsert")]
         public async Task<IActionResult> UpsertAnimeEntry([FromBody] AnimeEntryUpsertRequest animeEntryUpsertRequest)
         {
-            return Ok(await _animeService.UpsertAnimeEntry(animeEntryUpsertRequest));
+            if (User.Claims.FirstOrDefault(c => c.Type == MyAnimeListClaimTypes.MalUserId)?.Value is not string malUserId)
+            {
+                return BadRequest("Please link your MyAnimeList account to upsert anime entries.");
+            }
+
+            var result = await _animeService.UpsertAnimeEntry(animeEntryUpsertRequest);
+
+            try{
+                await _malSyncService.PublishMalSyncAction(int.Parse(malUserId), animeEntryUpsertRequest, SyncAction.Upsert);
+                _logger.LogInformation("Published MAL sync action for user {MalUserId} and anime {MediaId}", malUserId, animeEntryUpsertRequest.MediaId);
+            }
+            catch(Exception ex){
+                _logger.LogError(ex, "Failed to publish MAL sync action for user {MalUserId} and anime {MediaId}", malUserId, animeEntryUpsertRequest.MediaId);
+            }
+
+            return Ok(result);
         }
 
+        [EnableCors("Authenticated")]
         [HttpPost("{animeId}/toggle-favourite")]
         public async Task<IActionResult> ToggleFavourite(int animeId)
         {
             return Ok(await _animeService.ToggleFavourite(animeId));
         }
 
-        [HttpPost("{animeEntryId}/delete-entry")]
-        public async Task<IActionResult> DeleteAnimeEntry(int animeEntryId)
+        [EnableCors("Authenticated")]
+        [HttpPost("delete-entry")]
+        public async Task<IActionResult> DeleteAnimeEntry([FromBody] AnimeDeleteEntry animeDeleteEntry)
         {
-            return Ok(await _animeService.DeleteAnimeEntry(animeEntryId));
+            if (User.Claims.FirstOrDefault(c => c.Type == MyAnimeListClaimTypes.MalUserId)?.Value is not string malUserId)
+            {
+                return BadRequest("Please link your MyAnimeList account to upsert anime entries.");
+            }
+            
+            var result = await _animeService.DeleteAnimeEntry(animeDeleteEntry.MediaListEntryId);
+
+            try{
+                await _malSyncService.PublishMalSyncAction(int.Parse(malUserId), new AnimeEntryUpsertRequest { MalId = animeDeleteEntry.MalId }, SyncAction.Delete);
+                _logger.LogInformation("Published MAL sync action for user {MalUserId} and anime {MediaId}", malUserId, animeDeleteEntry.MalId);
+            }
+            catch(Exception ex){
+                _logger.LogError(ex, "Failed to publish MAL sync action for user {MalUserId} and anime {MediaId}", malUserId, animeDeleteEntry.MalId);
+            }
+
+            return Ok(result);
         }
 
     }

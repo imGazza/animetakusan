@@ -1,9 +1,14 @@
 using System.Text.Json.Serialization;
 using AnimeTakusan.API.Extensions;
+using AnimeTakusan.API.Handlers.ConsumerHandlers;
+using AnimeTakusan.Application.Handlers.ConsumerHandlers;
 using AnimeTakusan.Application.Interfaces;
+using AnimeTakusan.Application.RabbitMq;
 using AnimeTakusan.Application.Validators;
 using AnimeTakusan.Infrastructure.Authentication;
 using AnimeTakusan.Infrastructure.Contexts;
+using AnimeTakusan.Infrastructure.RabbitMQ;
+using AnimeTakusan.Infrastructure.RabbitMQ.Options;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
@@ -23,6 +28,10 @@ builder.Services.AddControllers().AddJsonOptions(options =>
     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
 
+builder.Services.Configure<RabbitMqOptions>(builder.Configuration.GetSection(RabbitMqOptions.SectionName));
+builder.Services.Configure<MalAuthEventOptions>(builder.Configuration.GetSection(MalAuthEventOptions.SectionName));
+builder.Services.Configure<MalSyncActionOptions>(builder.Configuration.GetSection(MalSyncActionOptions.SectionName));
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -32,6 +41,15 @@ builder.Services.AddMapster();
 // Services
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IJwtHandler, JwtHandler>();
+
+// RabbitMq
+builder.Services.AddSingleton<IRabbitMqConnectionManager, RabbitMqConnectionManager>();
+builder.Services.AddSingleton<IMessagePublisher, RabbitMqPublisher>();
+builder.Services.AddScoped<IMessageHandler, MalAuthEventHandler>();
+builder.Services.AddSingleton<RabbitMqInitializer>();
+builder.Services.AddHostedService<RabbitMqConsumerService>();
+
+
 builder.Services.AddAniListAnimeProvider(builder.Configuration);
 builder.Services.AddValidatorsFromAssemblyContaining<ICustomValidator>();
 builder.AddServices();
@@ -59,6 +77,11 @@ builder.Services.AddDbContext<BaseContext>(opt =>
 builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
+
+// RabbitMq Initialization
+using var scope = app.Services.CreateScope();
+var initializer = scope.ServiceProvider.GetRequiredService<RabbitMqInitializer>();
+await initializer.InitializeAsync();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

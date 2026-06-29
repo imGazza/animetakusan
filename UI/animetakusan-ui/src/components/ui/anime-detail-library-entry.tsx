@@ -28,6 +28,7 @@ import { useDeleteAnimeEntry } from "@/features/anime-detail/queries";
 // for rendering the values of fields.
 const defaultEntry = (anime: AnimeDetail): AnimeEntryUpsert => ({
   mediaId: anime.id,
+  malId: anime.idMal,
   status: !anime.mediaListEntry ? "PLANNING" : null,
   score: null,
   progress: null,
@@ -39,7 +40,7 @@ const AnimeDetailLibraryEntry = ({ anime }: { anime: AnimeDetail }) => {
 
   const isDesktop = useMediaQuery(DESKTOP_BREAKPOINT);
   const { mutate: upsertEntryMutate } = useAnimeEntryMutation();
-  const { mutate: deleteMutate } = useDeleteAnimeEntry(anime.id);
+  const { mutate: deleteMutate } = useDeleteAnimeEntry(anime.id, anime.idMal);
   const [open, setOpen] = useState(false);
   const [saveConfirmOpen, setSaveConfirmOpen] = useState(false);
 

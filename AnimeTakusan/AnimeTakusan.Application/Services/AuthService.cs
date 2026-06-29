@@ -2,6 +2,8 @@ using System.Security.Claims;
 using AnimeTakusan.Application.DTOs.Authentication.Requests;
 using AnimeTakusan.Application.DTOs.Authentication.Responses;
 using AnimeTakusan.Application.Interfaces;
+using AnimeTakusan.Application.Utility;
+using AnimeTakusan.Domain.Common;
 using AnimeTakusan.Domain.Entities;
 using AnimeTakusan.Domain.Exceptions;
 using FluentValidation;
@@ -22,10 +24,10 @@ public class AuthService : IAuthService, IInjectable
     private readonly IValidator<RegisterRequest> _registerRequestValidator;
 
     public AuthService(
-        IUserRepository userRepository, 
-        IJwtHandler jwtHandler, 
-        ILogger<AuthService> logger, 
-        UserManager<User> userManager, 
+        IUserRepository userRepository,
+        IJwtHandler jwtHandler,
+        ILogger<AuthService> logger,
+        UserManager<User> userManager,
         RoleManager<IdentityRole<Guid>> roleManager,
         IValidator<LoginRequest> loginRequestValidator,
         IValidator<RegisterRequest> registerRequestValidator)
@@ -43,11 +45,11 @@ public class AuthService : IAuthService, IInjectable
     /// Generates a generic guest access token for not signed-up users.
     /// Generates an authenticated user access token otherwise and create a new refresh token.
     /// </summary>
-    /// <returns>The access token and a representation of the user, if any.</returns>
+    /// <returns>The access token.</returns>
     public async Task<TokenResponse> Token()
     {
         var refreshToken = _jwtHandler.GetRefreshToken();
-        
+
         if (string.IsNullOrEmpty(refreshToken))
         {
             var (guestToken, guestExpiresAt) = _jwtHandler.GenerateGuestAccessToken();
@@ -55,7 +57,7 @@ public class AuthService : IAuthService, IInjectable
         }
 
         var user = await _userRepository.GetUserByRefreshToken(refreshToken);
-        
+
         if (user == null || !HasValidRefreshToken(user))
         {
             var (guestToken, guestExpiresAt) = _jwtHandler.GenerateGuestAccessToken();
@@ -69,13 +71,63 @@ public class AuthService : IAuthService, IInjectable
 
         var userRoles = await _userManager.GetRolesAsync(user);
 
-        var (accessToken, expiresAt) = _jwtHandler.GenerateUserAccessToken(user, userRoles);
-        var response = new TokenResponse {
+        List<Claim> claims = CreateClaimsForUser(user, userRoles);
+        var (accessToken, expiresAt) = _jwtHandler.GenerateUserAccessToken(user, claims);
+        var response = new TokenResponse
+        {
             AccessToken = accessToken,
             ExpiresAt = expiresAt
         };
         _logger.LogInformation($"Generated access token for user {user.Email}.");
         return response;
+    }
+
+    private List<Claim> CreateClaimsForUser(User user, IList<string> userRoles)
+    {
+        var claims = new List<Claim>();
+
+        foreach (var role in userRoles)
+        {
+            claims.Add(new Claim(ClaimTypes.Role, role));
+        }
+
+        ValidateAniListUser(user, claims);
+        ValidateMalUser(user, claims);
+
+        return claims;
+    }
+
+    private void ValidateAniListUser(User user, List<Claim> claims)
+    {
+        // Check AniList Account Sync
+        if (IsValidAniListUser(user))
+        {
+            claims.Add(new Claim(AniListClaimTypes.AccessToken, user.AniListUser.AccessToken));
+            claims.Add(new Claim(AniListClaimTypes.AniListUserId, user.AniListUser.AniListUserId.ToString()));
+        }
+    }
+
+    private bool IsValidAniListUser(User user)
+    {
+        return user.AniListUser != null && 
+            !string.IsNullOrEmpty(user.AniListUser.AccessToken) && 
+            (user.AniListUser.AccessTokenExpiry ?? DateTime.MinValue) > DateTime.UtcNow;
+    }
+
+    private void ValidateMalUser(User user, List<Claim> claims)
+    {
+        // Check MyAnimeList Account Sync
+        if (IsValidMalUser(user))
+        {
+            claims.Add(new Claim(MyAnimeListClaimTypes.MalUserId, user.MyAnimeListUser.MalUserId.ToString()));
+        }
+    }
+
+    private bool IsValidMalUser(User user)
+    {
+        return user.MyAnimeListUser != null &&
+            user.MyAnimeListUser.Status == MyAnimeListLinkStatus.Linked &&
+            user.MyAnimeListUser.RefreshTokenExpiry > DateTime.UtcNow;
     }
 
     /// <summary>
@@ -94,7 +146,25 @@ public class AuthService : IAuthService, IInjectable
         }
 
         var user = await _userRepository.GetUserByRefreshToken(refreshToken);
-        return user?.Adapt<UserInfo>();
+    
+        return user?.Adapt<UserInfo>() with { LinkedAccounts = GetSyncedAccounts(user) };
+    }
+
+    private List<SyncedAccounts> GetSyncedAccounts(User user)
+    {
+        var syncedAccounts = new List<SyncedAccounts>();
+
+        if (IsValidAniListUser(user))
+        {
+            syncedAccounts.Add(SyncedAccounts.AniList);
+        }
+
+        if (IsValidMalUser(user))
+        {
+            syncedAccounts.Add(SyncedAccounts.MyAnimeList);
+        }
+
+        return syncedAccounts;
     }
 
     /// <summary>
@@ -108,11 +178,11 @@ public class AuthService : IAuthService, IInjectable
         _loginRequestValidator.ValidateAndThrow(loginRequest);
 
         var user = await _userManager.FindByEmailAsync(loginRequest.Email);
-        if(user == null || !await _userManager.CheckPasswordAsync(user, loginRequest.Password))
+        if (user == null || !await _userManager.CheckPasswordAsync(user, loginRequest.Password))
         {
             throw new LoginFailedException();
         }
-        
+
         user.RefreshToken = _jwtHandler.GenerateRefreshToken();
         user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
         await _userManager.UpdateAsync(user);
@@ -123,7 +193,7 @@ public class AuthService : IAuthService, IInjectable
 
     private bool HasValidRefreshToken(User user)
     {
-        if(user.RefreshTokenExpiryTime <= DateTime.UtcNow)
+        if (user.RefreshTokenExpiryTime <= DateTime.UtcNow)
         {
             _logger.LogWarning($"Refresh token has expired for user {user.Email}.");
             return false;
@@ -164,10 +234,10 @@ public class AuthService : IAuthService, IInjectable
     public async Task SignUp(RegisterRequest registerRequest)
     {
         _registerRequestValidator.ValidateAndThrow(registerRequest);
-        
+
         var user = await _userManager.FindByEmailAsync(registerRequest.Email);
 
-        if(user != null)
+        if (user != null)
         {
             throw new UserAlreadySignedUpException(registerRequest.Email);
         }
@@ -188,7 +258,7 @@ public class AuthService : IAuthService, IInjectable
 
         await AddRoleToUser("Guest", user);
         await AddRoleToUser("User", user);
-    }    
+    }
 
     /// <summary>
     /// Authenticate or register a user using Google external login.
@@ -199,7 +269,7 @@ public class AuthService : IAuthService, IInjectable
         ValidateGoogleUserData(claimsPrincipal, out string email);
 
         var user = await _userManager.FindByEmailAsync(email);
-        if(user == null)
+        if (user == null)
         {
             user = new User
             {
@@ -214,7 +284,7 @@ public class AuthService : IAuthService, IInjectable
 
             await AddRoleToUser("User", user);
         }
-        
+
         await AddGoogleLogin(claimsPrincipal, user);
 
         var refreshToken = _jwtHandler.GenerateRefreshToken();
@@ -224,16 +294,16 @@ public class AuthService : IAuthService, IInjectable
         await _userManager.UpdateAsync(user);
         _logger.LogInformation($"User {user.Email} logged in with Google.");
     }
-    
+
     private void ValidateGoogleUserData(ClaimsPrincipal claimsPrincipal, out string email)
     {
-        if(claimsPrincipal == null)
+        if (claimsPrincipal == null)
         {
             throw new ExternalLoginException("Google", "ClaimsPrincipal is missing.");
         }
 
         var emailClaim = claimsPrincipal.FindFirst(ClaimTypes.Email);
-        if(emailClaim == null || string.IsNullOrWhiteSpace(emailClaim.Value))
+        if (emailClaim == null || string.IsNullOrWhiteSpace(emailClaim.Value))
         {
             throw new ExternalLoginException("Google", "Email claim is missing.");
         }
@@ -245,7 +315,7 @@ public class AuthService : IAuthService, IInjectable
     {
         // Add login only if not already added
         var userGoogleLogin = await _userManager.GetLoginsAsync(user);
-        if(userGoogleLogin.SingleOrDefault(x => x.LoginProvider == "Google") != null)
+        if (userGoogleLogin.SingleOrDefault(x => x.LoginProvider == "Google") != null)
         {
             return;
         }

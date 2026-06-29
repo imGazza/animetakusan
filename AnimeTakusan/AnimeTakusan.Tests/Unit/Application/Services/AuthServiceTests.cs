@@ -150,12 +150,16 @@ public class AuthServiceTests
         user.RefreshToken = validRefreshToken;
         user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7); // Valid
         var roles = new List<string> { "User" };
+        var claims = new List<Claim>
+        {
+            new Claim(ClaimTypes.Role, "User")
+        };
 
         _mockJwtHandler.Setup(x => x.GetRefreshToken()).Returns(validRefreshToken);
         _mockUserRepository.Setup(x => x.GetUserByRefreshToken(validRefreshToken))
             .ReturnsAsync(user);
         _mockJwtHandler.Setup(x => x.GenerateRefreshToken()).Returns(newRefreshToken);
-        _mockJwtHandler.Setup(x => x.GenerateUserAccessToken(user, roles))
+        _mockJwtHandler.Setup(x => x.GenerateUserAccessToken(user, claims))
             .Returns((accessToken, expiresAt));
         _mockUserManager.Setup(x => x.GetRolesAsync(user)).ReturnsAsync(roles);
         _mockUserManager.Setup(x => x.UpdateAsync(user)).ReturnsAsync(IdentityResult.Success);

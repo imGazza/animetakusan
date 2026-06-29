@@ -9,12 +9,17 @@ public class AniListUserConfiguration : IEntityTypeConfiguration<AniListUser>
     public void Configure(EntityTypeBuilder<AniListUser> builder)
     {
         builder.ToTable("AniListUsers");
+
         builder.HasKey(u => u.Id);
         builder.Property(u => u.Id).UseIdentityAlwaysColumn();
+        
         builder.Property(u => u.AniListUserId).IsRequired();
         builder.Property(u => u.UserId).IsRequired();
         builder.Property(u => u.AccessToken);
         builder.Property(u => u.CreatedAt).IsRequired();
         builder.Property(u => u.UpdatedAt).IsRequired();
+
+        builder.HasIndex(u => u.AniListUserId).IsUnique();
+        builder.HasIndex(u => u.UserId).IsUnique();
     }
 }

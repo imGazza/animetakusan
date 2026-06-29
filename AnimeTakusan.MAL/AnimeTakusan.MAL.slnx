@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="AnimeTakusan.MAL.API/AnimeTakusan.MAL.API.csproj" />
+  <Project Path="AnimeTakusan.MAL.Application/AnimeTakusan.MAL.Application.csproj" />
+  <Project Path="AnimeTakusan.MAL.Domain/AnimeTakusan.MAL.Domain.csproj" />
+  <Project Path="AnimeTakusan.MAL.Infrastructure/AnimeTakusan.MAL.Infrastructure.csproj" />
+</Solution>

@@ -1,4 +1,4 @@
-using System;
+using AnimeTakusan.Domain.Common;
 
 namespace AnimeTakusan.Application.DTOs.Authentication.Responses;
 
@@ -10,6 +10,5 @@ public record UserInfo
     public string ProfilePicture { get; init; }
     public string FirstName { get; init; }
     public string LastName { get; init; }
-    public int? AniListUserId { get; init; }
-    public int? MyAnimeListUserId { get; init; }
+    public List<SyncedAccounts> LinkedAccounts { get; init; }
 }

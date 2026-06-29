@@ -39,6 +39,7 @@ const AnimeCard = memo(({ anime }: { anime: Anime }) => {
 
     const entry: AnimeEntryUpsert = {
       mediaId: anime.id,
+      malId: anime.idMal,
       status: "PLANNING",
       progress: null,
       startedAt: null,

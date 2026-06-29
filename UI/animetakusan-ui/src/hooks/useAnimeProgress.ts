@@ -16,6 +16,7 @@ export const useAnimeProgress = (anime: Anime) => {
 
     mutate({
       ...entry,
+      malId: anime.idMal,
       progress,
       status: progress >= 1 && anime.mediaListEntry.status === "PLANNING" ? "CURRENT" : null,
       startedAt: progress >= 1 && !anime.mediaListEntry.startedAt ? { day: startedAt.getDate(), month: startedAt.getMonth() + 1, year: startedAt.getFullYear() } : null,

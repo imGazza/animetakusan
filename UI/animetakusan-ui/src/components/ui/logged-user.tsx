@@ -5,7 +5,7 @@ import { useNavigate } from "react-router";
 import { useAuth } from "@/hooks/useAuth";
 import UserAvatar from "./user-avatar";
 
-const LoggedUser = ({ menuItems }: { menuItems: { label: string, icon: ForwardRefExoticComponent<Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>> }[] }) => {
+const LoggedUser = ({ menuItems }: { menuItems: { label: string, icon: ForwardRefExoticComponent<Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>>, href?: string }[] }) => {
 
   const { isAuthenticated, user, logout } = useAuth();
   const navigate = useNavigate();

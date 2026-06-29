@@ -30,7 +30,7 @@ public static class AnimeProviderExtensions
                     builder.AddHttpMessageHandler<GraphQLLoggingHandler>();
                     builder.AddHttpMessageHandler<AniListAuthenticationHandler>();
                     builder.AddHttpMessageHandler<NullGraphQLVariablesHandler>();
-                    builder.AddStandardHedgingHandler();
+                    builder.AddStandardResilienceHandler();
                 }
             );
 

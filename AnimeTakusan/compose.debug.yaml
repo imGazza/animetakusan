@@ -1,6 +1,23 @@
 services:
-  animetakusanapi:
-    image: animetakusanapi
+
+  rabbitmq:
+    image: rabbitmq:4-management
+    ports:
+      - 5672:5672
+      - 15672:15672
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+      - TZ=Europe/Rome
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "check_port_connectivity"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  animetakusan-main:
+    image: animetakusan-main
     env_file: development.env
     build:
       context: .
@@ -13,6 +30,28 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx      
       - TZ=Europe/Rome
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
     volumes:
       - ./logs:/app/logs/anime-takusan
+      - ~/.aspnet/https:/https:ro
+
+  animetakusan-malsync:
+    image: animetakusan-malsync
+    env_file: development.env
+    build:
+      context: ../AnimeTakusan.MAL
+      dockerfile: AnimeTakusan.MAL.API/Dockerfile
+    ports:
+      - 5175:5175
+    environment:
+      - ASPNETCORE_URLS=https://+:5175
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+      - TZ=Europe/Rome
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    volumes:
       - ~/.aspnet/https:/https:ro

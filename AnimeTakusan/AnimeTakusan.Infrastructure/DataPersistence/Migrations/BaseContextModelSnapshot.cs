@@ -50,10 +50,51 @@ namespace AnimeTakusan.Infrastructure.DataPersistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AniListUserId")
+                        .IsUnique();
+
                     b.HasIndex("UserId")
                         .IsUnique();
 
                     b.ToTable("AniListUsers", (string)null);
+                });
+
+            modelBuilder.Entity("AnimeTakusan.Domain.Entities.MyAnimeListUser", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("MalUserId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("RefreshTokenExpiry")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MalUserId")
+                        .IsUnique();
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("MyAnimeListUsers", (string)null);
                 });
 
             modelBuilder.Entity("AnimeTakusan.Domain.Entities.User", b =>
@@ -289,6 +330,17 @@ namespace AnimeTakusan.Infrastructure.DataPersistence.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("AnimeTakusan.Domain.Entities.MyAnimeListUser", b =>
+                {
+                    b.HasOne("AnimeTakusan.Domain.Entities.User", "User")
+                        .WithOne("MyAnimeListUser")
+                        .HasForeignKey("AnimeTakusan.Domain.Entities.MyAnimeListUser", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", null)
@@ -343,6 +395,8 @@ namespace AnimeTakusan.Infrastructure.DataPersistence.Migrations
             modelBuilder.Entity("AnimeTakusan.Domain.Entities.User", b =>
                 {
                     b.Navigation("AniListUser");
+
+                    b.Navigation("MyAnimeListUser");
                 });
 #pragma warning restore 612, 618
         }

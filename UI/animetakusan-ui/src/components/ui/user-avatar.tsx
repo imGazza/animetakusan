@@ -1,17 +1,19 @@
 import { Avatar, AvatarFallback, AvatarImage } from "./avatar";
-import { Popover, PopoverContent, PopoverTrigger } from "./popover";
+import { Popover, PopoverClose, PopoverContent, PopoverTrigger } from "./popover";
 import { MenuButton } from "./menu-button";
 import { LogOut } from "lucide-react";
 import type { User } from "@/models/auth/User";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "./alert-dialog";
+import { useNavigate } from "react-router";
 
 interface UserAvatarProps {
-  items: { label: string; icon: React.ElementType; }[];
+  items: { label: string; icon: React.ElementType; href?: string; }[];
   logout?: () => void;
   user?: User | null;
 }
 
 const UserAvatar = ({ items, logout, user }: UserAvatarProps) => {
+  const navigate = useNavigate();
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -40,13 +42,19 @@ const UserAvatar = ({ items, logout, user }: UserAvatarProps) => {
 
         <div className="px-3 pt-2 pb-2">
           <div className="grid grid-cols-3 gap-1.5">
-            {items.map(({ label, icon: Icon }) => (
-              <MenuButton key={label} variant="tile">
-                <div className="flex items-center justify-center size-8 rounded-lg">
-                  <Icon className="size-[1.1rem]" />
-                </div>
-                <span className="text-[11px] font-medium leading-none">{label}</span>
-              </MenuButton>
+            {items.map(({ label, icon: Icon, href }) => (
+              <PopoverClose asChild key={label}>
+                <MenuButton
+                  variant="tile"
+                  disabled={!href}
+                  onClick={() => href && navigate(href)}
+                >
+                  <div className="flex items-center justify-center size-8 rounded-lg">
+                    <Icon className="size-[1.1rem]" />
+                  </div>
+                  <span className="text-[11px] font-medium leading-none">{label}</span>
+                </MenuButton>
+              </PopoverClose>
             ))}
           </div>
 

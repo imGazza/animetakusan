@@ -55,7 +55,7 @@ public class AniListAuthService : IAniListAuthService, IInjectable
 
         try
         {
-            await _userRepository.AddAniListUserAsync(aniListUser);            
+            await _userRepository.UpsertAniListUserAsync(aniListUser);            
         }
         catch (Exception ex)
         {

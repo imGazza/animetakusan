@@ -420,3 +420,12 @@ FodyWeavers.xsd
 # JetBrains Rider files
 .idea/
 *.idea/
+
+# Claude Code / AI tooling
+CLAUDE.md
+**/CLAUDE.md
+.claude/
+**/.claude/
+CLAUDE.local.md
+.rtk/
+**/.rtk/
