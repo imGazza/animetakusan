@@ -18,7 +18,7 @@ const UserAvatar = ({ items, logout, user }: UserAvatarProps) => {
     <Popover>
       <PopoverTrigger asChild>
         <Avatar className="cursor-pointer ring-2 ring-transparent transition-all duration-200">
-          <AvatarImage src={user?.profilePicture ?? "https://github.com/shadcn.png"} alt={user?.username} className="grayscale" />
+          <AvatarImage src={user?.profilePicture ?? "https://github.com/shadcn.png"} alt={user?.userName} className="grayscale" />
           <AvatarFallback>CN</AvatarFallback>
         </Avatar>
       </PopoverTrigger>
@@ -35,13 +35,13 @@ const UserAvatar = ({ items, logout, user }: UserAvatarProps) => {
               <span className="absolute right-0 bottom-0 size-2.5 rounded-full bg-green-500 ring-2 ring-popover" />
             </div>
             <div className="flex flex-col gap-1 min-w-0">
-              <span className="text-sm font-semibold leading-none truncate">{user?.username ?? "User"}</span>
+              <span className="text-sm font-semibold leading-none truncate">{user?.userName ?? "User"}</span>
             </div>
           </div>
         </div>
 
         <div className="px-3 pt-2 pb-2">
-          <div className="grid grid-cols-3 gap-1.5">
+          <div className="grid grid-cols-2 gap-1.5">
             {items.map(({ label, icon: Icon, href }) => (
               <PopoverClose asChild key={label}>
                 <MenuButton

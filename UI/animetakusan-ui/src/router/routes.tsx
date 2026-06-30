@@ -6,7 +6,7 @@ import RootLayout from "@/features/layout/RootLayout";
 import AnimeDetail from "@/features/anime-detail/AnimeDetail";
 import { createBrowserRouter } from "react-router";
 import Library from "@/features/library/Library";
-import Profile from "@/features/profile/Profile";
+import Settings from "@/features/profile/Settings";
 
 export const routes = createBrowserRouter([
     {
@@ -57,13 +57,13 @@ export const routes = createBrowserRouter([
                 ]
             },
             {
-                path: "/profile",
+                path: "/settings",
                 //errorElement: <ErrorPage />,
                 Component: AppLayout,
                 children: [
                     {
                         index: true,
-                        Component: Profile
+                        Component: Settings
                     }
                 ]
             }

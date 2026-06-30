@@ -1,5 +1,5 @@
 
-import { Monitor, Settings, User } from "lucide-react";
+import { Settings, User } from "lucide-react";
 
 export const siteConfig = {
   navItems: [
@@ -8,9 +8,8 @@ export const siteConfig = {
     { label: "Library", href: "/library", coming: false },
   ],
   profileNavItems: [
-    { label: "Profile", icon: User, href: "/profile" },
-    { label: "Platforms", icon: Monitor, href: "/profile" },
-    { label: "Settings", icon: Settings }
+    { label: "Profile", icon: User },
+    { label: "Settings", icon: Settings, href: "/settings" }
   ],
   urls: {
     github: "https://github.com/imGazza/animetakusan"

@@ -11,14 +11,14 @@ import { platforms } from "./platforms";
 const getInitials = (name?: string) =>
   name
     ? name
-        .split(/[\s._-]+/)
-        .filter(Boolean)
-        .slice(0, 2)
-        .map((part) => part[0]?.toUpperCase())
-        .join("")
+      .split(/[\s._-]+/)
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((part) => part[0]?.toUpperCase())
+      .join("")
     : "AT";
 
-const Profile = () => {
+const Settings = () => {
   const { isAuthenticated, user } = useAuth();
   const navigate = useNavigate();
 
@@ -44,7 +44,7 @@ const Profile = () => {
 
   return (
     <Container>
-      <PageHeaderBlock variant="profile" title="Profile" />
+      <PageHeaderBlock variant="profile" title="Settings" />
 
       {/* Account summary */}
       <div className="mb-8 flex flex-col gap-4 rounded-xs border bg-card p-5 sm:flex-row sm:items-center sm:gap-5">
@@ -63,11 +63,8 @@ const Profile = () => {
           )}
         </div>
         <div className="sm:ml-auto">
-          <span className="inline-flex items-center gap-1.5 rounded-xs bg-muted px-3 py-1 text-sm font-medium text-muted-foreground">
-            <span
-              className="size-1.5 rounded-full"
-              style={{ backgroundColor: "var(--accent-profile)" }}
-            />
+          <span className="inline-flex items-center gap-1.5 rounded-xs bg-muted py-1 text-sm font-medium text-muted-foreground">
+            <span className="size-1.5 rounded-full bg-accent" />
             {connectedCount} of {platforms.length} platforms connected
           </span>
         </div>
@@ -76,9 +73,6 @@ const Profile = () => {
       {/* Platforms */}
       <div className="mb-4 flex flex-col gap-1">
         <h3 className="text-lg font-semibold tracking-tight">Connected platforms</h3>
-        <p className="text-sm text-muted-foreground">
-          Link your accounts to sync and track your anime across services.
-        </p>
       </div>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -93,4 +87,4 @@ const Profile = () => {
     </Container>
   );
 };
-export default Profile;
+export default Settings;

@@ -10,7 +10,7 @@ interface PlatformCardProps {
 }
 
 const PlatformCard = ({ platform, connected }: PlatformCardProps) => {
-  const { name, description, brand, brandTo, Logo, authUrl } = platform;
+  const { name, brand, brandTo, Logo, authUrl } = platform;
 
   const handleConnect = () => {
     window.location.href = authUrl;
@@ -24,14 +24,7 @@ const PlatformCard = ({ platform, connected }: PlatformCardProps) => {
         connected ? "border-border" : "hover:border-foreground/20"
       )}
     >
-      {/* Brand glow accent in the top-right corner */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -right-16 -top-16 size-40 rounded-full opacity-15 blur-2xl transition-opacity duration-300 group-hover:opacity-25"
-        style={{ backgroundColor: brand }}
-      />
-
-      <CardHeader className="flex items-start gap-4 p-5 pb-4">
+      <CardHeader className="flex items-center gap-4 p-5 pb-4">
         {/* Logo tile */}
         <div
           className="flex size-12 shrink-0 items-center justify-center rounded-xs text-white shadow-sm ring-1 ring-black/5"
@@ -50,9 +43,6 @@ const PlatformCard = ({ platform, connected }: PlatformCardProps) => {
               </span>
             )}
           </div>
-          <CardDescription className="text-pretty leading-relaxed">
-            {description}
-          </CardDescription>
         </div>
       </CardHeader>
 
