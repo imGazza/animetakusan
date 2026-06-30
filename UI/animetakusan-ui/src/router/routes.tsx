@@ -7,6 +7,7 @@ import AnimeDetail from "@/features/anime-detail/AnimeDetail";
 import { createBrowserRouter } from "react-router";
 import Library from "@/features/library/Library";
 import Settings from "@/features/profile/Settings";
+import ProtectedRoute from "@/features/auth/ProtectedRoute";
 
 export const routes = createBrowserRouter([
     {
@@ -51,8 +52,13 @@ export const routes = createBrowserRouter([
                 Component: AppLayout,
                 children: [
                     {
-                        index: true,
-                        Component: Library
+                        Component: ProtectedRoute,
+                        children: [
+                            {
+                                index: true,
+                                Component: Library
+                            }
+                        ]
                     }
                 ]
             },
@@ -62,8 +68,13 @@ export const routes = createBrowserRouter([
                 Component: AppLayout,
                 children: [
                     {
-                        index: true,
-                        Component: Settings
+                        Component: ProtectedRoute,
+                        children: [
+                            {
+                                index: true,
+                                Component: Settings
+                            }
+                        ]
                     }
                 ]
             }

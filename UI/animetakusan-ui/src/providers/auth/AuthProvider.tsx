@@ -9,7 +9,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const navigate = useNavigate();
 
-  const { data: userInfo, error, refetch: refetchUser } = useUserQuery();
+  const { data: userInfo, isLoading, error, refetch: refetchUser } = useUserQuery();
   const loginMutation = useLoginMutation(refetchUser, navigate);
   const logoutMutation = useLogoutMutation(refetchUser, navigate);
   const loginProviderMutation = useLoginProviderMutation();
@@ -41,12 +41,13 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const authInfo = useMemo(() => ({
     isAuthenticated: !!userInfo,
+    isInitializing: isLoading,
     user: userInfo ?? null,
     login,
     loginProvider,
     logout,
     signUp,
-  }), [userInfo, refetchUser, login, loginProvider, logout, signUp]);
+  }), [userInfo, isLoading, login, loginProvider, logout, signUp]);
   
   return <AuthContext value={authInfo}>{children}</AuthContext>;
 };

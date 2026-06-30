@@ -7,6 +7,7 @@ import { useNavigate } from "react-router";
 import { LogIn } from "lucide-react";
 import PlatformCard from "./PlatformCard";
 import { platforms } from "./platforms";
+import useLinkedAccounts from "@/hooks/useLinkedAccounts";
 
 const getInitials = (name?: string) =>
   name
@@ -20,6 +21,7 @@ const getInitials = (name?: string) =>
 
 const Settings = () => {
   const { isAuthenticated, user } = useAuth();
+  const { linkedAccounts, connectedCount } = useLinkedAccounts();
   const navigate = useNavigate();
 
   if (!isAuthenticated || !user) {
@@ -37,13 +39,10 @@ const Settings = () => {
         </div>
       </Container>
     );
-  }
-
-  const linkedAccounts = user.linkedAccounts ?? [];
-  const connectedCount = platforms.filter((p) => linkedAccounts.includes(p.key)).length;
+  }  
 
   return (
-    <Container>
+    <Container className="animate-in fade-in duration-300">
       <PageHeaderBlock variant="profile" title="Settings" />
 
       {/* Account summary */}

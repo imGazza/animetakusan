@@ -13,6 +13,8 @@ export const useUserQuery = () =>
     staleTime: Infinity,
     retry: 2,
     select: (data) => {
+      // Mock linked accounts for demonstration purposes
+      //data.linkedAccounts = ["MyAnimeList"];
       localStorage.setItem('isAuthenticated', JSON.stringify(!!data.id));
       data.userName && localStorage.setItem('user', data.userName);
       return data?.id ? data : null; },
