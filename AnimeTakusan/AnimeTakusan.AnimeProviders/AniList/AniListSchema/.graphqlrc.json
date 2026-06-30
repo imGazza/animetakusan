@@ -7,6 +7,7 @@
     "Queries/GetSeasonalAnime.graphql",
     "Queries/GetAnime.graphql",
     "Queries/GetUserAnimeList.graphql",
+    "Queries/GetViewer.graphql",
     "Mutations/UpsertAnimeEntry.graphql",
     "Mutations/ToggleFavourite.graphql",
     "Mutations/DeleteAnimeEntry.graphql"

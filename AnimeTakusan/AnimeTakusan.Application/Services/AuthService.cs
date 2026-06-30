@@ -135,7 +135,7 @@ public class AuthService : IAuthService, IInjectable
     /// </summary>
     /// <returns>
     /// Returns the logged user's information, if any.
-    /// Returns an emty object for guest users.
+    /// Returns an empty object for guest users.
     /// </returns>
     public async Task<UserInfo> GetUserInfo()
     {
@@ -147,7 +147,7 @@ public class AuthService : IAuthService, IInjectable
 
         var user = await _userRepository.GetUserByRefreshToken(refreshToken);
     
-        return user?.Adapt<UserInfo>() with { LinkedAccounts = GetSyncedAccounts(user) };
+        return user?.Adapt<UserInfo>() with { UserName = user.AniListUser?.AniListUsername ?? user.UserName, ProfilePicture = user.AniListUser?.AniListAvatar, LinkedAccounts = GetSyncedAccounts(user) };
     }
 
     private List<SyncedAccounts> GetSyncedAccounts(User user)
@@ -275,10 +275,7 @@ public class AuthService : IAuthService, IInjectable
             {
                 Id = Guid.NewGuid(),
                 Email = email,
-                UserName = email,
-                FirstName = claimsPrincipal.FindFirst(ClaimTypes.GivenName)?.Value ?? string.Empty,
-                LastName = claimsPrincipal.FindFirst(ClaimTypes.Surname)?.Value ?? string.Empty,
-                ProfilePicture = claimsPrincipal.FindFirst("picture")?.Value ?? string.Empty,
+                UserName = email
             };
             await _userManager.CreateAsync(user);
 

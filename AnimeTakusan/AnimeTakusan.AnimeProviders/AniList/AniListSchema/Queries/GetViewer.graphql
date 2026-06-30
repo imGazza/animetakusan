@@ -1,0 +1,10 @@
+query GetViewer {
+  Viewer {
+    id
+    avatar {
+      large
+    }
+    name
+    unreadNotificationCount
+  }
+}

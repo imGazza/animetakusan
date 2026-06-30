@@ -9,10 +9,9 @@ export const useLibraryQuery = () =>
     gcTime: 1000 * 60 * 10, // 10 minutes,
     refetchOnWindowFocus: false,
     refetchOnMount: false,
-    retry: 2
   })
 
-export const useLibraryQueryOptions = () => 
+export const useLibraryQueryOptions = () =>
   queryOptions({
     queryKey: ["library"],
     queryFn: libraryApis.userLibrary,
@@ -20,5 +19,4 @@ export const useLibraryQueryOptions = () =>
     gcTime: 1000 * 60 * 10, // 10 minutes,
     refetchOnWindowFocus: false,
     refetchOnMount: false,
-    retry: 2
   });

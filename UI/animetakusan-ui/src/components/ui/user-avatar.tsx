@@ -18,8 +18,10 @@ const UserAvatar = ({ items, logout, user }: UserAvatarProps) => {
     <Popover>
       <PopoverTrigger asChild>
         <Avatar className="cursor-pointer ring-2 ring-transparent transition-all duration-200">
-          <AvatarImage src={user?.profilePicture ?? "https://github.com/shadcn.png"} alt={user?.userName} className="grayscale" />
-          <AvatarFallback>CN</AvatarFallback>
+          <AvatarImage src={user?.profilePicture || "/images/default-avatar.svg"} alt={user?.userName} className="object-cover"/>
+          <AvatarFallback className="p-0">
+            <img src="/images/default-avatar.svg" alt={user?.userName} className="size-full object-cover" />
+          </AvatarFallback>
         </Avatar>
       </PopoverTrigger>
 
@@ -29,8 +31,10 @@ const UserAvatar = ({ items, logout, user }: UserAvatarProps) => {
           <div className="flex items-center gap-3">
             <div className="relative shrink-0">
               <Avatar size="lg">
-                <AvatarImage src={user?.profilePicture ?? "https://github.com/shadcn.png"} className="grayscale" />
-                <AvatarFallback>CN</AvatarFallback>
+                <AvatarImage src={user?.profilePicture || "/images/default-avatar.svg"} className="object-cover"/>
+                <AvatarFallback className="p-0">
+                  <img src="/images/default-avatar.svg" alt={user?.userName} className="size-full object-cover" />
+                </AvatarFallback>
               </Avatar>
               <span className="absolute right-0 bottom-0 size-2.5 rounded-full bg-green-500 ring-2 ring-popover" />
             </div>

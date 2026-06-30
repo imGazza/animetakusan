@@ -1,18 +1,13 @@
 import AnimePreview from "@/components/ui/anime-preview"
 import AnimeTopPreview from "@/components/ui/anime-top-preview"
 import { useBrowseSectionQuery } from "./queries";
-import { toast } from "sonner";
 import useDeferredRendering from "@/hooks/useDeferredRendering";
 
 const BrowseSection = () => {
-
-  const { data: browseSection, isLoading, error } = useBrowseSectionQuery();
+  
+  const { data: browseSection, isLoading } = useBrowseSectionQuery();
 
   const isReady = useDeferredRendering(browseSection);
-
-  if (error) {
-    toast.error(error.message || "Error loading browse section. Please try again.");
-  }
 
   return (
     <div className="mt-4 md:mt-10">

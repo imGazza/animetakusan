@@ -44,6 +44,14 @@ public class UserRepository : IUserRepository
         await _context.SaveChangesAsync();
     }
 
+    public async Task UpdateAniListUserInfoAsync(int aniListUserId, string aniListUsername, string aniListAvatar)
+    {
+        await _context.Set<AniListUser>().Where(a => a.AniListUserId == aniListUserId).ExecuteUpdateAsync(s => s
+            .SetProperty(a => a.UpdatedAt, DateTime.UtcNow)
+            .SetProperty(a => a.AniListUsername, aniListUsername)
+            .SetProperty(a => a.AniListAvatar, aniListAvatar));
+    }
+
     public async Task LinkMalUserAsync(MyAnimeListUser malUser)
     {
         await _context.Set<MyAnimeListUser>().AddAsync(malUser);

@@ -67,7 +67,6 @@ public class JwtHandler : IJwtHandler
         {
             new(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
             new(JwtRegisteredClaimNames.Email, user.Email ?? string.Empty),
-            new(JwtRegisteredClaimNames.Name, $"{user.FirstName} {user.LastName}"),
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
         };
 

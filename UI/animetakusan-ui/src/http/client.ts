@@ -7,8 +7,6 @@ let failedQueue: Array<{
     reject: (reason?: any) => void;
 }> = [];
 
-let serverError = false;
-
 const processQueue = (error: any, token: string | null = null) => {
     failedQueue.forEach(prom => {
         if (error) {
@@ -32,8 +30,7 @@ const refreshToken = async (): Promise<string | null> => {
     } catch (error) {
         TokenManager.clearToken();
         localStorage.setItem('isAuthenticated', 'false');
-        //window.location.href = '/login';
-        serverError = true;
+        // Let the error boundary handle the error
         throw error;
     }
 };
@@ -48,11 +45,6 @@ const client = axios.create({
 
 client.interceptors.request.use(
     async (config: InternalAxiosRequestConfig) => {
-
-        if (serverError) {
-            throw new Error("Server error detected, aborting requests.");
-            // TODO: Find a better solution
-        }
 
         // Skip token logic for the refresh endpoint itself
         if (config.url?.includes('/auth/token')) {

@@ -15,6 +15,8 @@ public class AniListUserConfiguration : IEntityTypeConfiguration<AniListUser>
         
         builder.Property(u => u.AniListUserId).IsRequired();
         builder.Property(u => u.UserId).IsRequired();
+        builder.Property(u => u.AniListUsername);
+        builder.Property(u => u.AniListAvatar);
         builder.Property(u => u.AccessToken);
         builder.Property(u => u.CreatedAt).IsRequired();
         builder.Property(u => u.UpdatedAt).IsRequired();

@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useDebouncedCallback } from "use-debounce";
 import { useAnimeEntryMutation } from "@/features/queries";
-import { toast } from "sonner";
 import type { Anime } from "@/models/common/Anime";
 
 export const useAnimeProgress = (anime: Anime) => {
@@ -20,10 +19,6 @@ export const useAnimeProgress = (anime: Anime) => {
       progress,
       status: progress >= 1 && anime.mediaListEntry.status === "PLANNING" ? "CURRENT" : null,
       startedAt: progress >= 1 && !anime.mediaListEntry.startedAt ? { day: startedAt.getDate(), month: startedAt.getMonth() + 1, year: startedAt.getFullYear() } : null,
-    }, {
-      onError() {
-        toast.error("Failed to update progress. Please try again.");
-      },
     });
   }, 500);
 

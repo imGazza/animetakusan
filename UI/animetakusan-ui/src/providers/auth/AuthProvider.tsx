@@ -9,7 +9,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const navigate = useNavigate();
 
-  const { data: userInfo, isLoading, error, refetch: refetchUser } = useUserQuery();
+  const { data: userInfo, isLoading, refetch: refetchUser } = useUserQuery();
   const loginMutation = useLoginMutation(refetchUser, navigate);
   const logoutMutation = useLogoutMutation(refetchUser, navigate);
   const loginProviderMutation = useLoginProviderMutation();
@@ -34,10 +34,6 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
     });
   }, [signupMutation]);
-
-  if (error) {
-    // redirect to 500 page, something is wrong with the server
-  }
 
   const authInfo = useMemo(() => ({
     isAuthenticated: !!userInfo,

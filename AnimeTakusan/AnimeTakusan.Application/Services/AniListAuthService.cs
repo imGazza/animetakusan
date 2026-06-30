@@ -1,3 +1,4 @@
+using AnimeTakusan.Application.DTOs.AnimeProvider.Responses;
 using AnimeTakusan.Application.DTOs.Authentication.Responses;
 using AnimeTakusan.Application.Interfaces;
 using AnimeTakusan.Domain.Entities;
@@ -11,13 +12,15 @@ public class AniListAuthService : IAniListAuthService, IInjectable
     private readonly IJwtHandler _jwtHandler;
     private readonly IUserRepository _userRepository;
     private readonly ILogger<AniListAuthService> _logger;
+    private readonly IAnimeProvider _aniListProvider;
 
 
-    public AniListAuthService(IJwtHandler jwtHandler, IUserRepository userRepository, ILogger<AniListAuthService> logger)
+    public AniListAuthService(IJwtHandler jwtHandler, IUserRepository userRepository, ILogger<AniListAuthService> logger, IAnimeProvider aniListProvider)
     {
         _jwtHandler = jwtHandler;
         _userRepository = userRepository;
         _logger = logger;
+        _aniListProvider = aniListProvider;
     }
 
     public void VerifyCallbackState(string code)
@@ -55,7 +58,7 @@ public class AniListAuthService : IAniListAuthService, IInjectable
 
         try
         {
-            await _userRepository.UpsertAniListUserAsync(aniListUser);            
+            await _userRepository.UpsertAniListUserAsync(aniListUser);
         }
         catch (Exception ex)
         {
@@ -63,5 +66,23 @@ public class AniListAuthService : IAniListAuthService, IInjectable
         }
 
         _logger.LogInformation($"Successfully linked AniList account (ID: {aniListUserId}) to user (ID: {user.Id}).");
+    }
+
+    public async Task<ViewerInfoResponse> GetViewerInfo()
+    {
+        try
+        {
+            var viewerInfo = await _aniListProvider.GetViewerInfo();
+
+            await _userRepository.UpdateAniListUserInfoAsync(viewerInfo.Id, viewerInfo.Name, viewerInfo.Avatar);
+
+            return viewerInfo;
+
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to retrieve viewer info from AniList.");
+            throw new AniListAuthenticationException("Failed to retrieve viewer info from AniList.", ex);
+        }
     }
 }

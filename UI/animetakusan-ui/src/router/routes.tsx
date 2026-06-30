@@ -4,18 +4,23 @@ import Browse from "@/features/browse/Browse";
 import AppLayout from "@/features/layout/AppLayout";
 import RootLayout from "@/features/layout/RootLayout";
 import AnimeDetail from "@/features/anime-detail/AnimeDetail";
-import { createBrowserRouter } from "react-router";
+import { createBrowserRouter, redirect } from "react-router";
 import Library from "@/features/library/Library";
 import Settings from "@/features/profile/Settings";
 import ProtectedRoute from "@/features/auth/ProtectedRoute";
+import ErrorPage from "@/features/error/ErrorPage";
 
 export const routes = createBrowserRouter([
     {
-        Component: RootLayout,
+        path: "/",
+        loader: () => redirect("/browse")
+    },
+    {
+        Component: RootLayout,        
+        errorElement: <ErrorPage variant="fullpage" />, // Catches everything not caught by child routes (expecially 404 on routes)
         children: [
             {
                 path: "/login",
-                //errorElement: <ErrorPage />,
                 Component: LoginLayout,
                 children: [
                     {
@@ -24,55 +29,31 @@ export const routes = createBrowserRouter([
                     }
                 ]
             },
-            {
-                path: "/browse",
-                //errorElement: <ErrorPage />,
+            {                
                 Component: AppLayout,
                 children: [
                     {
-                        index: true,
-                        Component: Browse
-                    }
-                ]
-            },
-            {
-                path: "/anime/:id",
-                //errorElement: <ErrorPage />,
-                Component: AppLayout,
-                children: [
+                        path: "/browse",
+                        Component: Browse,
+                        errorElement: <ErrorPage variant="scoped" />
+                    },
                     {
-                        index: true,
-                        Component: AnimeDetail
-                    }
-                ]
-            },
-            {
-                path: "/library",
-                //errorElement: <ErrorPage />,
-                Component: AppLayout,
-                children: [
+                        path: "/anime/:id",
+                        Component: AnimeDetail,
+                        errorElement: <ErrorPage variant="scoped" />
+                    },
                     {
                         Component: ProtectedRoute,
                         children: [
                             {
-                                index: true,
-                                Component: Library
-                            }
-                        ]
-                    }
-                ]
-            },
-            {
-                path: "/settings",
-                //errorElement: <ErrorPage />,
-                Component: AppLayout,
-                children: [
-                    {
-                        Component: ProtectedRoute,
-                        children: [
+                                path: "/library",
+                                Component: Library,
+                                errorElement: <ErrorPage variant="scoped" />
+                            },
                             {
-                                index: true,
-                                Component: Settings
+                                path: "/settings",
+                                Component: Settings,
+                                errorElement: <ErrorPage variant="scoped" />
                             }
                         ]
                     }

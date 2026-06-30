@@ -3,16 +3,12 @@ import MyAnimeListLogo from "./MyAnimeListLogo";
 import type { ComponentType } from "react";
 
 export interface Platform {
-  /** Matches the value emitted by the backend `SyncedAccounts` enum (User.linkedAccounts). */
   key: "AniList" | "MyAnimeList";
   name: string;
   description: string;
-  /** Brand colour used for accents, the logo tile and the connect button. */
   brand: string;
-  /** Subtle gradient end colour for the logo tile. */
   brandTo: string;
   Logo: ComponentType<{ className?: string }>;
-  /** Absolute backend endpoint the browser is redirected to in order to link the account. */
   authUrl: string;
 }
 

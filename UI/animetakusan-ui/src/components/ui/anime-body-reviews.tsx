@@ -33,8 +33,10 @@ const AnimeBodyReviews = ({ anime }: { anime: AnimeDetail }) => {
           >
             <div className="flex items-start gap-3">
               <Avatar size="sm" className="shrink-0 mt-0.5">
-                <AvatarImage src={review.user.avatar} alt={review.user.name} />
-                <AvatarFallback>{review.user.name.charAt(0)}</AvatarFallback>
+                <AvatarImage src={review.user.avatar || "/images/default-avatar.svg"} alt={review.user.name} className="object-cover" />
+                <AvatarFallback className="p-0">
+                  <img src="/images/default-avatar.svg" alt={review.user.name} className="size-full object-cover" />
+                </AvatarFallback>
               </Avatar>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between gap-2 mb-1.5">

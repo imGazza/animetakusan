@@ -6,8 +6,7 @@ export const useBrowseSectionQuery = () =>
   useQuery({
     queryKey: ['browseSection'],
     queryFn: browseApis.browseSection,
-    staleTime: Infinity,
-    retry: 2
+    staleTime: Infinity
   });
 
 export const browseQueryKey = (filter: AnimeFilter, sort: string = "PopularityDesc") =>
@@ -19,7 +18,10 @@ export const useBrowseQuery = (filter: AnimeFilter, sort: string = "PopularityDe
     queryFn: ({ pageParam }) => browseApis.browse({ filter: filter, page: { page: pageParam, perPage: 20 }, sort }),
     initialPageParam: 1,
     getNextPageParam: (lastPage) => lastPage.page.hasNextPage ? lastPage.page.currentPage + 1 : null,
-    staleTime: Infinity
+    staleTime: Infinity,
+    // Infinite scroll: never blow away already loaded pages
+    throwOnError: false,
+    meta: { silent: true },
   });
 
 export const useSimpleBrowseQuery = (filter: AnimeFilter, sort: string = "PopularityDesc", enabled: boolean = true) =>
@@ -27,5 +29,8 @@ export const useSimpleBrowseQuery = (filter: AnimeFilter, sort: string = "Popula
     queryKey: ['simpleBrowse', filter, sort] as const,
     queryFn: () => browseApis.browse({ filter: filter, page: { page: 1, perPage: 20 }, sort }),
     staleTime: Infinity,
-    enabled
+    enabled,
+    // Simple search: handled inline, never full page.
+    throwOnError: false,
+    meta: { silent: true },
   });

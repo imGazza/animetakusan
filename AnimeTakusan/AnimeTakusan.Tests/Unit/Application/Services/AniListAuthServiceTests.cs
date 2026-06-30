@@ -18,6 +18,7 @@ public class AniListAuthServiceTests
     private readonly Mock<IUserRepository> _mockUserRepository;
     private readonly Mock<ILogger<AniListAuthService>> _mockLogger;
     private readonly AniListAuthService _aniListAuthService;
+    private readonly Mock<IAnimeProvider> _mockProvider;
     private readonly Faker<User> _userFaker;
 
     public AniListAuthServiceTests()
@@ -25,11 +26,13 @@ public class AniListAuthServiceTests
         _mockJwtHandler = new Mock<IJwtHandler>();
         _mockUserRepository = new Mock<IUserRepository>();
         _mockLogger = new Mock<ILogger<AniListAuthService>>();
+        _mockProvider = new Mock<IAnimeProvider>();
 
         _aniListAuthService = new AniListAuthService(
             _mockJwtHandler.Object,
             _mockUserRepository.Object,
-            _mockLogger.Object
+            _mockLogger.Object,
+            _mockProvider.Object
         );
 
         _userFaker = AuthenticationFakers.UserFaker;

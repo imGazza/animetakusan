@@ -9,10 +9,11 @@ import useDeferredRendering from '@/hooks/useDeferredRendering';
 import { useFilteredLibrary } from '@/hooks/useFilteredLibrary';
 import { useEffect } from 'react';
 import useLinkedAccounts from '@/hooks/useLinkedAccounts';
+import AniListConnectCard from './AniListConnectCard';
 
 export function Library() {
 
-  const { data: library, isLoading, error } = useLibraryQuery();
+  const { data: library, isLoading } = useLibraryQuery();
   const { filter, sort, addFilter, setSort, removeFilter, resetAllFilters } = useLibraryFilter();
   const isReady = useDeferredRendering(library);
   const { linkedAccounts } = useLinkedAccounts();
@@ -29,11 +30,12 @@ export function Library() {
 
   return (
     <Container className="animate-in fade-in duration-300">
-      <PageHeaderBlock variant="library" title={localStorage.getItem('user') ? `${localStorage.getItem('user')}'s Library` : "User's Library"} />
 
       {
         linkedAccounts.includes("AniList") ? (
           <>
+            <PageHeaderBlock variant="library" title={localStorage.getItem('user') ? `${localStorage.getItem('user')}'s Library` : "User's Library"} />
+
             <LibraryFilters
               filter={filter}
               sort={sort}
@@ -61,11 +63,7 @@ export function Library() {
               }
             </div>
           </>) : (
-          <div className="mt-10 flex flex-col items-center justify-center gap-4 rounded-xs border border-dashed py-16 text-center">
-            <p className="max-w-sm text-balance text-muted-foreground">
-              Connect your AniList account to view your library.
-            </p>
-          </div>
+          <AniListConnectCard />
         )
       }
 

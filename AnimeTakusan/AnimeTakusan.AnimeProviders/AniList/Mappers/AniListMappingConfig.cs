@@ -84,5 +84,12 @@ public class AniListMappingConfig : IRegister, IAnimeProviderMapper
 
         config.NewConfig<DeleteAnimeEntryResult, DeleteAnimeEntryResponse>()
             .Map(dest => dest.Deleted, src => src.DeleteMediaListEntry.Deleted ?? false);
+
+        config.NewConfig<GetViewerResult, ViewerInfoResponse>()
+            .Map(dest => dest.Id, src => src.Viewer.Id)
+            .Map(dest => dest.Name, src => src.Viewer.Name)
+            .Map(dest => dest.Avatar, src => src.Viewer.Avatar.Large)
+            .Map(dest => dest.UnreadNotificationCount, src => src.Viewer.UnreadNotificationCount);
+
     }
 }

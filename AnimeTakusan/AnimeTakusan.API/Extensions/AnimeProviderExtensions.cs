@@ -18,7 +18,7 @@ public static class AnimeProviderExtensions
         services.AddTransient<AniListAuthenticationHandler>();
         services.AddTransient<GraphQLLoggingHandler>();
 
-        services.AddAniListClient(ExecutionStrategy.CacheFirst)
+        services.AddAniListClient(ExecutionStrategy.NetworkOnly)
             .ConfigureHttpClient(
                 client =>
                 {

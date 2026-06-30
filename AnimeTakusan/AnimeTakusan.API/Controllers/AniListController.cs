@@ -1,5 +1,6 @@
 using AnimeTakusan.Application.DTOs.Authentication.Responses;
 using AnimeTakusan.Application.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AnimeTakusan.API.Controllers
@@ -54,6 +55,13 @@ namespace AnimeTakusan.API.Controllers
             var aniListTokenResponse = await response.Content.ReadFromJsonAsync<AniListTokenResponse>();
             await _aniListAuthService.LinkAniListAccountToUser(aniListTokenResponse);
             return Redirect(_configuration["Authentication:Logged:RedirectUri"]!);
+        }
+
+        [Authorize(Roles = "User")]
+        [HttpGet("viewer")]
+        public async Task<IActionResult> GetViewer()
+        {
+            return Ok(await _aniListAuthService.GetViewerInfo());
         }
 
         private bool AreAniListAuthSettingsValid()

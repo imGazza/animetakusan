@@ -5,6 +5,7 @@ namespace AnimeTakusan.Application.Interfaces;
 
 public interface IAnimeProvider
 {
+    Task<ViewerInfoResponse> GetViewerInfo();
     Task<AnimePageResponse> GetSeasonalAnime(AnimeSeasonalRequest animeSeasonalRequest);
     Task<AnimeDetailResponse> GetAnimeById(int id);
     Task<AnimeBrowseResponse> GetAnimeBrowseSection(AnimeBrowseSectionRequest animeBroseSectionRequest);

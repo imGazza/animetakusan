@@ -11,10 +11,11 @@ export const useUserQuery = () =>
     queryKey: ['user'],
     queryFn: authApis.userInfo,
     staleTime: Infinity,
-    retry: 2,
+    // An error on this query means that the user is not logged in,
+    // that's handled by ProtectedRoute that already redirects to the login page.
+    throwOnError: false,
+    meta: { silent: true },
     select: (data) => {
-      // Mock linked accounts for demonstration purposes
-      //data.linkedAccounts = ["MyAnimeList"];
       localStorage.setItem('isAuthenticated', JSON.stringify(!!data.id));
       data.userName && localStorage.setItem('user', data.userName);
       return data?.id ? data : null; },
@@ -23,6 +24,7 @@ export const useUserQuery = () =>
 export const useLoginMutation = (refetchUser: () => void, navigate: NavigateFunction) =>
   useMutation({
     mutationFn: authApis.login,
+    meta: { silent: true }, // custom toast below
     onSuccess: () => {
       refetchUser();
       TokenManager.clearToken();
@@ -36,6 +38,7 @@ export const useLoginMutation = (refetchUser: () => void, navigate: NavigateFunc
 export const useLogoutMutation = (refetchUser: () => void, navigate: NavigateFunction) =>
   useMutation({
     mutationFn: authApis.logout,
+    meta: { silent: true }, // custom toast below
     onSuccess: () => {
       TokenManager.clearToken();
       refetchUser();
@@ -59,6 +62,7 @@ export const useLoginProviderMutation = () =>
 export const useSignupMutation = () =>
   useMutation({
     mutationFn: authApis.signUp,
+    meta: { silent: true }, // custom toast below
     onSuccess: () => {
       TokenManager.clearToken();
       toast.success("Signup successful! You can now log in.");

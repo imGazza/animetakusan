@@ -17,6 +17,14 @@ public class AniListProvider : IAnimeProvider
     {
         _client = client;
     }
+
+    public async Task<ViewerInfoResponse> GetViewerInfo()
+    {
+        var response = await _client.GetViewer.ExecuteAsync();
+
+        EnsureNoErrors(response);
+        return response.Data.Adapt<ViewerInfoResponse>();
+    }
     
     public async Task<AnimeDetailResponse> GetAnimeById(int id)
     {
