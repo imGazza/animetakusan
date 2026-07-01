@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 using AnimeTakusan.MAL.Application.DTOs.Messages;
 using AnimeTakusan.MAL.Application.Interfaces;
 using AnimeTakusan.MAL.Domain;
+using AnimeTakusan.MAL.Domain.Exception.SyncActionExceptions;
 
 namespace AnimeTakusan.MAL.Application.Handlers;
 
@@ -65,11 +66,11 @@ public class MalSyncActionHandler : IMessageHandler
         var malSyncActionMessage = JsonSerializer.Deserialize<MalSyncActionMessage>(message, _jsonOptions);
 
         if (malSyncActionMessage == null)
-            throw new ArgumentException("Invalid message format", nameof(message));
+            throw new SyncActionException($"Invalid message format: {message}");
 
         var malUser = await _malUserRepository.GetByMalUserIdAsync(malSyncActionMessage.MalUserId);
         if (malUser == null)
-            throw new ArgumentException("MAL user not found", nameof(malSyncActionMessage.MalUserId));
+            throw new SyncActionException($"MAL user {malSyncActionMessage.MalUserId} not found");
 
         return (malSyncActionMessage, malUser);
     }
@@ -83,7 +84,7 @@ public class MalSyncActionHandler : IMessageHandler
             CreatedAt = DateTime.UtcNow
         });
 
-        var expiredMessage = new MalAuthEventMessage(malUser.UserId, malUser.MalUserId, malUser.RefreshTokenExpiresAt, Status.Expired);
+        var expiredMessage = new MalAuthEventMessage(malUser.UserId, malUser.MalUserId, malUser.AccessTokenExpiresAt, Status.Expired);
         await _messagePublisher.PublishAsync(expiredMessage);
     }
 

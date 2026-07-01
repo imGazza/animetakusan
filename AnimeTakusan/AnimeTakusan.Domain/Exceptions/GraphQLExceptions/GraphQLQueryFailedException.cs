@@ -1,14 +1,16 @@
+using System.Net;
+
 namespace AnimeTakusan.Domain.Exceptions.GraphQLExceptions;
 
 public class GraphQLQueryFailedException : Exception
 {
-    public GraphQLQueryFailedException(string providerName, List<string> errorMessages) : base($"{providerName} query failed: {string.Join(", ", errorMessages)}")
+    private readonly List<GraphQLQueryFailedError> _errors;
+    public List<GraphQLQueryFailedError> Errors => _errors;
+
+    public GraphQLQueryFailedException(string providerName, List<GraphQLQueryFailedError> errors) : base($"{providerName} query failed: {string.Join(", ", errors.Select(e => e.Message))}")
     {
-        
+        _errors = errors;
     }
 
-    public GraphQLQueryFailedException(string providerName, string errorMessage) : base($"{providerName} query failed: {errorMessage}")
-    {
-        
-    }
+    public record GraphQLQueryFailedError(string Message, HttpStatusCode Code);
 }

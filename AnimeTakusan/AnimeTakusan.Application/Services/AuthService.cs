@@ -22,6 +22,7 @@ public class AuthService : IAuthService, IInjectable
     private readonly IJwtHandler _jwtHandler;
     private readonly IValidator<LoginRequest> _loginRequestValidator;
     private readonly IValidator<RegisterRequest> _registerRequestValidator;
+    private readonly ITokenProtector _tokenProtector;
 
     public AuthService(
         IUserRepository userRepository,
@@ -30,7 +31,8 @@ public class AuthService : IAuthService, IInjectable
         UserManager<User> userManager,
         RoleManager<IdentityRole<Guid>> roleManager,
         IValidator<LoginRequest> loginRequestValidator,
-        IValidator<RegisterRequest> registerRequestValidator)
+        IValidator<RegisterRequest> registerRequestValidator,
+        ITokenProtector tokenProtector)
     {
         _logger = logger;
         _userRepository = userRepository;
@@ -39,6 +41,7 @@ public class AuthService : IAuthService, IInjectable
         _roleManager = roleManager;
         _loginRequestValidator = loginRequestValidator;
         _registerRequestValidator = registerRequestValidator;
+        _tokenProtector = tokenProtector;
     }
 
     /// <summary>
@@ -98,7 +101,7 @@ public class AuthService : IAuthService, IInjectable
     }
 
     private void ValidateAniListUser(User user, List<Claim> claims)
-    {
+    {        
         // Check AniList Account Sync
         if (IsValidAniListUser(user))
         {

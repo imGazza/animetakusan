@@ -2,6 +2,7 @@ using System.Text;
 using AnimeTakusan.MAL.Application.DTOs.Messages;
 using AnimeTakusan.MAL.Application.Interfaces;
 using AnimeTakusan.MAL.Domain;
+using AnimeTakusan.MAL.Domain.Exception.MalAuthExceptions;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.IdentityModel.JsonWebTokens;
 
@@ -13,17 +14,20 @@ public class MalAuthService : IMalAuthService
     private readonly IMalUserRepository _malUserRepository;
     private readonly IMessagePublisher _messagePublisher;
     private readonly IMalSyncService _malSyncService;
+    private readonly ITokenProtector _tokenProtector;
 
     public MalAuthService(
         IMalOAuthClient malOAuthClient,
         IMalUserRepository malUserRepository,
         IMessagePublisher messagePublisher,
-        IMalSyncService malSyncService)
+        IMalSyncService malSyncService,
+        ITokenProtector tokenProtector)
     {
         _malOAuthClient = malOAuthClient;
         _malUserRepository = malUserRepository;
         _messagePublisher = messagePublisher;
         _malSyncService = malSyncService;
+        _tokenProtector = tokenProtector;
     }
 
     public async Task AuthenticateMalUser(string code, string codeVerifier, string state)
@@ -37,8 +41,8 @@ public class MalAuthService : IMalAuthService
         {
             UserId = new Guid(userId),
             MalUserId = int.Parse(malUserId),
-            AccessToken = tokens.AccessToken,
-            RefreshToken = tokens.RefreshToken,
+            AccessToken = _tokenProtector.Protect(tokens.AccessToken),
+            RefreshToken = _tokenProtector.Protect(tokens.RefreshToken),
             AccessTokenExpiresAt = DateTime.UtcNow.AddDays(21), // 2 minutes less than the real expiration
             RefreshTokenExpiresAt = DateTime.UtcNow.AddDays(26) // 5 days less then the real expiration of 31 days
         };
@@ -59,10 +63,10 @@ public class MalAuthService : IMalAuthService
 
     public async Task<string> RefreshToken(MalUser malUser)
     {
-        var tokens = await _malOAuthClient.RefreshTokenAsync(malUser.RefreshToken);
+        var tokens = await _malOAuthClient.RefreshTokenAsync(_tokenProtector.Unprotect(malUser.RefreshToken));
 
-        malUser.AccessToken = tokens.AccessToken;
-        malUser.RefreshToken = tokens.RefreshToken;
+        malUser.AccessToken = _tokenProtector.Protect(tokens.AccessToken);
+        malUser.RefreshToken = _tokenProtector.Protect(tokens.RefreshToken);
         malUser.AccessTokenExpiresAt = DateTime.UtcNow.AddDays(21); // 2 minutes less than the real expiration
         malUser.RefreshTokenExpiresAt = DateTime.UtcNow.AddDays(26); // 5 days less then the real expiration of 31 days
 
@@ -92,14 +96,14 @@ public class MalAuthService : IMalAuthService
     {
         var tokenHandler = new JsonWebTokenHandler();
         if (!tokenHandler.CanReadToken(token))
-            throw new ArgumentException("MAL access token is not a valid JWT.");
+            throw new MalAuthException("MAL access token is not a valid JWT.");
 
         var jwt = tokenHandler.ReadJsonWebToken(token);
         var malUserId = jwt.Claims.FirstOrDefault(c => c.Type == "sub")?.Value;
 
         if (string.IsNullOrEmpty(malUserId))
         {
-            throw new ArgumentException("Failed to extract MAL user ID from access token.");
+            throw new MalAuthException("Failed to extract MAL user ID from access token.");
         }
 
         return malUserId;

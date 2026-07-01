@@ -1,4 +1,3 @@
-using System;
 using AnimeTakusan.API.Handlers;
 using AnimeTakusan.API.Handlers.Mappers;
 using AnimeTakusan.Application.Interfaces;
@@ -11,6 +10,7 @@ public static class ExceptionExtensions
     {
         // Register exception mappers
         services.AddSingleton<IExceptionMapper, AuthenticationExceptionMapper>();
+        services.AddSingleton<IExceptionMapper, AniListExceptionMapper>();
         
         // Register global exception handler
         services.AddExceptionHandler<GlobalExceptionHandler>();

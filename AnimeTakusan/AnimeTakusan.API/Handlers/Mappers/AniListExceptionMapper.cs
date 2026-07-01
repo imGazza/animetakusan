@@ -1,3 +1,4 @@
+using System.Net;
 using AnimeTakusan.Application.DTOs.Common.Responses;
 using AnimeTakusan.Application.Interfaces;
 using AnimeTakusan.Domain.Exceptions.GraphQLExceptions;
@@ -13,12 +14,16 @@ public class AniListExceptionMapper : IExceptionMapper
 
     public ExceptionDetails MapException(Exception exception)
     {
-
         return exception switch
         {
-            GraphQLQueryFailedException or GraphQLMissingRequestException => new ExceptionDetails
+            GraphQLQueryFailedException => new ExceptionDetails
             {
-                StatusCode = System.Net.HttpStatusCode.BadRequest,
+                StatusCode = ((GraphQLQueryFailedException)exception).Errors.FirstOrDefault()?.Code ?? HttpStatusCode.BadRequest,
+                Message = exception.Message
+            },
+            GraphQLMissingRequestException => new ExceptionDetails
+            {
+                StatusCode = HttpStatusCode.BadRequest,
                 Message = exception.Message
             },
             // Should never reach here due to CanHandle check.

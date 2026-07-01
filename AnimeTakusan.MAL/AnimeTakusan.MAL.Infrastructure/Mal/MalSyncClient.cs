@@ -4,6 +4,7 @@ using AnimeTakusan.MAL.Application.DTOs;
 using AnimeTakusan.MAL.Application.DTOs.Messages;
 using AnimeTakusan.MAL.Application.Interfaces;
 using AnimeTakusan.MAL.Application.Mapping;
+using AnimeTakusan.MAL.Domain.Exception.SyncActionExceptions;
 
 namespace AnimeTakusan.MAL.Infrastructure.Mal;
 
@@ -69,7 +70,7 @@ public class MalSyncClient : IMalSyncClient
         var syncResponse = await response.Content.ReadFromJsonAsync<MalSyncActionResponse>();
         if (syncResponse == null)
         {
-            throw new InvalidOperationException("MAL sync endpoint returned an empty response.");
+            throw new SyncActionException("MAL sync endpoint returned an empty response.");
         }
 
         return syncResponse;
@@ -89,7 +90,7 @@ public class MalSyncClient : IMalSyncClient
         var syncResponse = await response.Content.ReadFromJsonAsync<MalSyncActionResponse>();
         if (syncResponse == null)
         {
-            throw new InvalidOperationException("MAL sync endpoint returned an empty response.");
+            throw new SyncActionException("MAL sync endpoint returned an empty response.");
         }
 
         return syncResponse;

@@ -13,10 +13,10 @@ import AniListConnectCard from './AniListConnectCard';
 
 export function Library() {
 
-  const { data: library, isLoading } = useLibraryQuery();
+  const { linkedAccounts } = useLinkedAccounts();
+  const { data: library, isLoading } = useLibraryQuery(linkedAccounts.includes("AniList"));
   const { filter, sort, addFilter, setSort, removeFilter, resetAllFilters } = useLibraryFilter();
   const isReady = useDeferredRendering(library);
-  const { linkedAccounts } = useLinkedAccounts();
 
   const filteredLists = useFilteredLibrary(library ?? null, filter, sort)?.lists ?? library?.lists ?? [];
 

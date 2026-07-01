@@ -7,9 +7,11 @@ using AnimeTakusan.Application.RabbitMq;
 using AnimeTakusan.Application.Validators;
 using AnimeTakusan.Infrastructure.Authentication;
 using AnimeTakusan.Infrastructure.Contexts;
+using AnimeTakusan.Infrastructure.Protection;
 using AnimeTakusan.Infrastructure.RabbitMQ;
 using AnimeTakusan.Infrastructure.RabbitMQ.Options;
 using FluentValidation;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
@@ -41,6 +43,7 @@ builder.Services.AddMapster();
 // Services
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IJwtHandler, JwtHandler>();
+builder.Services.AddScoped<ITokenProtector, DataProtectionTokenProtector>();
 
 // RabbitMq
 builder.Services.AddSingleton<IRabbitMqConnectionManager, RabbitMqConnectionManager>();
@@ -66,6 +69,9 @@ builder
 
 // Exception Handling
 builder.Services.AddExceptionHandling();
+
+// Data protection
+builder.Services.AddDataProtection().PersistKeysToDbContext<BaseContext>();
 
 // CORS
 builder.AddCorsPolicies(builder.Configuration);

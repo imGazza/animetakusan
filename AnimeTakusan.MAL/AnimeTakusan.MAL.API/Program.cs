@@ -1,17 +1,28 @@
 using System.Text.Json.Serialization;
 using AnimeTakusan.MAL.API.Extensions;
+using AnimeTakusan.MAL.API.Handlers;
 using AnimeTakusan.MAL.Application.Handlers;
 using AnimeTakusan.MAL.Application.Interfaces;
 using AnimeTakusan.MAL.Application.Services;
 using AnimeTakusan.MAL.Infrastructure;
 using AnimeTakusan.MAL.Infrastructure.Mal;
+using AnimeTakusan.MAL.Infrastructure.Protection;
 using AnimeTakusan.MAL.Infrastructure.RabbitMQ;
 using AnimeTakusan.MAL.Infrastructure.RabbitMQ.Options;
 using AnimeTakusan.MAL.Infrastructure.Repositories;
 using AnimeTakusan.MAL.Worker;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .CreateLogger();
+
+Log.Information("Service starting up...");
+builder.Services.AddSerilog();
 
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
@@ -32,9 +43,18 @@ builder.Services.Configure<MalSyncActionOptions>(builder.Configuration.GetSectio
 // RabbitMq
 builder.Services.AddSingleton<IRabbitMqConnectionManager, RabbitMqConnectionManager>();
 builder.Services.AddSingleton<IMessagePublisher, RabbitMqPublisher>();
-builder.Services.AddScoped<IMessageHandler, MalSyncActionHandler>();
 builder.Services.AddSingleton<RabbitMqInitializer>();
 builder.Services.AddHostedService<RabbitMqConsumerService>();
+
+// Exception Handling
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddSingleton<IExceptionMapper, SyncActionExceptionMapper>();
+builder.Services.AddSingleton<IExceptionMapper, MalAuthExceptionMapper>();
+
+// Data Protection
+builder.Services.AddScoped<ITokenProtector, DataProtectionTokenProtector>();
+builder.Services.AddDataProtection().PersistKeysToDbContext<MalContext>();
+
 
 builder.Services.AddHttpClient<IMalOAuthClient, MalOAuthClient>(client =>
     {
@@ -65,6 +85,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.ApplyDatabaseMigrations();
+
+app.UseSerilogRequestLogging();
 app.UseHttpsRedirection();
 
 app.MapControllers();

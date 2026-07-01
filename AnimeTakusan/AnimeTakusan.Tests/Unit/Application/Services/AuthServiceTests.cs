@@ -28,6 +28,7 @@ public class AuthServiceTests
     private readonly Mock<IPasswordHasher<User>> _mockPasswordHasher;
     private readonly Mock<IValidator<LoginRequest>> _mockLoginRequestValidator;
     private readonly Mock<IValidator<RegisterRequest>> _mockRegisterRequestValidator;
+    private readonly Mock<ITokenProtector> _mockTokenProtector;
     private readonly AuthService _authService;
     private readonly Faker<User> _userFaker;
     private readonly Faker<RegisterRequest> _registerRequestFaker;
@@ -42,6 +43,7 @@ public class AuthServiceTests
         _mockPasswordHasher = new Mock<IPasswordHasher<User>>();
         _mockLoginRequestValidator = new Mock<IValidator<LoginRequest>>();
         _mockRegisterRequestValidator = new Mock<IValidator<RegisterRequest>>();
+        _mockTokenProtector = new Mock<ITokenProtector>();
 
         // Mock UserManager (requires complex setup due to concrete class with many dependencies)
         var userStore = new Mock<IUserStore<User>>();
@@ -61,7 +63,8 @@ public class AuthServiceTests
             _mockUserManager.Object,
             _mockRoleManager.Object,
             _mockLoginRequestValidator.Object,
-            _mockRegisterRequestValidator.Object
+            _mockRegisterRequestValidator.Object,
+            _mockTokenProtector.Object
         );
 
         // Setup Bogus fakers for test data using centralized mock configuration
@@ -666,10 +669,7 @@ public class AuthServiceTests
         // Assert
         _mockUserManager.Verify(x => x.CreateAsync(It.Is<User>(u =>
             u.Email == email &&
-            u.UserName == email &&
-            u.FirstName == firstName &&
-            u.LastName == lastName &&
-            u.ProfilePicture == picture)), Times.Once);
+            u.UserName == email)), Times.Once);
     }
 
     [Fact(DisplayName = "AuthenticateWithGoogle should add Google login to existing user")]

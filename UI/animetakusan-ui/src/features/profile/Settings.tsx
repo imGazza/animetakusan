@@ -9,12 +9,26 @@ import PlatformCard from "./PlatformCard";
 import { platforms } from "./platforms";
 import useLinkedAccounts from "@/hooks/useLinkedAccounts";
 import { useViewerInfoQuery } from "./queries";
+import { queryClient } from "@/lib/query-client";
+import type { User } from "@/models/auth/User";
+import { useEffect } from "react";
 
 const Settings = () => {
   const { isAuthenticated, user } = useAuth();
   const { linkedAccounts, connectedCount } = useLinkedAccounts();
   const navigate = useNavigate();
-  const { data: viewerInfo } = useViewerInfoQuery();
+  const { data: viewerInfo } = useViewerInfoQuery(linkedAccounts.includes("AniList"));
+
+  useEffect(() => {
+    if (viewerInfo) {
+      queryClient.setQueryData(['user'], (userInfoOld: User | undefined) => 
+        userInfoOld ? { 
+          ...userInfoOld, 
+          profilePicture: viewerInfo.avatar ?? userInfoOld.profilePicture,
+          userName: viewerInfo.username ?? userInfoOld.userName
+        } : userInfoOld);
+    }
+  }, [viewerInfo]);
 
   if (!isAuthenticated || !user) {
     return (

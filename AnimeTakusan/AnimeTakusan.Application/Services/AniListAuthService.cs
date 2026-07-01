@@ -13,14 +13,21 @@ public class AniListAuthService : IAniListAuthService, IInjectable
     private readonly IUserRepository _userRepository;
     private readonly ILogger<AniListAuthService> _logger;
     private readonly IAnimeProvider _aniListProvider;
+    private readonly ITokenProtector _tokenProtector;
 
 
-    public AniListAuthService(IJwtHandler jwtHandler, IUserRepository userRepository, ILogger<AniListAuthService> logger, IAnimeProvider aniListProvider)
+    public AniListAuthService(
+        IJwtHandler jwtHandler, 
+        IUserRepository userRepository, 
+        ILogger<AniListAuthService> logger, 
+        IAnimeProvider aniListProvider,
+        ITokenProtector tokenProtector)
     {
         _jwtHandler = jwtHandler;
         _userRepository = userRepository;
         _logger = logger;
         _aniListProvider = aniListProvider;
+        _tokenProtector = tokenProtector;
     }
 
     public void VerifyCallbackState(string code)
@@ -52,7 +59,7 @@ public class AniListAuthService : IAniListAuthService, IInjectable
         {
             AniListUserId = aniListUserId,
             UserId = user.Id,
-            AccessToken = aniListTokenData.AccessToken,
+            AccessToken = _tokenProtector.Protect(aniListTokenData.AccessToken),
             AccessTokenExpiry = DateTime.UtcNow.AddSeconds(aniListTokenData.ExpiresIn)
         };
 

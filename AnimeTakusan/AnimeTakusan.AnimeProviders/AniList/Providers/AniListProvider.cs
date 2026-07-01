@@ -1,3 +1,4 @@
+using System.Net;
 using AnimeTakusan.AnimeProviders.AniListSchema;
 using AnimeTakusan.Application.DTOs.AnimeProvider.Requests;
 using AnimeTakusan.Application.DTOs.AnimeProvider.Responses;
@@ -132,7 +133,9 @@ public class AniListProvider : IAnimeProvider
         }
         catch (GraphQLClientException)
         {
-            throw new GraphQLQueryFailedException(ProviderName, operationResult.Errors.Select(e => e.Message).ToList());
+            throw new GraphQLQueryFailedException(ProviderName, operationResult.Errors
+                .Select(e => new GraphQLQueryFailedException.GraphQLQueryFailedError(e.Message, (HttpStatusCode)Enum.Parse(typeof(HttpStatusCode), e.Code.ToString())))
+                .ToList());
         }
     }
 

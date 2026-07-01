@@ -1,6 +1,7 @@
 using System.Net.Http.Json;
 using AnimeTakusan.MAL.Application.DTOs;
 using AnimeTakusan.MAL.Application.Interfaces;
+using AnimeTakusan.MAL.Domain.Exception.MalAuthExceptions;
 using Microsoft.Extensions.Configuration;
 
 namespace AnimeTakusan.MAL.Infrastructure.Mal;
@@ -57,7 +58,7 @@ public class MalOAuthClient : IMalOAuthClient
         var tokens = await response.Content.ReadFromJsonAsync<MalTokensResponse>();
         if (tokens == null)
         {
-            throw new InvalidOperationException("MAL token endpoint returned an empty response.");
+            throw new MalAuthException("MAL token endpoint returned an empty response.");
         }
 
         return tokens;
@@ -70,7 +71,7 @@ public class MalOAuthClient : IMalOAuthClient
             string.IsNullOrEmpty(_configuration["Mal:RedirectUri"]) ||
             string.IsNullOrEmpty(_configuration["Mal:AuthUrl"]))
         {
-            throw new ArgumentException("MAL configuration is missing required values.");
+            throw new MalAuthException("MAL configuration is missing required values.");
         }
     }
 }
