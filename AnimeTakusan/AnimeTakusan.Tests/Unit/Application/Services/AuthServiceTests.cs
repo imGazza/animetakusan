@@ -28,7 +28,6 @@ public class AuthServiceTests
     private readonly Mock<IPasswordHasher<User>> _mockPasswordHasher;
     private readonly Mock<IValidator<LoginRequest>> _mockLoginRequestValidator;
     private readonly Mock<IValidator<RegisterRequest>> _mockRegisterRequestValidator;
-    private readonly Mock<ITokenProtector> _mockTokenProtector;
     private readonly AuthService _authService;
     private readonly Faker<User> _userFaker;
     private readonly Faker<RegisterRequest> _registerRequestFaker;
@@ -43,7 +42,6 @@ public class AuthServiceTests
         _mockPasswordHasher = new Mock<IPasswordHasher<User>>();
         _mockLoginRequestValidator = new Mock<IValidator<LoginRequest>>();
         _mockRegisterRequestValidator = new Mock<IValidator<RegisterRequest>>();
-        _mockTokenProtector = new Mock<ITokenProtector>();
 
         // Mock UserManager (requires complex setup due to concrete class with many dependencies)
         var userStore = new Mock<IUserStore<User>>();
@@ -63,8 +61,7 @@ public class AuthServiceTests
             _mockUserManager.Object,
             _mockRoleManager.Object,
             _mockLoginRequestValidator.Object,
-            _mockRegisterRequestValidator.Object,
-            _mockTokenProtector.Object
+            _mockRegisterRequestValidator.Object
         );
 
         // Setup Bogus fakers for test data using centralized mock configuration
@@ -153,16 +150,12 @@ public class AuthServiceTests
         user.RefreshToken = validRefreshToken;
         user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7); // Valid
         var roles = new List<string> { "User" };
-        var claims = new List<Claim>
-        {
-            new Claim(ClaimTypes.Role, "User")
-        };
 
         _mockJwtHandler.Setup(x => x.GetRefreshToken()).Returns(validRefreshToken);
         _mockUserRepository.Setup(x => x.GetUserByRefreshToken(validRefreshToken))
             .ReturnsAsync(user);
         _mockJwtHandler.Setup(x => x.GenerateRefreshToken()).Returns(newRefreshToken);
-        _mockJwtHandler.Setup(x => x.GenerateUserAccessToken(user, claims))
+        _mockJwtHandler.Setup(x => x.GenerateUserAccessToken(user, It.IsAny<List<Claim>>()))
             .Returns((accessToken, expiresAt));
         _mockUserManager.Setup(x => x.GetRolesAsync(user)).ReturnsAsync(roles);
         _mockUserManager.Setup(x => x.UpdateAsync(user)).ReturnsAsync(IdentityResult.Success);

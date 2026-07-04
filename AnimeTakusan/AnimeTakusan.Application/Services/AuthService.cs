@@ -22,7 +22,6 @@ public class AuthService : IAuthService, IInjectable
     private readonly IJwtHandler _jwtHandler;
     private readonly IValidator<LoginRequest> _loginRequestValidator;
     private readonly IValidator<RegisterRequest> _registerRequestValidator;
-    private readonly ITokenProtector _tokenProtector;
 
     public AuthService(
         IUserRepository userRepository,
@@ -31,8 +30,7 @@ public class AuthService : IAuthService, IInjectable
         UserManager<User> userManager,
         RoleManager<IdentityRole<Guid>> roleManager,
         IValidator<LoginRequest> loginRequestValidator,
-        IValidator<RegisterRequest> registerRequestValidator,
-        ITokenProtector tokenProtector)
+        IValidator<RegisterRequest> registerRequestValidator)
     {
         _logger = logger;
         _userRepository = userRepository;
@@ -41,7 +39,6 @@ public class AuthService : IAuthService, IInjectable
         _roleManager = roleManager;
         _loginRequestValidator = loginRequestValidator;
         _registerRequestValidator = registerRequestValidator;
-        _tokenProtector = tokenProtector;
     }
 
     /// <summary>
@@ -81,7 +78,7 @@ public class AuthService : IAuthService, IInjectable
             AccessToken = accessToken,
             ExpiresAt = expiresAt
         };
-        _logger.LogInformation($"Generated access token for user {user.Email}.");
+        _logger.LogDebug("Generated user access token for user {UserEmail}.", user.Email);
         return response;
     }
 
@@ -105,7 +102,6 @@ public class AuthService : IAuthService, IInjectable
         // Check AniList Account Sync
         if (IsValidAniListUser(user))
         {
-            claims.Add(new Claim(AniListClaimTypes.AccessToken, user.AniListUser.AccessToken));
             claims.Add(new Claim(AniListClaimTypes.AniListUserId, user.AniListUser.AniListUserId.ToString()));
         }
     }
@@ -149,8 +145,10 @@ public class AuthService : IAuthService, IInjectable
         }
 
         var user = await _userRepository.GetUserByRefreshToken(refreshToken);
-    
-        return user?.Adapt<UserInfo>() with { UserName = user.AniListUser?.AniListUsername ?? user.UserName, ProfilePicture = user.AniListUser?.AniListAvatar, LinkedAccounts = GetSyncedAccounts(user) };
+        if (user is null)
+            return null;
+
+        return user.Adapt<UserInfo>() with { UserName = user.AniListUser?.AniListUsername ?? user.UserName, ProfilePicture = user.AniListUser?.AniListAvatar, LinkedAccounts = GetSyncedAccounts(user) };
     }
 
     private List<SyncedAccounts> GetSyncedAccounts(User user)
@@ -191,14 +189,14 @@ public class AuthService : IAuthService, IInjectable
         await _userManager.UpdateAsync(user);
         _jwtHandler.WriteRefreshTokenCookie(user.RefreshToken);
 
-        _logger.LogInformation($"User {user.Email} logged in.");
+        _logger.LogInformation("User {UserEmail} logged in.", user.Email);
     }
 
     private bool HasValidRefreshToken(User user)
     {
         if (user.RefreshTokenExpiryTime <= DateTime.UtcNow)
         {
-            _logger.LogWarning($"Refresh token has expired for user {user.Email}.");
+            _logger.LogWarning("Refresh token has expired for user {UserEmail}.", user.Email);
             return false;
         }
         return true;
@@ -225,7 +223,7 @@ public class AuthService : IAuthService, IInjectable
         user.RefreshTokenExpiryTime = null;
         await _userManager.UpdateAsync(user);
         _jwtHandler.DeleteRefreshTokenCookie();
-        _logger.LogInformation($"User {user.Email} logged out.");
+        _logger.LogInformation("User {UserEmail} logged out.", user.Email);
     }
 
     /// <summary>
@@ -261,6 +259,8 @@ public class AuthService : IAuthService, IInjectable
 
         await AddRoleToUser("Guest", user);
         await AddRoleToUser("User", user);
+
+        _logger.LogInformation("User {UserEmail} signed up.", user.Email);
     }
 
     /// <summary>
@@ -292,7 +292,7 @@ public class AuthService : IAuthService, IInjectable
         user.RefreshToken = refreshToken;
         user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
         await _userManager.UpdateAsync(user);
-        _logger.LogInformation($"User {user.Email} logged in with Google.");
+        _logger.LogInformation("User {UserEmail} logged in with Google.", user.Email);
     }
 
     private void ValidateGoogleUserData(ClaimsPrincipal claimsPrincipal, out string email)
@@ -329,7 +329,7 @@ public class AuthService : IAuthService, IInjectable
         if (!loginResult.Succeeded)
         {
             throw new ExternalLoginException("Google", $"Failed to add Google login for user {user.Email}. {string.Join(", ",
-                    loginResult.Errors.Select(x => x.Description))}");
+                loginResult.Errors.Select(x => x.Description))}");
         }
     }
 

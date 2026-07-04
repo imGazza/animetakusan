@@ -21,11 +21,6 @@ jobs:
         with:
           dotnet-version: '10.0'
 
-      # Restore dependencies
-      - name: Restore dependencies
-        working-directory: ./AnimeTakusan
-        run: dotnet restore AnimeTakusan.slnx
-
       # Restore tools
       - name: Restore tools
         working-directory: ./AnimeTakusan

@@ -13,12 +13,14 @@ public class RabbitMqConsumerService : BackgroundService
     private readonly IRabbitMqConnectionManager _connectionManager;
     private readonly IServiceScopeFactory _serviceScopeFactory;
     private IChannel? _channel;
+    private readonly ILogger<RabbitMqConsumerService> _logger;
 
-    public RabbitMqConsumerService(IOptions<MalAuthEventOptions> options, IRabbitMqConnectionManager connectionManager, IServiceScopeFactory serviceScopeFactory)
+    public RabbitMqConsumerService(IOptions<MalAuthEventOptions> options, IRabbitMqConnectionManager connectionManager, IServiceScopeFactory serviceScopeFactory, ILogger<RabbitMqConsumerService> logger)
     {
         _options = options.Value;
         _connectionManager = connectionManager;
         _serviceScopeFactory = serviceScopeFactory;
+        _logger = logger;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -50,19 +52,24 @@ public class RabbitMqConsumerService : BackgroundService
 
     private async Task HandleMessageAsync(object sender, BasicDeliverEventArgs eventArgs)
     {
-        using var scope = _serviceScopeFactory.CreateScope();
-        var messageHandler = scope.ServiceProvider.GetRequiredService<IMessageHandler>();
-
-        var jsonMessage = Encoding.UTF8.GetString(eventArgs.Body.ToArray());
+        var messageId = eventArgs.BasicProperties.MessageId;
 
         try
         {
-            await messageHandler.HandleMessageAsync(jsonMessage);
-            
+            var jsonMessage = Encoding.UTF8.GetString(eventArgs.Body.ToArray());
+            _logger.LogInformation("Received message {MessageId} on queue {QueueName}.", messageId, _options.QueueName);
+
+            using var scope = _serviceScopeFactory.CreateScope();
+            var messageHandler = scope.ServiceProvider.GetRequiredService<IMessageHandler>();
+
+            await messageHandler.HandleMessageAsync(jsonMessage, messageId);
+
             await _channel!.BasicAckAsync(eventArgs.DeliveryTag, multiple: false);
+            _logger.LogInformation("Message {MessageId} acknowledged.", messageId);
         }
-        catch (Exception)
-        {            
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error while handling message {MessageId}; dead-lettering.", messageId);
             await _channel!.BasicNackAsync(eventArgs.DeliveryTag, multiple: false, requeue: false);
         }
     }

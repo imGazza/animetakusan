@@ -31,12 +31,6 @@ namespace AnimeTakusan.API.Controllers
             return Ok(await _animeService.GetAnimeById(id));
         }
 
-        [HttpGet("seasonal")]
-        public async Task<IActionResult> GetSeasonalAnime()
-        {
-            return Ok(await _animeService.GetSeasonalAnime());
-        }
-
         [HttpGet("browse")]
         public async Task<IActionResult> GetAnimeBrowseSection()
         {

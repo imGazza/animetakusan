@@ -1,6 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using AnimeTakusan.Application.Interfaces;
+using AnimeTakusan.Application.Utility;
 using AnimeTakusan.Infrastructure.RabbitMQ.Options;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -23,10 +24,15 @@ public class RabbitMqPublisher : IMessagePublisher
 
     public async Task PublishAsync<T>(T message, CancellationToken cancellationToken = default)
     {
+        var messageId = Guid.NewGuid().ToString();
+        using var loggerScope = _logger.PublisherLoggerScope(_options.ExchangeName, messageId, JsonSerializer.Serialize(message, new JsonSerializerOptions { Converters = { new JsonStringEnumConverter() } }));
+
         var connection = await _connectionManager.GetConnectionAsync(cancellationToken);
         using var channel = await connection.CreateChannelAsync(
             new CreateChannelOptions(publisherConfirmationsEnabled: true, publisherConfirmationTrackingEnabled: true), 
             cancellationToken: cancellationToken);
+            
+        _logger.LogDebug("Publishing message of type {MessageType} with ID {MessageId} to exchange {ExchangeName}.", typeof(T).Name, messageId, _options.ExchangeName);
 
         var body = JsonSerializer.SerializeToUtf8Bytes(message, new JsonSerializerOptions { Converters = { new JsonStringEnumConverter() } });
 
@@ -34,13 +40,13 @@ public class RabbitMqPublisher : IMessagePublisher
         {
             Persistent = true,
             ContentType = "application/json",
-            MessageId = Guid.NewGuid().ToString(),
+            MessageId = messageId,
             Timestamp = new AmqpTimestamp(DateTimeOffset.UtcNow.ToUnixTimeSeconds())
         };
 
         channel.BasicReturnAsync += (sender, args) =>
         {
-            _logger.LogError("Messaggio non instradabile: {Reason}", args.ReplyText);
+            _logger.LogError("Error while publishing message: {Reason}", args.ReplyText);
             return Task.CompletedTask;
         };
 
@@ -51,5 +57,7 @@ public class RabbitMqPublisher : IMessagePublisher
             basicProperties: properties,
             body: body,
             cancellationToken: cancellationToken);
+        
+        _logger.LogInformation("Message ID {MessageId} published successfully to exchange {ExchangeName}.", messageId, _options.ExchangeName);
     }
 }

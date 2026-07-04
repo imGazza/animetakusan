@@ -4,6 +4,7 @@ using AnimeTakusan.Application.DTOs.AnimeProvider.Requests;
 using AnimeTakusan.Application.DTOs.AnimeProvider.Responses;
 using AnimeTakusan.Application.Interfaces;
 using AnimeTakusan.Domain.Exceptions.GraphQLExceptions;
+using AnimeTakusan.Infrastructure.Authentication;
 using Mapster;
 using StrawberryShake;
 
@@ -12,15 +13,18 @@ namespace AnimeTakusan.AnimeProviders.AniList.Providers;
 public class AniListProvider : IAnimeProvider
 {
     private readonly IAniListClient _client;
+    private readonly AniListAuthScope _aniListAuthScope;
     private const string ProviderName = "AniList";
 
-    public AniListProvider(IAniListClient client)
+    public AniListProvider(IAniListClient client, AniListAuthScope aniListAuthScope)
     {
         _client = client;
+        _aniListAuthScope = aniListAuthScope;
     }
 
     public async Task<ViewerInfoResponse> GetViewerInfo()
     {
+        _aniListAuthScope.AttachToken = true;
         var response = await _client.GetViewer.ExecuteAsync();
 
         EnsureNoErrors(response);
@@ -33,21 +37,6 @@ public class AniListProvider : IAnimeProvider
 
         EnsureNoErrors(response);
         return response.Data.Adapt<AnimeDetailResponse>();
-    }
-
-    // Kept for now, maybe to remove in the future if not needed.
-    public async Task<AnimePageResponse> GetSeasonalAnime(AnimeSeasonalRequest animeSeasonalRequest)
-    {
-        var response = await _client.GetSeasonalAnime.ExecuteAsync(
-            ParseEnumOrDefault(animeSeasonalRequest.Season.ToString(), MediaSeason.Winter),
-            animeSeasonalRequest.SeasonYear,
-            new List<MediaSort?> { ParseEnumOrDefault(animeSeasonalRequest.Sort, MediaSort.PopularityDesc) },
-            animeSeasonalRequest.Page,
-            animeSeasonalRequest.PerPage
-        );
-
-        EnsureNoErrors(response);
-        return response.Data.Adapt<AnimePageResponse>();
     }
 
     public async Task<AnimeBrowseResponse> GetAnimeBrowseSection(AnimeBrowseSectionRequest animeBrowseSectionRequest)
@@ -86,6 +75,8 @@ public class AniListProvider : IAnimeProvider
 
     public async Task<AnimeUserLibraryResponse> GetUserAnimeLibrary(int aniListUserId)
     {
+        _aniListAuthScope.AttachToken = true;
+
         var response = await _client.GetUserAnimeList.ExecuteAsync(
             aniListUserId
         );
@@ -96,6 +87,8 @@ public class AniListProvider : IAnimeProvider
 
     public async Task<AnimeEntryUpsertResponse> UpsertAnimeEntry(AnimeEntryUpsertRequest upsertRequest)
     {
+        _aniListAuthScope.AttachToken = true;
+
         var response = await _client.UpsertAnimeEntry.ExecuteAsync(
             upsertRequest.StartedAt.Adapt<FuzzyDateInput>(),
             upsertRequest.CompletedAt.Adapt<FuzzyDateInput>(),
@@ -111,6 +104,8 @@ public class AniListProvider : IAnimeProvider
 
     public async Task<ToggleFavouriteResponse> ToggleFavourite(int animeId)
     {
+        _aniListAuthScope.AttachToken = true;
+
         var response = await _client.ToggleFavourite.ExecuteAsync(animeId);
         
         EnsureNoErrors(response);
@@ -119,6 +114,8 @@ public class AniListProvider : IAnimeProvider
 
     public async Task<DeleteAnimeEntryResponse> DeleteAnimeEntry(int animeEntryId)
     {
+        _aniListAuthScope.AttachToken = true;
+
         var response = await _client.DeleteAnimeEntry.ExecuteAsync(animeEntryId);
         
         EnsureNoErrors(response);
@@ -134,9 +131,18 @@ public class AniListProvider : IAnimeProvider
         catch (GraphQLClientException)
         {
             throw new GraphQLQueryFailedException(ProviderName, operationResult.Errors
-                .Select(e => new GraphQLQueryFailedException.GraphQLQueryFailedError(e.Message, (HttpStatusCode)Enum.Parse(typeof(HttpStatusCode), e.Code.ToString())))
+                .Select(e => new GraphQLQueryFailedException.GraphQLQueryFailedError(e.Message, ParseStatusCode(e.Code)))
                 .ToList());
         }
+    }
+
+    // GraphQL error codes are arbitrary strings (e.g. "NOT_FOUND") and may be null,
+    // so fall back to 500 when the code is missing or not a known HttpStatusCode.
+    private static HttpStatusCode ParseStatusCode(string code)
+    {
+        return Enum.TryParse<HttpStatusCode>(code, ignoreCase: true, out var status) && Enum.IsDefined(status)
+            ? status
+            : HttpStatusCode.InternalServerError;
     }
 
     private static TEnum ParseEnumOrDefault<TEnum>(string value, TEnum defaultValue) where TEnum : struct, Enum

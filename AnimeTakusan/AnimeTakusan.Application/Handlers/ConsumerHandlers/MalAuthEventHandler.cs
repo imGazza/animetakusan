@@ -2,8 +2,10 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using AnimeTakusan.Application.DTOs.Messages;
 using AnimeTakusan.Application.Interfaces;
+using AnimeTakusan.Application.Utility;
 using AnimeTakusan.Domain.Common;
 using AnimeTakusan.Domain.Entities;
+using Microsoft.Extensions.Logging;
 
 namespace AnimeTakusan.Application.Handlers.ConsumerHandlers;
 
@@ -15,14 +17,19 @@ public class MalAuthEventHandler : IMessageHandler
     };
 
     private readonly IUserRepository _userRepository;
+    private readonly ILogger<MalAuthEventHandler> _logger;
 
-    public MalAuthEventHandler(IUserRepository userRepository)
+    public MalAuthEventHandler(IUserRepository userRepository, ILogger<MalAuthEventHandler> logger)
     {
         _userRepository = userRepository;
+        _logger = logger;
     }
 
-    public async Task HandleMessageAsync(string message)
+    public async Task HandleMessageAsync(string message, string messageId)
     {
+        using var scope = _logger.ConsumerLoggerScope(messageId, message);
+
+        _logger.LogDebug("Processing message {MessageId}: {Message}", messageId, message);
         var malAuthEvent = JsonSerializer.Deserialize<MalAuthEventMessage>(message, _jsonOptions);
         if (malAuthEvent == null)
         {
@@ -35,16 +42,21 @@ public class MalAuthEventHandler : IMessageHandler
         {
             case Status.Linked:
                 await LinkMalAccount(malAuthEvent, malUser);
+                _logger.LogInformation("Linked MyAnimeList account for user ID: {UserId}", malAuthEvent.UserId);
                 break;
             case Status.Refreshed:
                 await RefreshMalAccount(malAuthEvent, malUser);
+                _logger.LogInformation("Refreshed MyAnimeList account for user ID: {UserId}", malAuthEvent.UserId);
                 break;
             case Status.Expired:
                 await UnlinkMalAccount(malAuthEvent, malUser);
+                _logger.LogInformation("Expired MyAnimeList account for user ID: {UserId}", malAuthEvent.UserId);
                 break;
             default:
                 throw new NotImplementedException("There is no behaviour for this status.");
         }
+
+        _logger.LogDebug("Successfully processed message {MessageId}", messageId);
     }
 
     private async Task LinkMalAccount(MalAuthEventMessage malAuthEvent, MyAnimeListUser malUser)

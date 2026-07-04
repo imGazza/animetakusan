@@ -10,6 +10,13 @@ namespace AnimeTakusan.AnimeProviders.AniList.Helpers.HttpHandlers;
 /// </summary>
 public class NullGraphQLVariablesHandler : DelegatingHandler
 {
+    private readonly ILogger<NullGraphQLVariablesHandler> _logger;
+
+    public NullGraphQLVariablesHandler(ILogger<NullGraphQLVariablesHandler> logger)
+    {
+        _logger = logger;
+    }
+    
     protected override async Task<HttpResponseMessage> SendAsync(
         HttpRequestMessage request,
         CancellationToken cancellationToken)
@@ -22,12 +29,6 @@ public class NullGraphQLVariablesHandler : DelegatingHandler
             if (json is JsonObject jsonObject &&
                 jsonObject["variables"] is JsonObject variables)
             {
-                // var queryText = jsonObject["query"]?.GetValue<string>() ?? string.Empty;
-                // if (queryText.TrimStart().StartsWith("mutation", StringComparison.OrdinalIgnoreCase))
-                // {
-                //     return await base.SendAsync(request, cancellationToken);
-                // }
-
                 var nullKeys = variables
                     .Where(kv => kv.Value is null)
                     .Select(kv => kv.Key)
@@ -35,6 +36,9 @@ public class NullGraphQLVariablesHandler : DelegatingHandler
 
                 foreach (var key in nullKeys)
                     variables.Remove(key);
+
+                if(nullKeys.Any())
+                    _logger.LogDebug("Removed null-valued variables from the GraphQL request: {NullKeys}", string.Join(", ", nullKeys));
 
                 var sanitized = json.ToJsonString();
 

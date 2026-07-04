@@ -1,5 +1,3 @@
-using System;
-
 namespace AnimeTakusan.MAL.Application.Interfaces;
 
 public interface IMessagePublisher

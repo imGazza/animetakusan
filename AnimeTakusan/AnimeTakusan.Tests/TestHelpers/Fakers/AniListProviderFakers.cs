@@ -36,7 +36,7 @@ public static class AniListProviderFakers
             favourites: f.Random.Number(0, 10000),
             relations: AniListRelationsFaker.Generate(),
             recommendations: AniListRecommendationsFaker.Generate(),
-            reviews: null,
+            reviews: new GetAnimeById_Media_Reviews_ReviewConnection(new List<IGetAnimeById_Media_Reviews_Nodes?>()),
             rankings: null
         ));
 

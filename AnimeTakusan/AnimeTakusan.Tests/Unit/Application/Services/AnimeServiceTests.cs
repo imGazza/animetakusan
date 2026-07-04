@@ -39,34 +39,6 @@ public class AnimeServiceTests
 
     #endregion
 
-    #region GetSeasonalAnime Tests
-
-    [Fact(DisplayName = "GetSeasonalAnime should call provider with current season and year")]
-    public async Task GetSeasonalAnime_CallsProviderWithCurrentSeasonRequest()
-    {
-        // Arrange
-        var expected = new AnimePageResponse();
-        var expectedSeason = SeasonUtility.GetCurrentSeason(DateTime.Now);
-        var expectedYear = SeasonUtility.GetCurrentSeasonYear(DateTime.Now);
-
-        _mockAnimeProvider
-            .Setup(x => x.GetSeasonalAnime(It.Is<AnimeSeasonalRequest>(r =>
-                r.Season == expectedSeason &&
-                r.SeasonYear == expectedYear)))
-            .ReturnsAsync(expected);
-
-        // Act
-        var result = await _animeService.GetSeasonalAnime();
-
-        // Assert
-        _mockAnimeProvider.Verify(x => x.GetSeasonalAnime(It.Is<AnimeSeasonalRequest>(r =>
-            r.Season == expectedSeason &&
-            r.SeasonYear == expectedYear)), Times.Once);
-        result.Should().Be(expected);
-    }
-
-    #endregion
-
     #region GetAnimeBrowseSection Tests
 
     [Fact(DisplayName = "GetAnimeBrowseSection should call provider with correct season fields")]

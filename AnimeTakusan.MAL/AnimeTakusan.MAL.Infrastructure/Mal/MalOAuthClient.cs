@@ -3,6 +3,7 @@ using AnimeTakusan.MAL.Application.DTOs;
 using AnimeTakusan.MAL.Application.Interfaces;
 using AnimeTakusan.MAL.Domain.Exception.MalAuthExceptions;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace AnimeTakusan.MAL.Infrastructure.Mal;
 
@@ -51,7 +52,6 @@ public class MalOAuthClient : IMalOAuthClient
 
     private async Task<MalTokensResponse> PostTokenRequestAsync(Dictionary<string, string> requestData)
     {
-        Console.WriteLine($"Requesting tokens from MAL with data: {string.Join(", ", requestData.Select(kv => $"{kv.Key}={kv.Value}"))}");
         var response = await _httpClient.PostAsync(string.Empty, new FormUrlEncodedContent(requestData));
         response.EnsureSuccessStatusCode();
 
@@ -60,7 +60,7 @@ public class MalOAuthClient : IMalOAuthClient
         {
             throw new MalAuthException("MAL token endpoint returned an empty response.");
         }
-
+        
         return tokens;
     }
 

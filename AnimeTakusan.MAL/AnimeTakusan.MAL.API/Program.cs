@@ -18,7 +18,7 @@ using Serilog;
 var builder = WebApplication.CreateBuilder(args);
 
 Log.Logger = new LoggerConfiguration()
-    .WriteTo.Console()
+    .ReadFrom.Configuration(builder.Configuration)
     .CreateLogger();
 
 Log.Information("Service starting up...");
@@ -28,8 +28,6 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
-
-builder.Services.AddOpenApi();
 
 builder.Services.AddDbContext<MalContext>(opt =>
     opt.UseNpgsql(builder.Configuration.GetConnectionString("PostgresSQL"), npgsql =>
@@ -47,9 +45,11 @@ builder.Services.AddSingleton<RabbitMqInitializer>();
 builder.Services.AddHostedService<RabbitMqConsumerService>();
 
 // Exception Handling
-builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddSingleton<IExceptionMapper, SyncActionExceptionMapper>();
 builder.Services.AddSingleton<IExceptionMapper, MalAuthExceptionMapper>();
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
+
 
 // Data Protection
 builder.Services.AddScoped<ITokenProtector, DataProtectionTokenProtector>();
@@ -70,6 +70,7 @@ builder.Services.AddScoped<IMalAuthService, MalAuthService>();
 builder.Services.AddScoped<IMalSyncService, MalSyncService>();
 builder.Services.AddScoped<IMalUserRepository, MalUserRepository>();
 builder.Services.AddScoped<IMalReplayMessageRepository, MalReplayMessageRepository>();
+builder.Services.AddScoped<IMessageHandler, MalSyncActionHandler>();
 
 var app = builder.Build();
 
@@ -78,19 +79,12 @@ using var scope = app.Services.CreateScope();
 var initializer = scope.ServiceProvider.GetRequiredService<RabbitMqInitializer>();
 await initializer.InitializeAsync();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
-
 app.ApplyDatabaseMigrations();
 
+app.UseExceptionHandler();
 app.UseSerilogRequestLogging();
 app.UseHttpsRedirection();
 
 app.MapControllers();
-
-
 
 app.Run();

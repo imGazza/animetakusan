@@ -429,3 +429,5 @@ CLAUDE.md
 CLAUDE.local.md
 .rtk/
 **/.rtk/
+.vscode/
+**/.vscode

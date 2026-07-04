@@ -24,6 +24,15 @@ public class UserRepository : IUserRepository
         return user;
     }
 
+    public async Task<AniListUser?> GetAniListUserByIdAsync(Guid userId)
+    {
+        var user = await _context.Users
+            .Include(u => u.AniListUser)
+            .Include(u => u.MyAnimeListUser)
+            .FirstOrDefaultAsync(u => u.Id == userId && u.AniListUser != null);
+        return user?.AniListUser;
+    }
+
     public async Task UpsertAniListUserAsync(AniListUser aniListUser)
     {
         var existingAniListUser = await _context.Set<AniListUser>().FirstOrDefaultAsync(a => a.UserId == aniListUser.UserId);

@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Caching\" />
     <Folder Include="DTOs\Messages\" />
     <Folder Include="Handlers\ConsumerHandlers\" />
     <Folder Include="Utility\" />

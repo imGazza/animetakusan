@@ -7,9 +7,6 @@ import type { UserLibrary } from "@/models/library/UserLibrary";
 import { useMemo } from "react";
 
 export const useFilteredLibrary = (library: UserLibrary | null, filter: LibraryFilter | null, sort: string) => {
-
-
-
   return useMemo(() => {
     if (!library) return null;
 

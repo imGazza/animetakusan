@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 using AnimeTakusan.MAL.Application.DTOs.Messages;
 using AnimeTakusan.MAL.Application.Interfaces;
 using AnimeTakusan.MAL.Domain;
+using Microsoft.Extensions.Logging;
 
 namespace AnimeTakusan.MAL.Application.Services;
 
@@ -15,11 +16,13 @@ public class MalSyncService : IMalSyncService
 
     private readonly IMalSyncClient _malSyncClient;
     private readonly IMalReplayMessageRepository _malReplayMessageRepository;
+    private readonly ILogger<MalSyncService> _logger;
 
-    public MalSyncService(IMalSyncClient malSyncClient, IMalReplayMessageRepository malReplayMessageRepository)
+    public MalSyncService(IMalSyncClient malSyncClient, IMalReplayMessageRepository malReplayMessageRepository, ILogger<MalSyncService> logger)
     {
         _malSyncClient = malSyncClient;
         _malReplayMessageRepository = malReplayMessageRepository;
+        _logger = logger;
     }
 
     public Task SyncAsync(MalSyncActionMessage message, string accessToken)
@@ -40,9 +43,11 @@ public class MalSyncService : IMalSyncService
             }
             catch
             {
-                // Log Warning for failed replay, but don't throw to avoid blocking other replays
+                _logger.LogWarning("Failed to replay message {MessageId} for MAL user {MalUserId}. Skipped.", entry.Id, malUser.MalUserId);
                 continue;
             }
         }
+
+        _logger.LogDebug("Replayed {Count} messages for MAL user {MalUserId}.", pending.Count, malUser.MalUserId);
     }
 }

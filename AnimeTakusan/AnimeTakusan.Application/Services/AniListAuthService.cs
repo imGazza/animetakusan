@@ -1,3 +1,4 @@
+using AnimeTakusan.Application.Caching;
 using AnimeTakusan.Application.DTOs.AnimeProvider.Responses;
 using AnimeTakusan.Application.DTOs.Authentication.Responses;
 using AnimeTakusan.Application.Interfaces;
@@ -14,6 +15,7 @@ public class AniListAuthService : IAniListAuthService, IInjectable
     private readonly ILogger<AniListAuthService> _logger;
     private readonly IAnimeProvider _aniListProvider;
     private readonly ITokenProtector _tokenProtector;
+    private readonly ICacheService _cache;
 
 
     public AniListAuthService(
@@ -21,12 +23,14 @@ public class AniListAuthService : IAniListAuthService, IInjectable
         IUserRepository userRepository, 
         ILogger<AniListAuthService> logger, 
         IAnimeProvider aniListProvider,
-        ITokenProtector tokenProtector)
+        ITokenProtector tokenProtector,
+        ICacheService cache)
     {
         _jwtHandler = jwtHandler;
         _userRepository = userRepository;
         _logger = logger;
         _aniListProvider = aniListProvider;
+        _cache = cache;
         _tokenProtector = tokenProtector;
     }
 
@@ -66,13 +70,15 @@ public class AniListAuthService : IAniListAuthService, IInjectable
         try
         {
             await _userRepository.UpsertAniListUserAsync(aniListUser);
+            await _cache.RemoveAsync(CacheKeys.AniListUserInfo(aniListUserId));
+            await _cache.RemoveAsync(CacheKeys.AniListToken(user.Id));
         }
         catch (Exception ex)
         {
             throw new AniListAuthenticationException("Failed to link AniList account to user.", ex);
         }
 
-        _logger.LogInformation($"Successfully linked AniList account (ID: {aniListUserId}) to user (ID: {user.Id}).");
+        _logger.LogInformation("Successfully linked AniList account (ID: {AniListUserId}) to user (ID: {UserId}). Removed user cache entries.", aniListUserId, user.Id);
     }
 
     public async Task<ViewerInfoResponse> GetViewerInfo()
@@ -84,7 +90,6 @@ public class AniListAuthService : IAniListAuthService, IInjectable
             await _userRepository.UpdateAniListUserInfoAsync(viewerInfo.Id, viewerInfo.Name, viewerInfo.Avatar);
 
             return viewerInfo;
-
         }
         catch (Exception ex)
         {

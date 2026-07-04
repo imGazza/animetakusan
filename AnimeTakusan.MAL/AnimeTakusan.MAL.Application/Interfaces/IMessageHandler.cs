@@ -4,5 +4,5 @@ namespace AnimeTakusan.MAL.Application.Interfaces;
 
 public interface IMessageHandler
 {
-    Task HandleMessageAsync(string message);
+    Task HandleMessageAsync(string message, string messageId);
 }

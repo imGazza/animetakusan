@@ -1,5 +1,6 @@
 using AnimeTakusan.Application.DTOs.Authentication.Responses;
 using AnimeTakusan.Application.Interfaces;
+using AnimeTakusan.Application.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -61,6 +62,11 @@ namespace AnimeTakusan.API.Controllers
         [HttpGet("viewer")]
         public async Task<IActionResult> GetViewer()
         {
+            if(User.Claims.FirstOrDefault(c => c.Type == AniListClaimTypes.AniListUserId)?.Value is not string aniListUserId)
+            {
+                return Unauthorized();
+            }
+
             return Ok(await _aniListAuthService.GetViewerInfo());
         }
 

@@ -4,7 +4,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace AnimeTakusan.Infrastructure.Protection;
 
-public class DataProtectionTokenProtector : ITokenProtector
+public class DataProtectionTokenProtector : ITokenProtector, IInjectable
 {
     private readonly IDataProtectionProvider _dataProtectionProvider;
     private readonly IConfiguration _configuration;

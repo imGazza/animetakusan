@@ -2,6 +2,7 @@ using System.Text.Json.Serialization;
 using AnimeTakusan.API.Extensions;
 using AnimeTakusan.API.Handlers.ConsumerHandlers;
 using AnimeTakusan.Application.Handlers.ConsumerHandlers;
+using AnimeTakusan.Application.Caching;
 using AnimeTakusan.Application.Interfaces;
 using AnimeTakusan.Application.RabbitMq;
 using AnimeTakusan.Application.Validators;
@@ -21,6 +22,7 @@ var builder = WebApplication.CreateBuilder(args);
 Log.Logger = new LoggerConfiguration()
     .ReadFrom.Configuration(builder.Configuration)
     .CreateLogger();
+    
 
 Log.Information("Application starting up...");
 builder.Services.AddSerilog();
@@ -30,9 +32,14 @@ builder.Services.AddControllers().AddJsonOptions(options =>
     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
 
-builder.Services.Configure<RabbitMqOptions>(builder.Configuration.GetSection(RabbitMqOptions.SectionName));
-builder.Services.Configure<MalAuthEventOptions>(builder.Configuration.GetSection(MalAuthEventOptions.SectionName));
-builder.Services.Configure<MalSyncActionOptions>(builder.Configuration.GetSection(MalSyncActionOptions.SectionName));
+// Redis Cache
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = builder.Configuration.GetConnectionString("Redis");
+    options.InstanceName = "animetakusan";
+});
+
+builder.Services.AddConfigurationOptions(builder.Configuration);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -46,12 +53,7 @@ builder.Services.AddScoped<IJwtHandler, JwtHandler>();
 builder.Services.AddScoped<ITokenProtector, DataProtectionTokenProtector>();
 
 // RabbitMq
-builder.Services.AddSingleton<IRabbitMqConnectionManager, RabbitMqConnectionManager>();
-builder.Services.AddSingleton<IMessagePublisher, RabbitMqPublisher>();
-builder.Services.AddScoped<IMessageHandler, MalAuthEventHandler>();
-builder.Services.AddSingleton<RabbitMqInitializer>();
-builder.Services.AddHostedService<RabbitMqConsumerService>();
-
+builder.Services.AddRabbitMqConfiguration(builder.Configuration);
 
 builder.Services.AddAniListAnimeProvider(builder.Configuration);
 builder.Services.AddValidatorsFromAssemblyContaining<ICustomValidator>();

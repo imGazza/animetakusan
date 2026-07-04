@@ -1,7 +1,9 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using AnimeTakusan.MAL.Application.Interfaces;
+using AnimeTakusan.MAL.Application.Utility;
 using AnimeTakusan.MAL.Infrastructure.RabbitMQ.Options;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 
@@ -11,19 +13,26 @@ public class RabbitMqPublisher : IMessagePublisher
 {
     private readonly MalAuthEventOptions _options;
     private readonly IRabbitMqConnectionManager _connectionManager;
+    private readonly ILogger<RabbitMqPublisher> _logger;
 
-    public RabbitMqPublisher(IOptions<MalAuthEventOptions> options, IRabbitMqConnectionManager connectionManager)
+    public RabbitMqPublisher(IOptions<MalAuthEventOptions> options, IRabbitMqConnectionManager connectionManager, ILogger<RabbitMqPublisher> logger)
     {
         _options = options.Value;
         _connectionManager = connectionManager;
+        _logger = logger;
     }
 
     public async Task PublishAsync<T>(T message, CancellationToken cancellationToken = default)
     {
+        var messageId = Guid.NewGuid().ToString();
+        using var scope = _logger.PublisherLoggerScope(_options.ExchangeName, messageId, JsonSerializer.Serialize(message, new JsonSerializerOptions { Converters = { new JsonStringEnumConverter() } }));
+
         var connection = await _connectionManager.GetConnectionAsync(cancellationToken);
         using var channel = await connection.CreateChannelAsync(
             new CreateChannelOptions(publisherConfirmationsEnabled: true, publisherConfirmationTrackingEnabled: true), 
             cancellationToken: cancellationToken);
+
+        _logger.LogDebug("Publishing message of type {MessageType} to exchange {ExchangeName}.", typeof(T).Name, _options.ExchangeName);
 
         var body = JsonSerializer.SerializeToUtf8Bytes(message, new JsonSerializerOptions{ Converters = { new JsonStringEnumConverter() }});
 
@@ -31,14 +40,13 @@ public class RabbitMqPublisher : IMessagePublisher
         {
             Persistent = true,
             ContentType = "application/json",
-            MessageId = Guid.NewGuid().ToString(),
+            MessageId = messageId,
             Timestamp = new AmqpTimestamp(DateTimeOffset.UtcNow.ToUnixTimeSeconds())
         };
 
         channel.BasicReturnAsync += (sender, args) =>
         {
-            // TODO: Log
-            //_logger.LogError("Messaggio non instradabile: {Reason}", args.ReplyText);
+            _logger.LogError("Error while publishing message: {Reason}", args.ReplyText);
             return Task.CompletedTask;
         };
 
@@ -49,5 +57,8 @@ public class RabbitMqPublisher : IMessagePublisher
             basicProperties: properties,
             body: body,
             cancellationToken: cancellationToken);
+
+        _logger.LogInformation("Message of type {MessageType} published successfully to exchange {ExchangeName}.", typeof(T).Name, _options.ExchangeName);
+
     }
 }

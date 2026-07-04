@@ -52,13 +52,13 @@ const LibrarySortInfo = ({ anime, sort }: { anime: Anime; sort: string }) => {
 
   if(!value) return null;
 
-  const accentColor = anime.coverImage?.color ?? "#6b7280";
+  const accentColor = anime.coverImage?.color ?? "var(--accent)";
 
   return (
     <div
       className="flex items-center gap-1.5 mt-1.5 px-2 py-1 rounded-xs w-full overflow-hidden"
       style={{
-        backgroundColor: `${accentColor}22`,
+        backgroundColor: `color-mix(in srgb, ${accentColor} 13%, transparent)`,
         color: accentColor,
       }}
     >

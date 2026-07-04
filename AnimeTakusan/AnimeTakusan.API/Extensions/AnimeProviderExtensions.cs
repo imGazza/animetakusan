@@ -1,5 +1,6 @@
 using AnimeTakusan.AnimeProviders.AniList.Helpers.HttpHandlers;
 using AnimeTakusan.AnimeProviders.AniList.Providers;
+using AnimeTakusan.Application.Caching;
 using AnimeTakusan.Application.Interfaces;
 using AnimeTakusan.Infrastructure.Authentication;
 using StrawberryShake;
@@ -33,6 +34,8 @@ public static class AnimeProviderExtensions
                     builder.AddStandardResilienceHandler();
                 }
             );
+
+        services.Decorate<IAnimeProvider, CacheAnimeProviderDecorator>();
 
         return services;
     }

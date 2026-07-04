@@ -20,6 +20,7 @@ public class AniListAuthServiceTests
     private readonly AniListAuthService _aniListAuthService;
     private readonly Mock<IAnimeProvider> _mockProvider;
     private readonly Mock<ITokenProtector> _mockTokenProtector;
+    private readonly Mock<ICacheService> _mockCache;
     private readonly Faker<User> _userFaker;
 
     public AniListAuthServiceTests()
@@ -29,13 +30,15 @@ public class AniListAuthServiceTests
         _mockLogger = new Mock<ILogger<AniListAuthService>>();
         _mockProvider = new Mock<IAnimeProvider>();
         _mockTokenProtector = new Mock<ITokenProtector>();
+        _mockCache = new Mock<ICacheService>();
 
         _aniListAuthService = new AniListAuthService(
             _mockJwtHandler.Object,
             _mockUserRepository.Object,
             _mockLogger.Object,
             _mockProvider.Object,
-            _mockTokenProtector.Object
+            _mockTokenProtector.Object,
+            _mockCache.Object
         );
 
         _userFaker = AuthenticationFakers.UserFaker;
@@ -201,12 +204,14 @@ public class AniListAuthServiceTests
         // Arrange
         var user = _userFaker.Generate();
         var aniListUserId = 12345;
+        var protectedToken = "protected-access-token";
         var tokenData = new AniListTokenResponse { AccessToken = "valid.jwt.token", ExpiresIn = 3600 };
         _mockJwtHandler.Setup(x => x.GetAniListTokenClaims(tokenData.AccessToken))
             .Returns(new List<Claim> { new Claim("sub", aniListUserId.ToString()) });
         _mockJwtHandler.Setup(x => x.GetRefreshToken()).Returns("refresh-token");
         _mockUserRepository.Setup(x => x.GetUserByRefreshToken("refresh-token"))
             .ReturnsAsync(user);
+        _mockTokenProtector.Setup(x => x.Protect(tokenData.AccessToken)).Returns(protectedToken);
         _mockUserRepository.Setup(x => x.UpsertAniListUserAsync(It.IsAny<AniListUser>()))
             .Returns(Task.CompletedTask);
 
@@ -217,7 +222,7 @@ public class AniListAuthServiceTests
         _mockUserRepository.Verify(x => x.UpsertAniListUserAsync(It.Is<AniListUser>(a =>
             a.AniListUserId == aniListUserId &&
             a.UserId == user.Id &&
-            a.AccessToken == tokenData.AccessToken
+            a.AccessToken == protectedToken
         )), Times.Once);
     }
 

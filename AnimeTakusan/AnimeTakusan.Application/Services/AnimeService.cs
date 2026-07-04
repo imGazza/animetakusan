@@ -19,24 +19,6 @@ public class AnimeService : IAnimeService, IInjectable
         return await _animeProvider.GetAnimeById(id);
     }
 
-    public async Task<AnimePageResponse> GetSeasonalAnime()
-    {
-        var animeSeasonalRequest = CreateAnimeSeasonalRequest();
-        return await _animeProvider.GetSeasonalAnime(animeSeasonalRequest);
-    }
-
-    private AnimeSeasonalRequest CreateAnimeSeasonalRequest()
-    {
-        string currentSeason = SeasonUtility.GetCurrentSeason(DateTime.Now);
-        int currentSeasonYear = SeasonUtility.GetCurrentSeasonYear(DateTime.Now);
-        
-        return new AnimeSeasonalRequest
-        {
-            Season = currentSeason,
-            SeasonYear = currentSeasonYear
-        };
-    }
-
     public async Task<AnimeBrowseResponse> GetAnimeBrowseSection()
     {
         var animeBrowseSectionRequest = CreateAnimeBrowseSectionRequest();
@@ -53,10 +35,10 @@ public class AnimeService : IAnimeService, IInjectable
        var library = await _animeProvider.GetUserAnimeLibrary(userId);
        return library with
        {
-           Lists = library.Lists
+           Lists = library.Lists?
                 .Select(list => list with
                 {
-                    Entries = list.Entries
+                    Entries = list.Entries?
                         .OrderBy(entry => entry.Anime.Title.English ?? entry.Anime.Title.Romaji)
                         .ToList()
                 })

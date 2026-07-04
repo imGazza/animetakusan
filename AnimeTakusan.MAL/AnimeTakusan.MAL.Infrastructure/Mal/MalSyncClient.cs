@@ -1,28 +1,47 @@
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using AnimeTakusan.MAL.Application.DTOs;
 using AnimeTakusan.MAL.Application.DTOs.Messages;
 using AnimeTakusan.MAL.Application.Interfaces;
 using AnimeTakusan.MAL.Application.Mapping;
 using AnimeTakusan.MAL.Domain.Exception.SyncActionExceptions;
+using Microsoft.Extensions.Logging;
 
 namespace AnimeTakusan.MAL.Infrastructure.Mal;
 
 public class MalSyncClient : IMalSyncClient
 {
     private readonly HttpClient _httpClient;
+    private readonly ILogger<MalSyncClient> _logger;
+    private readonly ITokenProtector _tokenProtector;
 
-    public MalSyncClient(HttpClient httpClient)
+    public MalSyncClient(HttpClient httpClient, ILogger<MalSyncClient> logger, ITokenProtector tokenProtector)
     {
         _httpClient = httpClient;
+        _logger = logger;
+        _tokenProtector = tokenProtector;
     }
 
     public async Task SyncAnimeAsync(MalSyncActionMessage message, string accessToken)
     {
+        using var scope = _logger.BeginScope(
+            new Dictionary<string, object>
+            {
+                ["Layer"] = "MyAnimeList",
+                ["Action"] = message.Action.ToString(),
+                ["AnimeId"] = message.AnimeId,
+                ["MalUserId"] = message.MalUserId,
+                ["RequestData"] = JsonSerializer.Serialize(message, new JsonSerializerOptions { Converters = { new JsonStringEnumConverter() } })
+            }
+        );
+
         // If Delete action, we don't need to send any data
         if(message.Action == SyncAction.Delete)
         {
             await DeleteSyncRequestAsync(accessToken, message.AnimeId);
+            _logger.LogInformation("Deleted anime {AnimeId} for MAL user {MalUserId}", message.AnimeId, message.MalUserId);
             return;
         }
 
@@ -49,11 +68,11 @@ public class MalSyncClient : IMalSyncClient
             requestData["is_rewatching"] = "true";
 
         // Ignoring result for now as nothing is needed to be done with it
-        // Will be used with logging in the future
         await PatchSyncRequestAsync(requestData, message.AnimeId, accessToken);
+        _logger.LogInformation("Synced anime {AnimeId} for MAL user {MalUserId}", message.AnimeId, message.MalUserId);
     }
 
-    private async Task<MalSyncActionResponse> PatchSyncRequestAsync(Dictionary<string, string> requestData, int animeId, string accessToken)
+    private async Task PatchSyncRequestAsync(Dictionary<string, string> requestData, int animeId, string accessToken)
     {
         var url = $"{animeId}/my_list_status";
 
@@ -61,38 +80,22 @@ public class MalSyncClient : IMalSyncClient
         {
             Content = new FormUrlEncodedContent(requestData)
         };
-        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _tokenProtector.Unprotect(accessToken));
 
         var response = await _httpClient.SendAsync(request);
 
         response.EnsureSuccessStatusCode();
-
-        var syncResponse = await response.Content.ReadFromJsonAsync<MalSyncActionResponse>();
-        if (syncResponse == null)
-        {
-            throw new SyncActionException("MAL sync endpoint returned an empty response.");
-        }
-
-        return syncResponse;
     }
 
-    private async Task<MalSyncActionResponse> DeleteSyncRequestAsync(string accessToken, int animeId)
+    private async Task DeleteSyncRequestAsync(string accessToken, int animeId)
     {
         var url = $"{animeId}/my_list_status";
 
         var request = new HttpRequestMessage(HttpMethod.Delete, url);
-        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _tokenProtector.Unprotect(accessToken));
 
         var response = await _httpClient.SendAsync(request);
 
         response.EnsureSuccessStatusCode();
-
-        var syncResponse = await response.Content.ReadFromJsonAsync<MalSyncActionResponse>();
-        if (syncResponse == null)
-        {
-            throw new SyncActionException("MAL sync endpoint returned an empty response.");
-        }
-
-        return syncResponse;
     }
 }
