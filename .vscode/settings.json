@@ -1,9 +1,0 @@
-{
-    "coverage-gutters.coverageFileNames": [
-        "AnimeTakusan.Tests/coverage/lcov.info"
-    ],
-    "coverage-gutters.showLineCoverage": true,
-    "coverage-gutters.showRulerCoverage": true,
-    "dotnet-test-explorer.testArguments": "/p:CollectCoverage=true /p:CoverletOutputFormat=lcov /p:CoverletOutput=./coverage/lcov.info",
-    "dotnet-test-explorer.testProjectPath": "**/*Tests.csproj"
-}
