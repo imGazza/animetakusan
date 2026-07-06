@@ -2,9 +2,9 @@ import type { AnimeDetail } from "@/models/common/AnimeDetail";
 import { Play, Tv } from "lucide-react";
 import { Badge } from "./badge";
 import { Progress } from "./progress";
-import { calculateDurationFromSeconds, cn, createDateFromDetails } from "@/lib/utils";
+import { cn, createDateFromDetails } from "@/lib/utils";
 import { Button } from "./button";
-import { format } from "date-fns";
+import { format, formatDistanceToNowStrict } from "date-fns";
 import type { DetailedDate } from "@/models/common/Anime";
 import { displayAnimeEntryStatus } from "@/models/common/AnimeEntryStatus";
 import { useAnimeProgress } from "@/hooks/useAnimeProgress";
@@ -17,10 +17,10 @@ const statusClasses: Record<string, { gradient: string; bg: string; bgMuted: str
 };
 const defaultClasses = { gradient: "bg-gradient-to-r from-gray-400 to-gray-600", bg: "bg-gray-500/10", bgMuted: "bg-gray-500/30", text: "text-gray-500" };
 
-const getProgressLabel = (animeStatus: string, entryStatus: string, entryEpisodeProgress: number, nextAiringAt?: number, nextEpisode?: number): string => {
+const getProgressLabel = (animeStatus: string, entryStatus: string, entryEpisodeProgress: number, nextAiringAtUnix?: number, nextEpisode?: number): string => {
 
-  if (animeStatus === "RELEASING" && nextAiringAt && nextEpisode && entryEpisodeProgress === (nextEpisode - 1)) {
-    return `Ep. ${nextEpisode} airing in ${calculateDurationFromSeconds(nextAiringAt)}`;
+  if (animeStatus === "RELEASING" && nextAiringAtUnix && nextEpisode && entryEpisodeProgress === (nextEpisode - 1)) {
+    return `Ep. ${nextEpisode} airing ${formatDistanceToNowStrict(new Date(nextAiringAtUnix * 1000), { addSuffix: true })}`;
   }
   else if (animeStatus === "COMPLETED" && entryStatus === "CURRENT") {
     return `Ep. ${entryEpisodeProgress + 1}`;
@@ -85,7 +85,7 @@ const AnimeBodyProgress = ({ anime }: { anime: AnimeDetail }) => {
           <div className="flex justify-between items-center mt-3">
             <span className={cn(statusClass.text, "font-semibold text-sm")}>
               {
-                getProgressLabel(anime.status || "", anime.mediaListEntry?.status || "", localProgress, anime.nextAiringEpisode?.timeUntilAiring, anime.nextAiringEpisode?.episode)
+                getProgressLabel(anime.status || "", anime.mediaListEntry?.status || "", localProgress, anime.nextAiringEpisode?.airingAt, anime.nextAiringEpisode?.episode)
               }
             </span>
             {displayWatchedPeriod(anime.mediaListEntry?.status || "", anime.mediaListEntry?.startedAt, anime.mediaListEntry?.completedAt)}

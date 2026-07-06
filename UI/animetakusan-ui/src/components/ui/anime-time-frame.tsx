@@ -1,6 +1,7 @@
-import { calculateDurationFromSeconds, cn } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import type { Anime } from "@/models/common/Anime";
 import { displaySeason } from "@/models/common/AnimeSeason";
+import { formatDistanceToNowStrict } from "date-fns";
 import { useMemo } from "react";
 
 const AnimeTimeFrame = ( { anime, className }: { anime: Anime, className?: string } ) => {
@@ -8,8 +9,8 @@ const AnimeTimeFrame = ( { anime, className }: { anime: Anime, className?: strin
   const timeFrame = useMemo(() => {
     // Next airing episode
     if (anime.nextAiringEpisode) {
-      const timeRemaining = calculateDurationFromSeconds(anime.nextAiringEpisode.timeUntilAiring);
-      return `Ep. ${anime.nextAiringEpisode.episode} in ${timeRemaining}`;
+      const airsAt = new Date(anime.nextAiringEpisode.airingAt * 1000);
+      return `Ep. ${anime.nextAiringEpisode.episode} ${formatDistanceToNowStrict(airsAt, { addSuffix: true })}`;
     }
 
     // Season and year

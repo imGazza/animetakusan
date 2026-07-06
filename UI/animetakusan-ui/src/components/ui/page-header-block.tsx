@@ -1,7 +1,7 @@
-import { LibraryBig, Compass, Settings } from "lucide-react";
+import { LibraryBig, Compass, Settings, Home } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-type PageHeaderVariant = "library" | "browse" | "profile";
+type PageHeaderVariant = "library" | "browse" | "profile" | "home";
 
 const VARIANT_CONFIG: Record<
   PageHeaderVariant,
@@ -18,6 +18,10 @@ const VARIANT_CONFIG: Record<
   profile: {
     Icon: Settings,
     colorVar: "var(--accent-profile)",
+  },
+  home: {
+    Icon: Home,
+    colorVar: "var(--accent-home)",
   },
 };
 
