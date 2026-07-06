@@ -49,7 +49,7 @@ const SignUpForm = ({ setSelectedTab }: SignUpFormProps) => {
 
     // Not pwned, proceed with signup
     signUp(
-      { email: data.email, username: data.username, password: data.password },
+      { email: data.email, username: data.username, password: data.password, confirmPassword: data.confirmPassword },
       () => setSelectedTab('login')
     );
   }

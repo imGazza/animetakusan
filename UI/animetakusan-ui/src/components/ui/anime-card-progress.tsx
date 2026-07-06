@@ -13,10 +13,11 @@ const statusProgressClass: Record<string, string> = {
 };
 const defaultProgressClass = "bg-gradient-to-r from-gray-400 to-gray-600";
 
-const AnimeCardProgress = ({ anime }: { anime: Anime }) => {
-  if (!anime.mediaListEntry || anime.status === "NOT_YET_RELEASED") return null;
+const AnimeCardProgress = ({ anime }: { anime: Anime }) => {  
 
   const { localProgress, handleProgressUpdate, isCaughtUp, displayProgress } = useAnimeProgress(anime);
+
+  if (!anime.mediaListEntry || anime.status === "NOT_YET_RELEASED") return null;
 
   const isCompleted = anime.mediaListEntry.status === "COMPLETED";
   const progressClass = statusProgressClass[anime.mediaListEntry.status] ?? defaultProgressClass;

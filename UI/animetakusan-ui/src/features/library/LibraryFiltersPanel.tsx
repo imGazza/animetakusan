@@ -1,4 +1,3 @@
-import type { AnimeFilter } from "@/models/filter/AnimeFilter";
 import { FILTER_FORMATS, FILTER_GENRES, FILTER_SEASONS, FILTER_STATUSES, FILTER_YEARS } from "@/lib/filter-options";
 import useMediaQuery, { DESKTOP_BREAKPOINT } from "@/hooks/useMediaQuery";
 import LibraryDesktopFilterPanel from "@/components/ui/library-desktop-filter-panel";

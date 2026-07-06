@@ -2,7 +2,6 @@ import FilterNumber from "./filter-number";
 import FilterRadio from "./filter-radio";
 import FilterSeasons from "./filter-seasons";
 import FilterToggle from "./filter-toggle";
-import type { AnimeFilter } from "@/models/filter/AnimeFilter";
 import { capitalize } from "@/lib/utils";
 import type { FilterSeasonOption } from "@/lib/filter-options";
 import type { LibraryFilter } from "@/models/filter/LibraryFilter";

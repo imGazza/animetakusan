@@ -26,7 +26,7 @@ export const useAnimeProgress = (anime: Anime) => {
   useEffect(() => {
     if (!anime.mediaListEntry) return;
     setLocalProgress(anime.mediaListEntry.progress ?? 0);
-  }, [anime.mediaListEntry?.progress]);
+  }, [anime.mediaListEntry?.progress, anime.mediaListEntry]);
 
   // If the user navigates away mid-debounce, ensure the mutation is sent with the most recent value
   useEffect(() => () => { debouncedMutate.flush(); }, [debouncedMutate]);

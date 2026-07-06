@@ -56,7 +56,6 @@ services:
       redis:
         condition: service_healthy
     volumes:
-      - ./logs:/app/logs/anime-takusan
       - ~/.aspnet/https:/https:ro
 
   animetakusan-malsync:

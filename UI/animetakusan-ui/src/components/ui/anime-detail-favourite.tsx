@@ -2,8 +2,9 @@ import { Heart } from "lucide-react";
 import { Button } from "./button";
 import { cn } from "@/lib/utils";
 import { useToggleFavouriteAnime } from "@/features/anime-detail/queries";
+import type { Anime } from "@/models/common/Anime";
 
-const AnimeDetailFavourite = ({ anime }: { anime: any }) => {
+const AnimeDetailFavourite = ({ anime }: { anime: Anime }) => {
 
   const { mutate } = useToggleFavouriteAnime(anime.id);
 

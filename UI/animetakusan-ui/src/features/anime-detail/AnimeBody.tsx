@@ -9,6 +9,7 @@ import AnimeBodySynopsis from "@/components/ui/anime-body-synopsis";
 import useMediaQuery, { DESKTOP_BREAKPOINT } from "@/hooks/useMediaQuery";
 import type { AnimeDetail } from "@/models/common/AnimeDetail";
 import { useAuth } from "@/hooks/useAuth";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const AnimeBody = ({ anime }: { anime: AnimeDetail }) => {
 
@@ -19,7 +20,7 @@ const AnimeBody = ({ anime }: { anime: AnimeDetail }) => {
     <>
       {
         isDesktop ?
-          <div className="grid grid-cols-[300px_1fr] gap-4 items-start animate-in slide-in-from-bottom duration-300">
+          <div className="grid grid-cols-[300px_1fr] gap-4 items-start animate-in fade-in duration-500">
             <div className="flex flex-col gap-4">
               {isAuthenticated && <AnimeBodyProgress anime={anime} />}
               <AnimeBodyProduction anime={anime} />
@@ -34,7 +35,7 @@ const AnimeBody = ({ anime }: { anime: AnimeDetail }) => {
             </div>
           </div>
           :
-          <div className="flex flex-col gap-4 animate-in slide-in-from-bottom duration-300">
+          <div className="flex flex-col gap-4 animate-in fade-in duration-500">
             <AnimeBodyPopularity anime={anime} />
             {isAuthenticated && <AnimeBodyProgress anime={anime} />}
             <AnimeBodyProduction anime={anime} />
@@ -49,3 +50,43 @@ const AnimeBody = ({ anime }: { anime: AnimeDetail }) => {
   );
 }
 export default AnimeBody;
+
+const StatsRowSkeleton = () => (
+  <div className="flex gap-2 w-full">
+    <Skeleton className="h-[76px] flex-1 rounded-xs" />
+    <Skeleton className="h-[76px] flex-1 rounded-xs" />
+    <Skeleton className="h-[76px] flex-1 rounded-xs" />
+  </div>
+);
+
+const AnimeBodySkeleton = () => {
+
+  const isDesktop = useMediaQuery(DESKTOP_BREAKPOINT);
+
+  return (
+    isDesktop ? (
+      <div className="grid grid-cols-[300px_1fr] gap-4 items-start">
+        <div className="flex flex-col gap-4">
+          <Skeleton className="h-44 w-full rounded-xs" />
+          <Skeleton className="h-56 w-full rounded-xs" />
+          <Skeleton className="h-40 w-full rounded-xs" />
+        </div>
+        <div className="flex flex-col gap-4">
+          <StatsRowSkeleton />
+          <Skeleton className="h-40 w-full rounded-xs" />
+          <Skeleton className="h-52 w-full rounded-xs" />
+          <Skeleton className="h-52 w-full rounded-xs" />
+        </div>
+      </div>
+    ) : (
+      <div className="flex flex-col gap-4">
+        <StatsRowSkeleton />
+        <Skeleton className="h-32 w-full rounded-xs" />
+        <Skeleton className="h-40 w-full rounded-xs" />
+        <Skeleton className="h-52 w-full rounded-xs" />
+        <Skeleton className="h-52 w-full rounded-xs" />
+      </div>
+    )
+  );
+}
+export { AnimeBodySkeleton };

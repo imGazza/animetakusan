@@ -4,10 +4,6 @@ import { useMemo } from "react";
 
 const AnimeCardFormat = ({ format, episodes, duration }: { format: string; episodes?: number, duration?: number }) => {
 
-  if (!format) {
-    return null;
-  }
-
   const formattedDuration = useMemo(() => {
       // Next airing episode
       if (duration) {
@@ -17,6 +13,10 @@ const AnimeCardFormat = ({ format, episodes, duration }: { format: string; episo
       }
       return "";
     }, [duration]);
+
+  if (!format) {
+    return null;
+  } 
 
   return (
     <div className="flex flex-col gap-1">

@@ -1,7 +1,7 @@
 import { useAnimeDetailQuery } from "./queries";
 import { useParams } from "react-router";
 import AnimeHeader, { AnimeHeaderSkeleton } from "./AnimeHeader";
-import AnimeBody from "./AnimeBody";
+import AnimeBody, { AnimeBodySkeleton } from "./AnimeBody";
 import Container from "@/components/ui/container";
 import { useEffect } from "react";
 
@@ -18,6 +18,9 @@ const AnimeDetail = () => {
     return (
       <>
         <AnimeHeaderSkeleton />
+        <Container className="pt-4 md:pt-1 px-3">
+          <AnimeBodySkeleton />
+        </Container>
       </>
     )
   }

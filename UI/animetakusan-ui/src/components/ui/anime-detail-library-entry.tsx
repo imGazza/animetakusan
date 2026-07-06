@@ -50,7 +50,7 @@ const AnimeDetailLibraryEntry = ({ anime }: { anime: AnimeDetail }) => {
 
   useEffect(() => {
     if (open) setMediaListEntry(defaultEntry(anime));
-  }, [open]);
+  }, [open, anime]);
 
   const displayEntry = {
     status: mediaListEntry.status ?? anime.mediaListEntry?.status ?? "PLANNING",

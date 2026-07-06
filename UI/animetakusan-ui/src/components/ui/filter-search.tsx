@@ -13,7 +13,7 @@ const FilterSearch = ({ className }: { className?: string }) => {
 
   useEffect(() => {
     setSearch(debouncedValue || null);
-  }, [debouncedValue]);
+  }, [debouncedValue, setSearch]);
 
   useEffect(() => {
     if (!search) {

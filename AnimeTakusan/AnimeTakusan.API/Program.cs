@@ -1,18 +1,14 @@
 using System.Text.Json.Serialization;
 using AnimeTakusan.API.Extensions;
-using AnimeTakusan.API.Handlers.ConsumerHandlers;
-using AnimeTakusan.Application.Handlers.ConsumerHandlers;
-using AnimeTakusan.Application.Caching;
 using AnimeTakusan.Application.Interfaces;
-using AnimeTakusan.Application.RabbitMq;
 using AnimeTakusan.Application.Validators;
 using AnimeTakusan.Infrastructure.Authentication;
 using AnimeTakusan.Infrastructure.Contexts;
 using AnimeTakusan.Infrastructure.Protection;
 using AnimeTakusan.Infrastructure.RabbitMQ;
-using AnimeTakusan.Infrastructure.RabbitMQ.Options;
 using FluentValidation;
 using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
@@ -26,6 +22,10 @@ Log.Logger = new LoggerConfiguration()
 
 Log.Information("Application starting up...");
 builder.Services.AddSerilog();
+
+builder.Services.AddHealthChecks()
+    .AddNpgSql(builder.Configuration.GetConnectionString("PostgresSQL")!)
+    .AddRedis(builder.Configuration.GetConnectionString("Redis")!);
 
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
@@ -97,6 +97,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.MapHealthChecks("/health", new HealthCheckOptions { Predicate = _ => false });
+app.MapHealthChecks("/ready");     
 
 app.ApplyDatabaseMigrations();
 

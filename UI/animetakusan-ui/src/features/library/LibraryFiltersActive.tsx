@@ -1,5 +1,4 @@
 import Chip from "@/components/ui/chip";
-import AnimeSort from "@/components/ui/anime-sort";
 import type { LibraryFilter } from "@/models/filter/LibraryFilter";
 import LibrarySort from "@/components/ui/library-sort";
 

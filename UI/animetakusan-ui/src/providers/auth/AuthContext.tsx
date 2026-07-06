@@ -9,7 +9,7 @@ export const AuthContext = createContext<{
     login: (loginRequest: LoginRequest) => void,
     loginProvider: (provider: string) => void,
     logout: () => void,
-    signUp: (registerRequest: any, callbackFn?: () => void) => void,
+    signUp: (registerRequest: { email: string, username: string, password: string, confirmPassword: string }, callbackFn?: () => void) => void,
 }>({
     isAuthenticated: false,
     isInitializing: true,

@@ -34,7 +34,7 @@ export function ThemeProvider({
           setTheme(theme)
         }
       }
-    }, [theme])
+    }, [theme, storageKey])
 
   return (
     <ThemeContext value={themeValue}>{children}</ThemeContext>

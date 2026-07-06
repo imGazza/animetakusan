@@ -1,7 +1,4 @@
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using AnimeTakusan.Application.Interfaces;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AnimeTakusan.API.Controllers

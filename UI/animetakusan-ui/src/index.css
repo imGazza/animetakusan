@@ -10,9 +10,6 @@
   font-weight: 400;
 
   color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -20,6 +17,7 @@
   -moz-osx-font-smoothing: grayscale;
   --footer-height: calc(var(--spacing)*18);
   --header-height: calc(var(--spacing)*14);
+  --mobile-nav-height: calc(var(--spacing)*13);
   --md-image-width: 200px;
   --sm-image-width: 150px;
   --radius: 0.625rem;
@@ -158,21 +156,6 @@
   --color-filter-status: var(--filter-status);
   --color-filter-format: var(--filter-format);
   --color-filter-score: var(--filter-score);
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-
-  a:hover {
-    color: #747bff;
-  }
-
-  button {
-    background-color: #f9f9f9;
-  }
 }
 
 @layer base {

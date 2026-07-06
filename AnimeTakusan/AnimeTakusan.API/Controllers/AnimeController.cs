@@ -2,6 +2,7 @@ using AnimeTakusan.Application.DTOs.AnimeProvider.Requests;
 using AnimeTakusan.Application.DTOs.Messages;
 using AnimeTakusan.Application.Interfaces;
 using AnimeTakusan.Application.Utility;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
@@ -25,24 +26,28 @@ namespace AnimeTakusan.API.Controllers
             _logger = logger;
         }
 
+        [Authorize(Roles = "Guest")]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetAnimeById(int id)
         {
             return Ok(await _animeService.GetAnimeById(id));
         }
 
+        [Authorize(Roles = "Guest")]
         [HttpGet("browse")]
         public async Task<IActionResult> GetAnimeBrowseSection()
         {
             return Ok(await _animeService.GetAnimeBrowseSection());
         }
 
+        [Authorize(Roles = "Guest")]
         [HttpPost]
         public async Task<IActionResult> GetAnime([FromBody] AnimeFilterRequest animeFilterRequest)
         {
             return Ok(await _animeService.GetAnime(animeFilterRequest));
         }
 
+        [Authorize(Roles = "User")]
         [HttpGet("library")]
         public async Task<IActionResult> GetUserAnimeList()
         {
@@ -52,6 +57,7 @@ namespace AnimeTakusan.API.Controllers
                 : Ok(await _animeService.GetUserAnimeLibrary(int.Parse(userId)));
         }
 
+        [Authorize(Roles = "User")]
         [EnableCors("Authenticated")]
         [HttpPost("upsert")]
         public async Task<IActionResult> UpsertAnimeEntry([FromBody] AnimeEntryUpsertRequest animeEntryUpsertRequest)
@@ -74,6 +80,7 @@ namespace AnimeTakusan.API.Controllers
             return Ok(result);
         }
 
+        [Authorize(Roles = "User")]
         [EnableCors("Authenticated")]
         [HttpPost("{animeId}/toggle-favourite")]
         public async Task<IActionResult> ToggleFavourite(int animeId)
@@ -81,6 +88,7 @@ namespace AnimeTakusan.API.Controllers
             return Ok(await _animeService.ToggleFavourite(animeId));
         }
 
+        [Authorize(Roles = "User")]
         [EnableCors("Authenticated")]
         [HttpPost("delete-entry")]
         public async Task<IActionResult> DeleteAnimeEntry([FromBody] AnimeDeleteEntry animeDeleteEntry)
