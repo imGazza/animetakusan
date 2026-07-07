@@ -20,8 +20,7 @@ namespace AnimeTakusan.API.Controllers
             _configuration = configuration;
             _aniListAuthService = aniListAuthService;
         }
-
-        [Authorize(Roles = "User")]
+        
         [HttpGet("auth")]
         public async Task<IActionResult> AniListAuth()
         {

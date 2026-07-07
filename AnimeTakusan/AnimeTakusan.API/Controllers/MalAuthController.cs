@@ -15,8 +15,7 @@ namespace AnimeTakusan.API.Controllers
             _malAuthService = malAuthService;
             _configuration = configuration;
         }
-
-        // Authorize with User role
+        
         [HttpGet("login")]
         public async Task<IActionResult> Login()
         {
