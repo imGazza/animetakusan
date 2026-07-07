@@ -12,7 +12,7 @@ import Library from "@/features/library/Library";
 import Settings from "@/features/profile/Settings";
 import ProtectedRoute from "@/features/auth/ProtectedRoute";
 import ErrorPage from "@/features/error/ErrorPage";
-import HomePreview from "@/features/home/HomePreview"; // TEMP preview
+//import HomePreview from "@/features/home/HomePreview"; // TEMP preview
 
 export const routes = createBrowserRouter([
     {
