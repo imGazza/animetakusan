@@ -10,6 +10,7 @@ import { useFilteredLibrary } from '@/hooks/useFilteredLibrary';
 import { useEffect } from 'react';
 import useLinkedAccounts from '@/hooks/useLinkedAccounts';
 import AniListConnectCard from './AniListConnectCard';
+import PageTitle from '@/components/ui/page-title';
 
 export function Library() {
 
@@ -29,46 +30,47 @@ export function Library() {
   }, [filter, sort, resetVisibleCounts, isReady]);
 
   return (
-    <Container className="animate-in fade-in duration-300">
+    <>
+      <PageTitle text="Library" />
+      <Container className="animate-in fade-in duration-300">
 
-      {
-        linkedAccounts.includes("AniList") ? (
-          <>
-            <PageHeaderBlock variant="library" title={localStorage.getItem('user') ? `${localStorage.getItem('user')}'s Library` : "User's Library"} />
+        {
+          linkedAccounts.includes("AniList") ? (
+            <>
+              <PageHeaderBlock variant="library" title={localStorage.getItem('user') ? `${localStorage.getItem('user')}'s Library` : "User's Library"} />
 
-            <LibraryFilters
-              filter={filter}
-              sort={sort}
-              addFilter={addFilter}
-              setSort={setSort}
-              onRemoveFilter={removeFilter}
-              onResetFilter={resetAllFilters}
-            />
-            <div className="flex flex-col gap-6 mt-4">
-              {
-                isLoading || !isReady ? (
-                  <LibrarySectionSkeleton />
-                ) : (
-                  filteredLists.map(list => (
-                    list.entries.length > 0 &&
-                    <LibrarySection
-                      key={list.name}
-                      list={list}
-                      sort={sort}
-                      visibleCount={visibleCounts[list.name] ?? 12}
-                      onLoadMore={() => loadMore(list.name)}
-                    />
-                  ))
-                )
-              }
-            </div>
-          </>) : (
-          <AniListConnectCard />
-        )
-      }
-
-
-    </Container>
+              <LibraryFilters
+                filter={filter}
+                sort={sort}
+                addFilter={addFilter}
+                setSort={setSort}
+                onRemoveFilter={removeFilter}
+                onResetFilter={resetAllFilters}
+              />
+              <div className="flex flex-col gap-6 mt-4">
+                {
+                  isLoading || !isReady ? (
+                    <LibrarySectionSkeleton />
+                  ) : (
+                    filteredLists.map(list => (
+                      list.entries.length > 0 &&
+                      <LibrarySection
+                        key={list.name}
+                        list={list}
+                        sort={sort}
+                        visibleCount={visibleCounts[list.name] ?? 12}
+                        onLoadMore={() => loadMore(list.name)}
+                      />
+                    ))
+                  )
+                }
+              </div>
+            </>) : (
+            <AniListConnectCard />
+          )
+        }
+      </Container>
+    </>
   )
 }
 export default Library;
