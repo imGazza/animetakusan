@@ -18,7 +18,7 @@ namespace AnimeTakusan.API.Extensions
                     {
                         policy.WithOrigins(allowedOrigins)
                               .AllowAnyHeader()
-                              .WithMethods("GET", "OPTIONS")
+                              .WithMethods("GET", "POST", "OPTIONS")
                               .AllowCredentials()
                               .SetPreflightMaxAge(TimeSpan.FromMinutes(10)); // Cache preflight for 10 minutes
                     });
