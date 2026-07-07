@@ -44,7 +44,7 @@ const FiltersActive = ({ filter, sort, onRemoveFilter, onResetFilter }: FiltersA
   return (
     <div className="flex items-center justify-between mt-6 min-h-[22px]">
       <div className="group/hover flex gap-4 w-full">
-        <div className="flex gap-2 flex-wrap w-fit">
+        <div className="flex gap-2 flex-wrap w-fit shrink-0">
           {
             filterEntries
               .map(({ key, label }) => (
@@ -52,7 +52,7 @@ const FiltersActive = ({ filter, sort, onRemoveFilter, onResetFilter }: FiltersA
                   onRemoveFilter={() => onRemoveFilter?.(key as keyof AnimeFilter, label)}
                   key={`${key}-${label}`}
                   variant={categoryLabels[key as keyof AnimeFilter]}
-                  className="capitalize">
+                  className="capitalize text-xs">
                   {key === 'averageScoreGreater' ? `≥ ${label}%` : label}
                 </Chip>
               ))
@@ -61,7 +61,7 @@ const FiltersActive = ({ filter, sort, onRemoveFilter, onResetFilter }: FiltersA
         {
           filter ?
             <Chip variant="default" className="flex md:hidden md:group-hover/hover:flex" onRemoveFilter={onResetFilter}>
-              Clear All
+              Clear
             </Chip> : null
         }
       </div>

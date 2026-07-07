@@ -11,7 +11,7 @@ interface AnimePreviewProps {
 
 const AnimePreview = ({ title, filterName, data }: AnimePreviewProps) => {
   return (
-    <div className="flex flex-col gap-2 mb-4 md:mb-10">
+    <div className="flex flex-col gap-2 mb-6 md:mb-10">
       <AnimeSectionHeader title={title} filterName={filterName} />
       <AnimeDisplay className="lg:[&>*:nth-child(n+5)]:hidden xl:[&>*:nth-child(n+5)]:block xl:[&>*:nth-child(n+6)]:hidden 2xl:[&>*:nth-child(n+6)]:block">
         {
