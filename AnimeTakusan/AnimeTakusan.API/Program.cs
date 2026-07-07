@@ -9,6 +9,7 @@ using AnimeTakusan.Infrastructure.RabbitMQ;
 using FluentValidation;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
@@ -69,6 +70,14 @@ builder
 .AddGoogleAuthentication(builder.Configuration)
 .AddJwtAuthentication(builder.Configuration);
 
+// Proxy configurations
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost;
+    options.KnownIPNetworks.Clear();
+    options.KnownProxies.Clear();
+});
+
 // Exception Handling
 builder.Services.AddExceptionHandling();
 
@@ -97,6 +106,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+// Proxy configurations (uses the headers declared above)
+app.UseForwardedHeaders();
 
 app.MapHealthChecks("/health", new HealthCheckOptions { Predicate = _ => false });
 app.MapHealthChecks("/ready");     
