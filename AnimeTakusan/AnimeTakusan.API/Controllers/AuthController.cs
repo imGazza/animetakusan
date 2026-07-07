@@ -44,7 +44,7 @@ namespace AnimeTakusan.API.Controllers
             return Ok(user);
         }
 
-        [Authorize(Roles = "Guest, User")]
+        [Authorize(Roles = "Guest,User")]
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginRequest loginRequest)
         {

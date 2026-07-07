@@ -26,21 +26,21 @@ namespace AnimeTakusan.API.Controllers
             _logger = logger;
         }
 
-        [Authorize(Roles = "Guest, User")]
+        [Authorize(Roles = "Guest,User")]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetAnimeById(int id)
         {
             return Ok(await _animeService.GetAnimeById(id));
         }
 
-        [Authorize(Roles = "Guest, User")]
+        [Authorize(Roles = "Guest,User")]
         [HttpGet("browse")]
         public async Task<IActionResult> GetAnimeBrowseSection()
         {
             return Ok(await _animeService.GetAnimeBrowseSection());
         }
 
-        [Authorize(Roles = "Guest, User")]
+        [Authorize(Roles = "Guest,User")]
         [HttpPost]
         public async Task<IActionResult> GetAnime([FromBody] AnimeFilterRequest animeFilterRequest)
         {
