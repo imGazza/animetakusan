@@ -16,10 +16,12 @@ A platform to browse, track and cross-sync watched anime on AniList and MyAnimeL
 
 ## Technologies
 
-**Backend** — .NET 10, Entity Framework Core, PostgreSQL, Redis, RabbitMQ, GraphQL (StrawberryShake), Serilog with Seq.
+**Backend** - .NET 10, Entity Framework Core, PostgreSQL, Redis, RabbitMQ, GraphQL (StrawberryShake), Serilog with Seq.
 
-**Frontend** — React, Vite, Shadcn, TanStack Query, React Router, Tailwind CSS.
+**Frontend** - React, Vite, Shadcn, TanStack Query, React Router, Tailwind CSS.
 
-**Integrations** — AniList, MyAnimeList, Google OAuth.
+**Integrations** - AniList, MyAnimeList, Google OAuth.
 
-**Infrastructure** — Docker for services containers. Self-hosted on a (poor) Raspberry Pi 3B using Nginx and a Cloudflare tunnel. Frontend hosted on Vercel. Deployed using Github Actions.
+**Infrastructure** - Docker for services containers. Self-hosted on a (poor) Raspberry Pi 3B using Nginx and a Cloudflare tunnel. Frontend hosted on Vercel. Deployed using Github Actions.
+
+**AI** - AI tools to support development and implementation of less known patterns and technologies.
