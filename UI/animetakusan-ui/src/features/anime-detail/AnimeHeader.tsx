@@ -87,7 +87,7 @@ const AnimeHeaderSkeleton = () => {
   return (
     <div>
       <div className="relative w-full h-[200px] md:h-[400px] overflow-hidden">
-        <Container className="h-full relative flex items-end p-4 py-4 px-6 gap-4">
+        <Container className="h-full relative flex items-end p-4 py-4 px-3 gap-4">
           <div className="w-28 md:w-54 shrink-0 rounded-xs overflow-hidden">
             <AspectRatio ratio={37 / 53}>
               <Skeleton className="h-full w-full rounded-xs" />
