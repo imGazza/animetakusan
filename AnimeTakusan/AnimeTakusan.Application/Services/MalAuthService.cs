@@ -23,12 +23,12 @@ public class MalAuthService : IMalAuthService, IInjectable
 
     public async Task<string> GenerateStateParameterAsync()
     {
-        var user = await _userRepository.GetUserByRefreshToken(_jwtHandler.GetRefreshToken());
-        if (user == null)
+        var userSession = await _userRepository.GetUserSessionByRefreshToken(_jwtHandler.GetRefreshToken());
+        if (userSession == null)
             throw new ArgumentException("Internal logged user not found.");
 
         var nonce = WebEncoders.Base64UrlEncode(RandomNumberGenerator.GetBytes(32));
-        var state = WebEncoders.Base64UrlEncode(System.Text.Encoding.UTF8.GetBytes($"{user.Id}:{nonce}"));
+        var state = WebEncoders.Base64UrlEncode(System.Text.Encoding.UTF8.GetBytes($"{userSession.User.Id}:{nonce}"));
 
         return state;
     }

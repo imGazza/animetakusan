@@ -55,14 +55,14 @@ public class AniListAuthService : IAniListAuthService, IInjectable
         if(string.IsNullOrEmpty(aniListUserIdClaim) || !int.TryParse(aniListUserIdClaim, out var aniListUserId))
             throw new AniListAuthenticationException("Access token does not contain a valid AniList user ID.");
         
-        var user = await _userRepository.GetUserByRefreshToken(_jwtHandler.GetRefreshToken());
-        if (user == null)
+        var userSession = await _userRepository.GetUserSessionByRefreshToken(_jwtHandler.GetRefreshToken());
+        if (userSession == null)
             throw new AniListAuthenticationException("Internal logged user not found.");
 
         var aniListUser = new AniListUser
         {
             AniListUserId = aniListUserId,
-            UserId = user.Id,
+            UserId = userSession.User.Id,
             AccessToken = _tokenProtector.Protect(aniListTokenData.AccessToken),
             AccessTokenExpiry = DateTime.UtcNow.AddSeconds(aniListTokenData.ExpiresIn)
         };
@@ -71,14 +71,14 @@ public class AniListAuthService : IAniListAuthService, IInjectable
         {
             await _userRepository.UpsertAniListUserAsync(aniListUser);
             await _cache.RemoveAsync(CacheKeys.AniListUserInfo(aniListUserId));
-            await _cache.RemoveAsync(CacheKeys.AniListToken(user.Id));
+            await _cache.RemoveAsync(CacheKeys.AniListToken(userSession.User.Id));
         }
         catch (Exception ex)
         {
             throw new AniListAuthenticationException("Failed to link AniList account to user.", ex);
         }
 
-        _logger.LogInformation("Successfully linked AniList account (ID: {AniListUserId}) to user (ID: {UserId}). Removed user cache entries.", aniListUserId, user.Id);
+        _logger.LogInformation("Successfully linked AniList account (ID: {AniListUserId}) to user (ID: {UserId}). Removed user cache entries.", aniListUserId, userSession.User.Id);
     }
 
     public async Task<ViewerInfoResponse> GetViewerInfo()

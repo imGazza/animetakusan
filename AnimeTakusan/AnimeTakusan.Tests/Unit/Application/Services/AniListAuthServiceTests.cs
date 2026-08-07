@@ -165,8 +165,8 @@ public class AniListAuthServiceTests
         _mockJwtHandler.Setup(x => x.GetAniListTokenClaims(tokenData.AccessToken))
             .Returns(new List<Claim> { new Claim("sub", "12345") });
         _mockJwtHandler.Setup(x => x.GetRefreshToken()).Returns("refresh-token");
-        _mockUserRepository.Setup(x => x.GetUserByRefreshToken("refresh-token"))
-            .ReturnsAsync((User)null);
+        _mockUserRepository.Setup(x => x.GetUserSessionByRefreshToken("refresh-token"))
+            .ReturnsAsync((UserSession)null);
 
         // Act
         var act = async () => await _aniListAuthService.LinkAniListAccountToUser(tokenData);
@@ -185,8 +185,8 @@ public class AniListAuthServiceTests
         _mockJwtHandler.Setup(x => x.GetAniListTokenClaims(tokenData.AccessToken))
             .Returns(new List<Claim> { new Claim("sub", "12345") });
         _mockJwtHandler.Setup(x => x.GetRefreshToken()).Returns("refresh-token");
-        _mockUserRepository.Setup(x => x.GetUserByRefreshToken("refresh-token"))
-            .ReturnsAsync(user);
+        _mockUserRepository.Setup(x => x.GetUserSessionByRefreshToken("refresh-token"))
+            .ReturnsAsync(AuthenticationFakers.SessionFor(user, "refresh-token"));
         _mockUserRepository.Setup(x => x.UpsertAniListUserAsync(It.IsAny<AniListUser>()))
             .ThrowsAsync(new Exception("Database error"));
 
@@ -209,8 +209,8 @@ public class AniListAuthServiceTests
         _mockJwtHandler.Setup(x => x.GetAniListTokenClaims(tokenData.AccessToken))
             .Returns(new List<Claim> { new Claim("sub", aniListUserId.ToString()) });
         _mockJwtHandler.Setup(x => x.GetRefreshToken()).Returns("refresh-token");
-        _mockUserRepository.Setup(x => x.GetUserByRefreshToken("refresh-token"))
-            .ReturnsAsync(user);
+        _mockUserRepository.Setup(x => x.GetUserSessionByRefreshToken("refresh-token"))
+            .ReturnsAsync(AuthenticationFakers.SessionFor(user, "refresh-token"));
         _mockTokenProtector.Setup(x => x.Protect(tokenData.AccessToken)).Returns(protectedToken);
         _mockUserRepository.Setup(x => x.UpsertAniListUserAsync(It.IsAny<AniListUser>()))
             .Returns(Task.CompletedTask);

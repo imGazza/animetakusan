@@ -56,29 +56,29 @@ public class AuthService : IAuthService, IInjectable
             return new TokenResponse { AccessToken = guestToken, ExpiresAt = guestExpiresAt };
         }
 
-        var user = await _userRepository.GetUserByRefreshToken(refreshToken);
+        var userSession = await _userRepository.GetUserSessionByRefreshToken(refreshToken);
 
-        if (user == null || !HasValidRefreshToken(user))
+        if (userSession == null)
         {
+            _logger.LogWarning("No active session found for the provided refresh token. Falling back to a guest token.");
             var (guestToken, guestExpiresAt) = _jwtHandler.GenerateGuestAccessToken();
             return new TokenResponse { AccessToken = guestToken, ExpiresAt = guestExpiresAt };
         }
 
-        user.RefreshToken = _jwtHandler.GenerateRefreshToken();
-        user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
-        await _userManager.UpdateAsync(user);
-        _jwtHandler.WriteRefreshTokenCookie(user.RefreshToken);
+        string newRefreshToken = _jwtHandler.GenerateRefreshToken();
+        await _userRepository.UpdateUserSession(userSession.Id, newRefreshToken);
+        _jwtHandler.WriteRefreshTokenCookie(newRefreshToken);
 
-        var userRoles = await _userManager.GetRolesAsync(user);
+        var userRoles = await _userManager.GetRolesAsync(userSession.User);
 
-        List<Claim> claims = CreateClaimsForUser(user, userRoles);
-        var (accessToken, expiresAt) = _jwtHandler.GenerateUserAccessToken(user, claims);
+        List<Claim> claims = CreateClaimsForUser(userSession.User, userRoles);
+        var (accessToken, expiresAt) = _jwtHandler.GenerateUserAccessToken(userSession.User, claims);
         var response = new TokenResponse
         {
             AccessToken = accessToken,
             ExpiresAt = expiresAt
         };
-        _logger.LogDebug("Generated user access token for user {UserEmail}.", user.Email);
+        _logger.LogDebug("Generated user access token for user {UserEmail}.", userSession.User.Email);
         return response;
     }
 
@@ -144,11 +144,11 @@ public class AuthService : IAuthService, IInjectable
             return null;
         }
 
-        var user = await _userRepository.GetUserByRefreshToken(refreshToken);
-        if (user is null)
+        var userSession = await _userRepository.GetUserSessionByRefreshToken(refreshToken);
+        if (userSession is null)
             return null;
 
-        return user.Adapt<UserInfo>() with { UserName = user.AniListUser?.AniListUsername ?? user.UserName, ProfilePicture = user.AniListUser?.AniListAvatar, LinkedAccounts = GetSyncedAccounts(user) };
+        return userSession.User.Adapt<UserInfo>() with { UserName = userSession.User.AniListUser?.AniListUsername ?? userSession.User.UserName, ProfilePicture = userSession.User.AniListUser?.AniListAvatar, LinkedAccounts = GetSyncedAccounts(userSession.User) };
     }
 
     private List<SyncedAccounts> GetSyncedAccounts(User user)
@@ -184,22 +184,16 @@ public class AuthService : IAuthService, IInjectable
             throw new LoginFailedException();
         }
 
-        user.RefreshToken = _jwtHandler.GenerateRefreshToken();
-        user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
-        await _userManager.UpdateAsync(user);
-        _jwtHandler.WriteRefreshTokenCookie(user.RefreshToken);
+        UserSession userSession = new UserSession
+        {
+            RefreshToken =  _jwtHandler.GenerateRefreshToken(),
+            RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7),
+            UserId = user.Id
+        };
+        await _userRepository.CreateUserSession(userSession);
+        _jwtHandler.WriteRefreshTokenCookie(userSession.RefreshToken);
 
         _logger.LogInformation("User {UserEmail} logged in.", user.Email);
-    }
-
-    private bool HasValidRefreshToken(User user)
-    {
-        if (user.RefreshTokenExpiryTime <= DateTime.UtcNow)
-        {
-            _logger.LogWarning("Refresh token has expired for user {UserEmail}.", user.Email);
-            return false;
-        }
-        return true;
     }
 
     /// <summary>
@@ -213,17 +207,10 @@ public class AuthService : IAuthService, IInjectable
             return;
         }
 
-        var user = await _userRepository.GetUserByRefreshToken(refreshToken);
-        if (user == null)
-        {
-            return;
-        }
+        await _userRepository.DeleteUserSessionByRefreshToken(refreshToken);
 
-        user.RefreshToken = null;
-        user.RefreshTokenExpiryTime = null;
-        await _userManager.UpdateAsync(user);
         _jwtHandler.DeleteRefreshTokenCookie();
-        _logger.LogInformation("User {UserEmail} logged out.", user.Email);
+        _logger.LogInformation("User session deleted, user logged out.");
     }
 
     /// <summary>
@@ -287,11 +274,16 @@ public class AuthService : IAuthService, IInjectable
 
         await AddGoogleLogin(claimsPrincipal, user);
 
-        var refreshToken = _jwtHandler.GenerateRefreshToken();
+        string refreshToken = _jwtHandler.GenerateRefreshToken();
+        UserSession userSession = new UserSession
+        {
+            RefreshToken =  refreshToken,
+            RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7),
+            UserId = user.Id
+        };
+        await _userRepository.CreateUserSession(userSession);
+
         _jwtHandler.WriteRefreshTokenCookie(refreshToken);
-        user.RefreshToken = refreshToken;
-        user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
-        await _userManager.UpdateAsync(user);
         _logger.LogInformation("User {UserEmail} logged in with Google.", user.Email);
     }
 

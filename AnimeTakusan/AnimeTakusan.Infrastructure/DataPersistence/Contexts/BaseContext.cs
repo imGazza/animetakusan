@@ -11,6 +11,9 @@ public class BaseContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>, ID
     public BaseContext(DbContextOptions<BaseContext> options) : base(options){}
 
     public override DbSet<User> Users { get; set; }
+    public DbSet<AniListUser> AniListUsers { get; set; }
+    public DbSet<MyAnimeListUser> MyAnimeListUsers { get; set; }
+    public DbSet<UserSession> UserSessions { get; set; }
     public DbSet<DataProtectionKey> DataProtectionKeys { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
