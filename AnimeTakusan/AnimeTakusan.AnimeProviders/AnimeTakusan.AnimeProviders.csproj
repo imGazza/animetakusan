@@ -9,8 +9,8 @@
   <ItemGroup>
     <PackageReference Include="Bogus" Version="35.6.5" />
     <PackageReference Include="Mapster" Version="7.4.0" />
-    <PackageReference Include="StrawberryShake.Server" Version="15.1.11" />
-    <PackageReference Include="StrawberryShake.Transport.Http" Version="15.1.11" />
+    <PackageReference Include="StrawberryShake.Server" Version="16.6.0" />
+    <PackageReference Include="StrawberryShake.Transport.Http" Version="16.6.0" />
   </ItemGroup>
 
   <ItemGroup>
