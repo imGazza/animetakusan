@@ -109,7 +109,7 @@ public class MalSyncActionHandler : IMessageHandler
             // Read from DB again in case another db context instance already refreshed the token
             malUser = await _malUserRepository.GetByMalUserIdAsync(malUser.MalUserId);
 
-            if (malUser.AccessTokenExpiresAt < DateTime.UtcNow)
+            if (malUser != null && malUser.AccessTokenExpiresAt < DateTime.UtcNow)
                 await HandleExpiredUserAsync(malUser, message);
 
             throw;

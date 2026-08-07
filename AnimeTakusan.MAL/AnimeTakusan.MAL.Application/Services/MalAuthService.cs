@@ -58,11 +58,10 @@ public class MalAuthService : IMalAuthService
         _logger.LogInformation("User {UserId} successfully logged in MAL. MalUserId {MalUserId}", user.UserId, user.MalUserId);
 
         // Publish account linked message
-        // Expiration set as the AccessTokenExpiresAt in order to let expire the main app record before the actual refresh token expires
         await _messagePublisher.PublishAsync(new MalAuthEventMessage(
             user.UserId,
             user.MalUserId,
-            user.AccessTokenExpiresAt,
+            user.RefreshTokenExpiresAt,
             Status.Linked
         ));
     }
@@ -75,21 +74,21 @@ public class MalAuthService : IMalAuthService
         malUser.RefreshToken = _tokenProtector.Protect(tokens.RefreshToken);
         malUser.AccessTokenExpiresAt = DateTime.UtcNow.AddDays(21); // 10 days less than the real expiration
         malUser.RefreshTokenExpiresAt = DateTime.UtcNow.AddDays(26); // 5 days less then the real expiration of 31 days
+        malUser.UpdatedAt = DateTime.UtcNow;
 
         await _malUserRepository.UpdateTokens(malUser);
 
         _logger.LogDebug("MAL user {MalUserId} refreshed tokens.", malUser.MalUserId);
 
         // Publish token refreshed message
-        // Expiration set as the AccessTokenExpiresAt in order to let expire the main app record before the actual refresh token expires
         await _messagePublisher.PublishAsync(new MalAuthEventMessage(
             malUser.UserId,
             malUser.MalUserId,
-            malUser.AccessTokenExpiresAt,
+            malUser.RefreshTokenExpiresAt,
             Status.Refreshed
         ));
 
-        return tokens.AccessToken;
+        return malUser.AccessToken;
     }
 
     private string ExtractUserIdFromState(string state)
