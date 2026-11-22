@@ -80,15 +80,13 @@ public class CacheAnimeProviderDecorator : IAnimeProvider
 
     public async Task<AnimePageResponse> GetAnime(AnimeFilterRequest animeFilterRequest)
     {
-        if(!string.IsNullOrEmpty(animeFilterRequest.Filter?.Search))
-        {
-            return await _innerAnimeProvider.GetAnime(animeFilterRequest);
-        }
-
-        var publicFiltered = await _cache.GetOrSetAsync(
-            CacheKeys.AniListFilteredAnime(animeFilterRequest),
-            _cacheOptions.AniListPublicDataTtl,
-            () => _innerAnimeProvider.GetAnime(animeFilterRequest));
+        // Free-text searches aren't cached (too many distinct keys)
+        var publicFiltered = !string.IsNullOrEmpty(animeFilterRequest.Filter?.Search)
+            ? await _innerAnimeProvider.GetAnime(animeFilterRequest)
+            : await _cache.GetOrSetAsync(
+                CacheKeys.AniListFilteredAnime(animeFilterRequest),
+                _cacheOptions.AniListPublicDataTtl,
+                () => _innerAnimeProvider.GetAnime(animeFilterRequest));
 
         if(_currentUser.AniListUserId is not int aniListUserId)
         {

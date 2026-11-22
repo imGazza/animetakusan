@@ -6,8 +6,6 @@ import { Link } from "react-router";
 import { animeTitle } from "./lib";
 import SectionHeader from "./SectionHeader";
 
-const HOME_ACCENT = "var(--accent-home)";
-
 interface Upcoming {
   anime: AnimeEntry["anime"];
   episode: number;
@@ -49,7 +47,7 @@ const UpcomingAiring = ({ watching, now }: { watching: AnimeEntry[]; now: Date }
                     <p className="truncate text-sm font-medium leading-tight">{animeTitle(u.anime)}</p>
                     <p className="text-xs text-muted-foreground">Episode {u.episode}</p>
                   </div>
-                  <span className="shrink-0 text-xs font-semibold tabular-nums" style={{ color: HOME_ACCENT }}>
+                  <span className="shrink-0 text-xs font-semibold tabular-nums text-muted-foreground">
                     {formatDistanceToNowStrict(u.airsAt, { addSuffix: true })}
                   </span>
                 </Link>

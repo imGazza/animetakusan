@@ -21,6 +21,11 @@ interface MockOpts {
   createdDaysAgo?: number;
   startedDaysAgo?: number;
   completedDaysAgo?: number;
+  /** Media status override; defaults to RELEASING when nextInDays is set, FINISHED otherwise. */
+  mediaStatus?: string;
+  /** Media start/end dates in days ago (negative = in the future). */
+  airedFromDaysAgo?: number;
+  endedDaysAgo?: number;
 }
 
 const toDate = (daysAgo?: number) => {
@@ -34,15 +39,15 @@ const mock = (o: MockOpts): Anime => ({
   idMal: o.id,
   title: { romaji: o.title, english: o.title, native: o.title },
   coverImage: { extraLarge: cover(`ani-${o.id}`), color: o.color ?? "#7c3aed" },
-  startDate: toDate(o.startedDaysAgo ?? 120)!,
-  endDate: { year: null, month: null, day: null },
+  startDate: toDate(o.airedFromDaysAgo ?? o.startedDaysAgo ?? 120)!,
+  endDate: toDate(o.endedDaysAgo) ?? { year: null, month: null, day: null },
   bannerImage: cover(`banner-${o.id}`),
   season: "WINTER",
   seasonYear: 2026,
   description: "",
   type: "ANIME",
   format: "TV",
-  status: o.nextInDays != null ? "RELEASING" : "FINISHED",
+  status: o.mediaStatus ?? (o.nextInDays != null ? "RELEASING" : "FINISHED"),
   isFavourite: false,
   episodes: o.episodes,
   duration: 24,
@@ -72,6 +77,8 @@ const watching: Anime[] = [
   mock({ id: 103, title: "Dan Da Dan", episodes: 12, progress: 7, status: "CURRENT", nextInDays: 1, nextEpisode: 8, startedDaysAgo: 20, color: "#a78bfa" }),
   mock({ id: 104, title: "Blue Box", episodes: 25, progress: 3, status: "CURRENT", nextInDays: 4, nextEpisode: 5, startedDaysAgo: 12, color: "#60a5fa" }),
   mock({ id: 105, title: "Ranma ½", episodes: 12, progress: 10, status: "CURRENT", nextInDays: 3, nextEpisode: 11, startedDaysAgo: 30, color: "#fb7185" }),
+  // Finished airing 4 days ago with 3 episodes still unwatched -> feeds the backlog from start/end dates.
+  mock({ id: 106, title: "Orb: On the Movements of the Earth", episodes: 12, progress: 9, status: "CURRENT", airedFromDaysAgo: 81, endedDaysAgo: 4, startedDaysAgo: 70, color: "#4ade80" }),
 ];
 
 const completed: Anime[] = [
@@ -82,6 +89,9 @@ const completed: Anime[] = [
 const planning: Anime[] = [
   mock({ id: 301, title: "Monster", episodes: 74, progress: 0, status: "PLANNING", createdDaysAgo: 6, color: "#f97316" }),
   mock({ id: 302, title: "Steins;Gate", episodes: 24, progress: 0, status: "PLANNING", createdDaysAgo: 1, color: "#22d3ee" }),
+  // Planning highlights: one already airing, one premiering soon.
+  mock({ id: 303, title: "Sakamoto Days", episodes: 11, progress: 0, status: "PLANNING", nextInDays: 2, nextEpisode: 4, airedFromDaysAgo: 19, createdDaysAgo: 25, color: "#eab308" }),
+  mock({ id: 304, title: "Witch Watch", episodes: 25, progress: 0, status: "PLANNING", nextInDays: 6, nextEpisode: 1, mediaStatus: "NOT_YET_RELEASED", airedFromDaysAgo: -6, createdDaysAgo: 10, color: "#c084fc" }),
 ];
 
 const paused: Anime[] = [

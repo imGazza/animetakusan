@@ -12,12 +12,13 @@ import Library from "@/features/library/Library";
 import Settings from "@/features/profile/Settings";
 import ProtectedRoute from "@/features/auth/ProtectedRoute";
 import ErrorPage from "@/features/error/ErrorPage";
+import Home from "@/features/home/Home";
 //import HomePreview from "@/features/home/HomePreview"; // TEMP preview
 
 export const routes = createBrowserRouter([
     {
         path: "/",
-        loader: () => redirect("/browse")
+        loader: () => redirect("/home")
     },
     {
         Component: RootLayout,
@@ -59,13 +60,11 @@ export const routes = createBrowserRouter([
                     {
                         Component: ProtectedRoute,
                         children: [
-                            // Home prototype — not production-ready. Uncomment (and its import above)
-                            // to preview during development.
-                            // {
-                            //     path: "/home",
-                            //     Component: Home,
-                            //     errorElement: <ErrorPage variant="scoped" />
-                            // },
+                            {
+                                path: "/home",
+                                Component: Home,
+                                errorElement: <ErrorPage variant="scoped" />
+                            },
                             {
                                 path: "/library",
                                 Component: Library,

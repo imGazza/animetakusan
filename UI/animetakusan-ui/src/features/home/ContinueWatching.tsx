@@ -17,9 +17,12 @@ const ContinueWatching = ({ entries }: { entries: AnimeEntry[] }) => {
       {entries.length === 0 ? (
         <EmptyRail />
       ) : (
-        <div className="no-scrollbar -mx-2.5 flex snap-x snap-mandatory gap-4 overflow-x-auto px-2.5 pb-2 md:mx-0 md:px-0">
+        // Mobile: 3-column grid, same as Library/Browse (AnimeDisplay) — a swipe rail there
+        // fought with the page scroll and snapped the first card flush to the screen edge.
+        // md+: horizontal rail.
+        <div className="grid grid-cols-3 gap-3 md:no-scrollbar md:flex md:snap-x md:snap-mandatory md:gap-4 md:overflow-x-auto md:pb-2">
           {entries.map((entry) => (
-            <div key={entry.anime.id} className="w-[140px] shrink-0 snap-start md:w-[170px]">
+            <div key={entry.anime.id} className="flex min-w-0 flex-col md:w-[170px] md:shrink-0 md:snap-start">
               <AnimeCard anime={entry.anime} />
               <AnimeCardProgress anime={entry.anime} />
             </div>

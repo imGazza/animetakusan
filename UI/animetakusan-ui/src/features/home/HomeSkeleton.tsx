@@ -16,14 +16,14 @@ export const HomeSkeleton = () => (
 
     <div className="flex flex-col gap-3">
       <Skeleton className="h-4 w-44" />
-      <div className="flex gap-4 overflow-hidden">
+      <div className="grid grid-cols-3 gap-3 md:flex md:gap-4 md:overflow-hidden">
         {Array.from({ length: 6 }).map((_, i) => (
-          <Skeleton key={i} className="aspect-[37/53] w-[140px] shrink-0 rounded-sm md:w-[170px]" />
+          <Skeleton key={i} className="aspect-[37/53] rounded-sm md:w-[170px] md:shrink-0" />
         ))}
       </div>
     </div>
 
-    <div className="grid gap-6 lg:grid-cols-3">
+    <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
       <Skeleton className="h-80 rounded-xs lg:col-span-2" />
       <Skeleton className="h-80 rounded-xs" />
     </div>
