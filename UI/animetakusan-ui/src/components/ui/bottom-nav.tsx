@@ -1,4 +1,4 @@
-import { Compass, LibraryBig, LogIn, LogOut, User } from "lucide-react";
+import { Compass, Home, LibraryBig, LogIn, LogOut, User } from "lucide-react";
 import { NavLink, useNavigate } from "react-router";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -47,6 +47,7 @@ interface NavTab {
 }
 
 const NAV_TABS: NavTab[] = [
+  { label: "Home", href: "/home", Icon: Home, colorVar: "var(--accent-home)" },
   { label: "Browse", href: "/browse", Icon: Compass, colorVar: "var(--accent-browse)" },
   { label: "Library", href: "/library", Icon: LibraryBig, colorVar: "var(--accent-library)", stroke: { active: 1.9, inactive: 1.5 } },
 ];
@@ -206,8 +207,9 @@ const BottomNav = () => {
       style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
     >
       <div className="mx-auto flex h-(--mobile-nav-height) max-w-md items-center px-2">
-        <NavItem {...NAV_TABS[0]} />
-        <NavItem {...NAV_TABS[1]} />
+        {NAV_TABS.map((tab) => (
+          <NavItem key={tab.href} {...tab} />
+        ))}
         <ProfileTab />
       </div>
     </nav>
